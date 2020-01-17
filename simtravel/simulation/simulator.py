@@ -98,11 +98,11 @@ class Simulator:
 
         This follows a normal distribution
         """
-        r = int(np.random.normal(self.BATTERY_2, STD_CHARGE))
+        r = int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
 
         # Truncate the maximum and minimum values of the distribution.
         while r < BATTERY_THRS or r > MAX_BATTERY:
-            r = int(np.random.normal(self.BATTERY_2, STD_CHARGE))
+            r = int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
 
         CHARGE_SERIES.append(r)
 
