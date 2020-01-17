@@ -13,6 +13,7 @@ class IntensityMeasure():
         self.vehicle_count_int = 0
         self.vehicle_count_ext = 0
 
+
 class SquareCity():
     
     def __init__(self, sqrt_roundabouts=1, block_scale=4):
