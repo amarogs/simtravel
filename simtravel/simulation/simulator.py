@@ -5,20 +5,23 @@ from simtravel.models.states import States
 
 class Simulator:
 
-    def __init__(self, city_map, avenues):
+    def __init__(self, city_map, avenues, STR_RATE, SIZE):
         """
-        :param city_map: is the graph of the city, given a position returns the list of 
+        :param city_map: is the graph of the city, given a position returns the list of
             neighboring cells.
         :param avenues: is a set of cell that are avenues
 
          """
         super().__init__()
+        # Set the constants
+        self.STR_RATE = STR_RATE
+        self.SIZE = SIZE
 
+        # Set attributes
         self.city_map = city_map
         self.city_state = {(pos: 1) for pos in self.city_map}
         self.city_positions = list(city_map.keys())
         self.avenues = avenues
-        self.city_state = None
         self.vehicles = None  # List of vehicles
         self.ev_vehicles = None  # Set of ev vehicles
         self.stations = None  # List of stations
@@ -31,8 +34,38 @@ class Simulator:
                               States.QUEUEING: self.queueing, States.CHARGING, self.charging}
 
     def place_vehicles(self, EV_DEN, TF_DEN):
-        """Creates the vehicles and places them around the city."""
-        pass
+        """Creates the vehicles and places them around the city.
+        Initially all the vehicles are in the AT_DEST
+        state waiting to be released. The realeasing follows the
+        same distribution as the idle time spent at a destination."""
+
+        # Add constants to the simulator object
+        self.EV_DEN = EV_DEN
+        self.TF_DEN = TF_DEN
+        self.TOTAL_VEHICLES = int(STR_RATE * SIZE * SIZE * TF_DEN)
+        self.TOTAL_EV = int(EV_DEN * self.TOTAL_VEHICLES)
+
+        # Create the vehicles, place them on the city.
+        # Initially all the vehicles are in a AT_DEST
+        # state and so they don't occupy a place.
+
+        city_positions_copy = copy.copy(self.city_positions)
+        ev_vehicles = set()
+        vehicles = []
+
+        for _ in range(self.TOTAL_EV):
+            v = ElectricVehicle(city_positions_copy.pop(),
+                                self.compute_idle(), self.compute_battery())
+            vehicles.append(v)
+            ev_vehicles.add(v)
+        for _ in range(self.TOTAL_VEHICLES-TOTAL_EV):
+            v = Vehicle(city_positions_copy.pop(), self.compute_idle())
+            vehicles.append(v)
+
+        self.vehicles = vehicles
+        self.ev_vehicles = ev_vehicles
+
+        return self.vehicles
 
     def place_stations(num_stations, LAYOUT):
         """Sets the stations around the city given the LAYOUT."""
@@ -135,14 +168,11 @@ class Simulator:
         """Function called when a vehicle has State.CHARGING."""
         vehicle.wait_time -= 1
         if vehicle.wait_time == 0:
-            #The vehicle has waited long enough for 
+            # The vehicle has waited long enough for
             vehicle.station.vehicle_leaving()
             vehicle.station = None
             vehicle.state = States.TOWARDS_DEST
             # vehicle.path = FALTA POR ESCRIBIR
-            
-
-            
 
     def set_idle_distribution(self, upper, lower, std):
         """Sets the parameters of the normal distribution of the time the
@@ -150,6 +180,7 @@ class Simulator:
         self.IDLE_UPPER = upper
         self.IDLE_LOWER = lower
         self.IDLE_STD = std
+
     def compute_idle(self):
         """Returns the time a vehicle must spent idle when it reaches a
         destination.
@@ -166,8 +197,6 @@ class Simulator:
 
         return r
 
-        return r
-
     def set_battery_distribution(self, upper, lower, std):
         """Sets the parameters of the normal distribution of the charge the
         vehicle's have/recharge.
@@ -181,22 +210,19 @@ class Simulator:
     def compute_battery(self):
         """Returns the amount of charge that an EV has in its battery.
 
-        This follows a normal distribution
+        This follows a normal distribution.
         """
-        r = int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
+        r=int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
 
         # Truncate the maximum and minimum values of the distribution.
         while r < BATTERY_THRS or r > MAX_BATTERY:
-            r = int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
+            r=int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
 
         CHARGE_SERIES.append(r)
 
         return r
 
-    def compute_next_position(destination_pos, electric=True):
-        """Given a  """
-        return r
 
-    def compute_next_position(destination_pos, electric=True):
+    def compute_next_position(destination_pos, electric = True):
         """Given a."""
         pass
