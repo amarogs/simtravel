@@ -138,14 +138,4 @@ cpdef int lattice_distance(pos1, pos2):
         dy = SIZE - dy
     return (dx + dy)
 
-cpdef float normal_percentage():
-    """Computes a percentage that goes from 40% to 99%. """
-    cdef float A, fx
-    cdef int x
 
-    x = random.randint(0, 20)
-    A = 40 / cpow(18*3.14159, 0.5)
-    #A = 40 / ((18*3.14159)**(1.0/2.0))
-    fx = round(A* cexp( -1*(x*x/162.0)) + 3.5, 3)
-    #fx = round(A*np.exp(-1*float(x**2/162.0))+3.5, 3)
-    return (fx*0.1)

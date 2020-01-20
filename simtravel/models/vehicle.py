@@ -34,7 +34,7 @@ class Vehicle(object):
 
 class ElectricVehicle(Vehicle):
     def __init__(self, initial_pos, initial_wait_time, initial_battery):
-        super(ElectricVehicle, self).__init__(initial_pos, initial_wait_time)
+        
 
         self.battery = None
         self.initial_battery = initial_battery
@@ -49,6 +49,8 @@ class ElectricVehicle(Vehicle):
         self.station = None
 
 
+        super(ElectricVehicle, self).__init__(initial_pos, initial_wait_time)
+        self.restart()
     def restart(self):
         self.battery = self.initial_battery
         self.seeking_history = []
