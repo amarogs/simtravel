@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import random
 
 from simtravel.models.states import States
 from simtravel.models.station import Station
@@ -9,7 +10,7 @@ from simtravel.simulation import graphs
 
 class Simulator:
 
-    def __init__(self, city_map, avenues):
+    def __init__(self, city_map, avenues, CHAR_RATE):
         """
         :param city_map: is the graph of the city, given a position returns the list of
             neighboring cells.
@@ -23,16 +24,19 @@ class Simulator:
         self.city_state = {pos: 1 for pos in self.city_map}
         self.city_positions = list(city_map.keys())
         self.avenues = avenues
+        self.CHARGING_RATE = CHAR_RATE
         self.vehicles = None  # List of vehicles
         self.ev_vehicles = None  # Set of ev vehicles
         self.stations = None  # List of stations
+        self.stations_map = None #Dictionary where each position of the city has a list of stations
 
         # Dictionary where the key is a state and the value the function
         # associated with that state
         self.next_function = {States.AT_DEST: self.at_destination,
                               States.TOWARDS_DEST: self.towards_destination,
                               States.TOWARDS_ST: self.towards_station,
-                              States.QUEUEING: self.queueing, States.CHARGING: self.charging}
+                              States.QUEUEING: self.queueing, States.CHARGING: self.charging,
+                              States.NO_BATTERY: self.no_battery}
 
     def create_vehicles(self, EV_DEN, TF_DEN, SIZE, STR_RATE):
         """Creates the vehicles and places them around the city.
@@ -51,6 +55,7 @@ class Simulator:
         # state and so they don't occupy a place.
 
         city_positions_copy = copy.copy(self.city_positions)
+        random.shuffle(city_positions_copy)
         ev_vehicles = set()
         vehicles = []
 
@@ -93,19 +98,20 @@ class Simulator:
         self.stations = stations
         self.stations_map = stations_map
         return self.stations
-
+    def choose_station(self, pos):
+        return random.choice(self.stations_map[pos])
     def next_step(self):
         """For each vehicle, computes the next step in their algorithm."""
-        for vehicle in vehicles:
-            self.next_function[vehicle.state]
+        for vehicle in self.vehicles:
+            self.next_function[vehicle.state](vehicle)
 
     def towards_destination(self, vehicle):
         """Function called when a vehicle has State.TOWARDS_DEST."""
         electric = False
-        if v in self.ev_vehicles:
+        if vehicle in self.ev_vehicles:
             electric = True
 
-        if self.compute_next_position(vehicle, electric):
+        if self.compute_next_position(vehicle, vehicle.destination, electric):
             # If we have reached the destination:
             # set the position as a free position
             self.city_state[vehicle.pos] = 1
@@ -125,9 +131,9 @@ class Simulator:
             elif vehicle.battery == 0:
                 # The vehicle has run out of battery
                 # Set the vehicle's position as free.
-                self.no_battery_vehicle(vehicle)
-
-    def no_battery_vehicle(self, vehicle):
+                self.no_battery(vehicle)
+    
+    def no_battery(self, vehicle):
         """Operations made when a vehicle runs out of battery.
 
         It makes the vehicle invisible to the traffic.
@@ -150,7 +156,7 @@ class Simulator:
         """Function called when a vehicle has State.TOWARDS_ST."""
         vehicle.seeking += 1
 
-        if self.compute_next_position(vehicle):
+        if self.compute_next_position(vehicle, vehicle.station.pos):
             # Store the seeking time
             vehicle.seeking_history.append(vehicle.seeking)
             # Start the counter for queueing
@@ -158,22 +164,23 @@ class Simulator:
             if not self.check_for_a_charger(vehicle):
                 vehicle.state = States.QUEUEING
         elif vehicle.battery == 0:
-            self.no_battery_vehicle(vehicle)
+            self.no_battery(vehicle)
 
-    def check_for_a_charger(vehicle):
+    def check_for_a_charger(self, vehicle):
         """Checks if the vehicle's station has availables chargers, if so
         computes the goal charge and the waiting time that the vehicle must
         stay on the station."""
         charger_available = False
         if vehicle.station.charger_available():
-            charger_available = True.append(vehicle.queueing)
+            charger_available = True
+            vehicle.queueing_history.append(vehicle.queueing)
             # Set the next state to charging
             vehicle.state = States.CHARGING
             # Set the goal charge
             vehicle.desired_charge = self.compute_battery()
             # Compute the charge time
-            vehicle.wait_time = self.CHARGING_RATE * \
-                (vehicle.desired_charge-vehicle.battery)
+            vehicle.wait_time = int(self.CHARGING_RATE * \
+                (vehicle.desired_charge-vehicle.battery))
 
         return charger_available
 
@@ -186,9 +193,10 @@ class Simulator:
         """Function called when a vehicle has State.CHARGING."""
         vehicle.wait_time -= 1
         if vehicle.wait_time == 0:
-            # The vehicle has waited long enough for
+            # The vehicle has waited long enough
             vehicle.station.vehicle_leaving()
             vehicle.station = None
+            vehicle.battery = vehicle.desired_charge
             vehicle.state = States.TOWARDS_DEST
             vehicle.path = graphs.a_star(vehicle.pos, vehicle.destination)
 
@@ -239,13 +247,10 @@ class Simulator:
         while r < self.BATTERY_LOWER or r > self.BATTERY_UPPER:
             r=int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
 
-        
-
         return r
 
-    def update_city_and_vehicle(vehicle, choice):
-        pass
-    def compute_next_position(destination_pos, electric = True):
+
+    def compute_next_position(self, vehicle,  target, electric = True):
         """Given a."""
 
         # Recompute the path if we have moved to a random position in the previous step
@@ -278,3 +283,23 @@ class Simulator:
 
 
         return vehicle.pos == target
+
+    def move_to_random(self, vehicle):
+        """Move the vehicle to an available position in the neighbourhood. Returns True if there is
+        at least one position available, False otherwise."""
+        candidates = [
+            pos for (pos, tp) in self.city_map[vehicle.pos] if self.city_state[pos]]
+
+        if len(candidates):
+            self.update_city_and_vehicle(vehicle, random.choice(candidates))
+            vehicle.recompute_path = True
+            return True
+        else:
+            return False
+
+    def update_city_and_vehicle(self, vehicle, choice):
+        """Function that updates the city state and the vehicle position """
+        self.city_state[vehicle.pos] = 1  # Set the current position as free
+        self.city_state[choice] = 0  # Set the chosen position as occuppied
+        # vehicle.ppos = vehicle.pos  # Record the previous position
+        vehicle.pos = choice  # Update the vehicle position

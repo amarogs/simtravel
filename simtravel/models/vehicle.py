@@ -28,6 +28,7 @@ class Vehicle(object):
         """Sets the vehicle to it's original place with all the attributes as
         the start of the simulation."""
         self.pos = self.initial_pos
+        self.destination = self.initial_pos
         self.wait_time = self.initial_wait_time
         self.state = States.AT_DEST
 
