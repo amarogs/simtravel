@@ -6,7 +6,7 @@ import random
 from simtravel.models.states import States
 from simtravel.models.station import Station
 from simtravel.models.vehicle import ElectricVehicle, Vehicle
-from simtravel.simulation import graphs
+from simtravel.simulator import graphs
 
 
 class Simulator:
