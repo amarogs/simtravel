@@ -15,7 +15,7 @@ class VisualObject(object):
         self.rectangle = None
 
 
-class VisualVehicle(VisualObject):
+class VisualVehicle(VisualObject): 
     def __init__(self, cell_size, vehicle, canvas):
         super().__init__(cell_size)
 
@@ -196,7 +196,7 @@ class VisualRepresentation(object):
         """For each VisualVehicle in the simulation, updates the vehicle's rectangle
         according to the state. It also updates the destination rectangle. """
         for visual_veh in self.visual_vehicles:
-            if visual_veh.vehicle.state in [States.AT_DEST, States.QUEUEING, States.CHARGING]:
+            if visual_veh.vehicle.state in States.idle_states():
                 # The vehicle is not moving.
                 visual_veh.move_vehicle(state='hidden')
                 # Hide the destination rectangle

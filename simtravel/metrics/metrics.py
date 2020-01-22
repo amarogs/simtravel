@@ -1,214 +1,218 @@
-from parameters import *
+from simtravel.models.states import States
+from simtravel.simulation.graphs import lattice_distance
+
 import copy
 import numpy as np
-import numexpr as ne
+import h5py
 
-class SimulationMetrics(object):
-    def __init__(self, total_states, stations_pos, intensity_points,previous_data, SIZE, EV_DENSITY, TF_DENSITY, LAYOUT):
+
+class SimulationSnapshot(object):
+
+    def __init__(self, vehicles):
+        super().__init__()
+        # For each vehicle, store its position
+        self.v_pos = {v.id: v.pos for v in vehicles}
+        # For each vehicle, store its state
+        self.v_state = {v.id: v.state for v in vehicles}
+
+    def mean_velocities(self, previous, delta_tsteps):
+        """Given a previous snapshot, computes the mean speed of
+        the vehicles moving (mean_speed) and the mean speed of all
+        vehicles (mean_mobility). """
+
+        previous_state = previous.v_state
+        previous_pos = previous.v_pos
+
+        moving_distance, total_distance = 0, 0
+        moving_counter = 0
+
+        for v, state in self.v_state.items():
+            # Compute the distance from the two snapshots
+            distance = lattice_distance(self.v_pos[v], previous_pos[v])
+            total_distance += distance
+
+            if state in States.moving_states() and previous_state[v] in States.moving_states():
+                # If the vehicle is moving rigth now and was moving before, take it into account
+                moving_distance += distance
+                moving_counter += 1
+
+        # Compute the aggregated speed and mobility
+        moving_distance, total_distance = moving_distance / \
+            delta_tsteps, total_distance/delta_tsteps
+
+        if moving_counter == 0:
+            return (0, total_distance/len(previous_pos))
+        else:
+            return (moving_distance/moving_counter, total_distance/len(previous_pos))
+
+
+class SimulationMetric(object):
+    def __init__(self, city_map, stations, num_heat_snapshots, total_tsteps, delta_tsteps, SIZE):
+        super().__init__()
         self.SIZE = SIZE
-        self.HSIZE = int(self.SIZE/2)
-        self.I_TIME_STEP = float(1/DELTA_TIME_STEP)
-        self.LAYOUT = LAYOUT
-        self.EV_DENSITY = EV_DENSITY
-        self.TF_DENSITY = TF_DENSITY
-        self.counter = 0 #Count the number of times we have entered the update metrics
+        # For each state count the number of EV's in that state
+        self.states_evolution = {s: [] for s in States}
+        # Compute metrics about the speed and mobility
+        self.mean_speed_evolution = []
+        self.mean_mobility_evolution = []
+        # Compute metrics about the occupation of stations
+        self.occupation_history = {st.pos: [] for st in stations}
+        # Compute metrics about the placement of vehicles
+        self.heat_map = {pos: 0 for pos in city_map}
+        self.heat_map_tsteps = [int(((i+1)*total_tsteps)/(num_heat_snapshots*delta_tsteps))*delta_tsteps
+                                for i in range(num_heat_snapshots)]
+        self.delta_tsteps = delta_tsteps
+        self.heat_map_evolution = []
 
-        first = int(int(TOTAL_STEPS/3)/DELTA_TIME_STEP)*DELTA_TIME_STEP
-        second = int(int(2*TOTAL_STEPS/3)/DELTA_TIME_STEP)*DELTA_TIME_STEP
-        last = int(int(TOTAL_STEPS)/DELTA_TIME_STEP)*DELTA_TIME_STEP
-        self.snapshot_times = set([first, second, last])
+        # Compute the global metrics
+        self.mean_seeking = None
+        self.mean_queueing = None
 
-        # Dict: (vehicle: (state, position) )
-        self.previous_data = previous_data
-        #The attributes with a 'simulation' in the name refer to the attributes that store information
-        #of a particular repetition of the simulation
+        # Save the amount of charge and time spent idle
+        self.idle_distribution = None
+        self.charging_distribution = None
 
-        #Let's create the attributes to store the state
-        self.total_states = total_states
-        self.states_simulation = None  # A map where the key is a state
-        #and the value is a list with the number of times it appears.
-
-        # (pos : [# of vehicles in that station])
-        self.occupation_simulation = {i: [0] for i in stations_pos}
-
-        self.intensity_ext_simulation = []
-        self.intensity_int_simulation = []
-
-        self.heat_map = None  # (pos : # of vehicles that have passed)
-        self.heat_map_simulation = []  # List where the different heat maps are stored
-
-        # List where the different speeds are annotated.
-        self.speed_simulation = []
-        self.mobility_simulation = []
-        
-        self.seeking_simulation = None
-        self.queueing_simulation = None
-
-        #List where the final values of distribution and wait time are annotated
-        self.wait_series = None
-        self.charge_series = None
-
-    def lattice_distance(self, pos1, pos2):
-        dx = abs(pos1[0] - pos2[0])
-        dy = abs(pos1[1] - pos2[1])
-        if dx > self.HSIZE:
-            dx = self.SIZE - dx
-        if dy > self.HSIZE:
-            dy = self.SIZE - dy
-        return float(dx + dy)
-
-    def init_states(self, ev_vehicles):
-        """Function that counts the number of times each state appears at time_step=0
-        and returns a list of lists where each state is represented by its index. """
-
-        #Count the number of times each state appears.
-        state_count = [0 for k in range(self.total_states)]
-
-        for ev in ev_vehicles:
-            state_count[ev.state] += 1
-
-        #Then create the attribute that is going to store the count
-        self.states_simulation = [[state_count[k]] for k in range(self.total_states)]
-        return
-
-    def update_states(self, ev_vehicles):
-        """Count the number of vehicle that are in each state at time_step=n and appends it
-        to the corresponding list in states_simulation. """
-
-        #First count the number of vehicles that are in a certain state
-        state_count = [0 for k in self.states_simulation]
-
-        for ev in ev_vehicles:
-            state_count[ev.state] += 1
-
-        #Then add then to the evolution
-        for (i, state) in enumerate(self.states_simulation):
-            state.append(state_count[i])
-            
-
-    def update_occupation(self, stations):
-        """For each station, count the number of vehicles that are inside the 
-        station at each snapshot """
-        for st in stations:
-            self.occupation_simulation[st.pos].append(st.occupation)
-
-    def charge_and_time_distribution(self):
-        self.charge_series = CHARGE_SERIES
-        self.wait_series = WAIT_SERIES
-
-    def global_points(self, ev_vehicles):
-        seeking, queueing = [], []
-
-        for ev in ev_vehicles:
-            if len(ev.seeking_history)>0:
-                seeking.append(np.average(np.array(ev.seeking_history)))
-            if len(ev.queueing_history)>0:
-                queueing.append(np.average(np.array(ev.queueing_history)))
-        if len(seeking):
-            self.seeking_simulation = np.average(np.array(seeking))
-        if len(queueing):
-            self.queueing_simulation = np.average(np.array(queueing))
-
-    def init_heat_map(self, city_pos):
-        # For each position in the city, set the counter to 0
-        heat_map = {i: 0 for i in city_pos}
-
-        for _, (st, pos) in self.previous_data.items():
-            if st == 0 or st == 2:
-                #Increase the counter where there is a vehicle driving
-                heat_map[pos] += 1
-        self.heat_map = heat_map
-        return
-
-    def update_heat_map(self, new_data, step):
-        """Record the current position of the vehicles that are currently moving"""
-        for _, (st, pos) in new_data.items():
-            if st == 0 or st == 2:
-                self.heat_map[pos] += 1
-        if step in self.snapshot_times:
-            #Appends the current heat_map to the list of the evolution
-            self.heat_map_simulation.append(copy.copy(self.heat_map))
-    def create_matrices(self):
-        """Create new np matrices with some attributes like states_simulation and intensity_simulation """
-        #State matrix
-        self.states_simulation = np.array(self.states_simulation)
-        
-        #For each placement of intensity create the matrices and multiply by the factor 
-        #of time_step
-        divisor = self.I_TIME_STEP
-        interior = np.array(self.intensity_int_simulation)
-        exterior = np.array(self.intensity_ext_simulation)
-        
-        self.intensity_int_simulation = ne.evaluate("divisor * interior")
-        self.intensity_ext_simulation = ne.evaluate("divisor * exterior")
-        
-        #Mean speead as a numpy array
-        self.speed_simulation = np.array(self.speed_simulation)
-
-
-        #For each snapshot of the heat map create a matrix 
-        heat_map_matrix = []
-        for hmap in self.heat_map_simulation:
-            
-            A = np.zeros((self.SIZE, self.SIZE))
-            for pos, value in hmap.items():
-                A[pos] = value
-            heat_map_matrix.append(A)
-        self.heat_map_simulation = heat_map_matrix
-
-        
-    def update_all(self, ev_vehicles, new_data, stations,intensity_points ,step):
-        #Update the state of the ev_vehicles
+    def initialize(self, vehicles, ev_vehicles, stations):
+        """Method that updates the internal variables with the data
+        from the tstep=0 """
         self.update_states(ev_vehicles)
-
-        #Loop the stations to update the occupation
+        self.update_heat_map(vehicles, 0)
         self.update_occupation(stations)
 
-        #Now let's loop over all the vehicle to find the data we need
+    def update_data(self, vehicles, ev_vehicles, stations, current, previous, tstep):
+        """Method that updates the internal variables with the
+        data from a tstep different from the first one. """
+        self.update_states(ev_vehicles)
+        self.update_heat_map(vehicles, tstep)
+        self.update_occupation(stations)
+        self.update_speed_mobility(current, previous)
 
-        #Count the number of vehicles driving in the current time step and the previous one
-        new_speed = []
-        new_mobility = []
-        for v in new_data:
-            # Retrieve the data from the vehicles
-            (st_0, pos_0) = self.previous_data[v]
-            (st_1, pos_1) = new_data[v]
+    def update_states(self, ev_vehicles):
+        """Given a set/list of ev_vehicles, computes how many vehicles
+        are in each state, then appends that data to the evolution lists.
+        This method updates the attribute states_evolution """
 
-            if st_1 == 0 or st_1 == 2:
-                self.heat_map[pos_1] += 1 #There is a  vehicle at pos_1 that is driving
-                #We already know that the vehicle is driving, let's find out if the vehicle was driving before too
-                if (st_0 == 0 or st_0 == 2):
-                    new_speed.append(self.lattice_distance(pos_0, pos_1))
+        # First count the number of vehicles that are in a certain state
+        state_count = {s: 0 for s in States}
 
-            #Compute the mobility for this vehicle
-            new_mobility.append(self.lattice_distance(pos_0, pos_1))
-        divisor = self.I_TIME_STEP
-        if len(new_speed) > 0:
-            new_speed = np.array(new_speed) #Take the distance list and make a new array
-            new_speed = np.average(ne.evaluate("divisor * new_speed"))
-        else:
-            new_speed = 0.0
-        new_mobility = np.array(new_mobility) #Create a numpy array with the mobility
-        new_mobility = np.average(ne.evaluate("divisor * new_mobility")) #Compute the mean mobility of this snapshot.
+        for ev in ev_vehicles:
+            state_count[ev.state] += 1
+        # Append the count to the lists of evolution
+        for s in States:
+            self.states_evolution[s].append(state_count[s])
 
-        #Update the speed evolution list
-        self.speed_simulation.append(new_speed)
-        self.mobility_simulation.append(new_mobility)
+    def update_heat_map(self, vehicles, tstep):
+        """Given the list of vehicles and the current time step, 
+        if a vehicle is moving, then increase the counter of the cell
+        that it's occupying. """
 
-        #Appends the current heat_map to the list of the evolution if where are on a selected step
-        if step in self.snapshot_times:
-            self.heat_map_simulation.append(copy.copy(self.heat_map))
+        # First update the global count of the placement of vehicles
+        for v in vehicles:
+            if v.state in States.moving_states():
+                self.heat_map[v.pos] += 1
 
+        # Then, check if we have to make a snapshot of the heat map
+        if tstep in self.heat_map_tsteps:
+            heat = np.zeros((self.SIZE, self.SIZE), dtype="int32")
+            for pos, value in self.heat_map.items():
+                heat[pos] = value
+            self.heat_map_evolution.append(heat)
 
-        #Update the intensity measure at the points selected
-        interior, exterior = [],[]
-        for ip in intensity_points:
-            interior.append(ip.vehicle_count_int)
-            exterior.append(ip.vehicle_count_ext)
-            ip.restart()
+    def update_speed_mobility(self, current, previous):
+        """Given the current snapshot and the last snapshot, 
+        computes the mean_speed and mean_velcities and updates
+        the evolution lists for those parameters. """
+
+        speed, mobility = current.mean_velocities(previous, self.delta_tsteps)
+        self.mean_speed_evolution.append(speed)
+        self.mean_mobility_evolution.append(mobility)
+
+    def update_occupation(self, stations):
+        """Given the list of stations, count the number of 
+        vehicles that they hold and save it to a list. """
+        for st in stations:
+            self.occupation_history[st.pos].append(st.occupation)
+
+    def compute_seeking_queueing(self, ev_vehicles):
+        """Aggregates the data from the vehicles. For each
+        vehicle compute the mean number of steps used in seeking
+        and the mean number of steps used in queueing, then compute
+        a global average mean of the simulation. """
+        self.mean_seeking = np.mean([np.sum(ev.seeking_history)
+                                     for ev in ev_vehicles])
+        self.mean_queueing = np.mean([np.sum(ev.queueing_history)
+                                      for ev in ev_vehicles])
+
+    def store_idle_charging(self, ev_vehicles):
+        self.idle_distribution = [ev.idle_history for ev in ev_vehicles]
+        self.charging_distribution = [
+            ev.charging_history for ev in ev_vehicles]
+
+    def write_results(self, file, base_directory, ev_vehicles):
+        """Given a openned and writable HDF5 file, and the 
+        base directory where we are going to write, takes the
+        data from the simulation and stores it in the file. """
+
+        # Write states evolution data
+        directory = base_directory + "states/"
+        size = len(self.states_evolution[States.AT_DEST])
+
+        for s in States:
+            dset = file.create_dataset(
+                directory+str(s), (size,), dtype="uint32")
+            dset.write_direct(np.array(self.states_evolution[s]))
+
+        # Write mean speed and mobility
+        directory = base_directory + "velocities/"
+        size = len(self.mean_speed_evolution)
+
+        dset = file.create_dataset(
+            directory + "speed", (size,), dtype="uint32")
+        dset.write_direct(np.array(self.mean_speed_evolution))
+
+        dset = file.create_dataset(
+            directory + "mobility", (size,), dtype="uint32")
+        dset.write_direct(np.array(self.mean_mobility_evolution))
+
+        # Write heat map data
+        directory = base_directory + "heat_map/"
+        size = self.heat_map_evolution[0].shape
+
+        for (i, heat) in enumerate(self.heat_map_evolution):
+            dset = file.create_dataset(directory+str(i), size, dtype="uint32")
+            dset.write_direct(heat)
+
+        # Write occupation data
+        directory = base_directory + "occupation/"
+
+        for pos, station_occupation in self.occupation_history.items():
+            size = len(station_occupation)
+            dset = file.create_dataset(
+                directory + str(pos), (size,), dtype="uint32")
+            dset.write_direct(np.array(station_occupation))
+
+        # Write seeking and queueing
+        self.compute_seeking_queueing(ev_vehicles)
+        directory = base_directory + "global/"
+
+        dset = file.create_dataset(directory + "seeking", (1,), dtype="uint32")
+        dset.write_direct(np.array(self.mean_seeking))
+
+        dset = file.create_dataset(directory + "queueing", (1,), dtype="uint32")
+        dset.write_direct(np.array(self.mean_queueing))
+
+        # Write idle data
+        directory = base_directory + "idle/"
+        for ev in ev_vehicles:
+            data = ev.idle_history
+            dset = file.create_dataset(directory + str(ev.id), (len(data),), dtype="uint32")
+            dset.write_direct(np.array(data))
         
-        self.intensity_int_simulation.append(interior)
-        self.intensity_ext_simulation.append(exterior)
-
-        self.previous_data = new_data  # Set the previous data as the new data
-        self.counter += 1 #Increase the counter
+        # Write charging data
+        directory = base_directory + "charging/"
+        for ev in ev_vehicles:
+            data = ev.charging_history
+            if len(data) > 0:
+                dset = file.create_dataset(
+                    directory + str(ev.id), (len(data),), dtype="uint32")
+                dset.write_direct(np.array(data))

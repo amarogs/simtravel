@@ -1,5 +1,5 @@
 class Station(object):
-    def __init__(self, pos, N_CHARGERS, speed=1):
+    def __init__(self, pos, N_CHARGERS):
         self.pos = pos
         self.N_CHARGERS = N_CHARGERS
         self.available = self.N_CHARGERS

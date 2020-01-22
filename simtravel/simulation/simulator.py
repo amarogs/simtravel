@@ -120,6 +120,7 @@ class Simulator:
             # set the amount of time the vehicle must
             # stay idle at destination
             vehicle.wait_time = self.compute_idle()
+            vehicle.idle_history.append(vehicle.wait_time)
         elif electric:
             if vehicle.battery <= self.BATTERY_LOWER:
                 # The vehicle is running out of battery and needs to recharge
@@ -161,6 +162,8 @@ class Simulator:
             vehicle.seeking_history.append(vehicle.seeking)
             # Start the counter for queueing
             vehicle.queueing = 0
+            # Increase the occupation counter
+            vehicle.station.occupation += 1
             if not self.check_for_a_charger(vehicle):
                 vehicle.state = States.QUEUEING
         elif vehicle.battery == 0:
@@ -178,6 +181,7 @@ class Simulator:
             vehicle.state = States.CHARGING
             # Set the goal charge
             vehicle.desired_charge = self.compute_battery()
+            vehicle.charging_history.append(vehicle.desired_charge)
             # Compute the charge time
             vehicle.wait_time = int(self.CHARGING_RATE * \
                 (vehicle.desired_charge-vehicle.battery))

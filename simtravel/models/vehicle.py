@@ -9,7 +9,7 @@ class Vehicle(object):
         """pos is the vehicle's original position and wait_time is the amount of
         time a vehicle must spent before taking the first destination """
         self.pos = None  # Current position of the vehicle
-        self.id = abs(hash(str(initial_pos))) % (10 ** 8)
+        self.id = hash(str(initial_pos))
         self.destination = None  # Position where the vehicle is heading
         self.path = []  # List of positions to take
         # If True computes a path from the current position to a position in the previous path
@@ -18,10 +18,11 @@ class Vehicle(object):
         self.state = None
         # Time left waiting at the destination or reacharging if applied to an EV.
         self.wait_time = None
-
+        self.idle_history = None
+        # Attributes to restart the vehicle
         self.initial_wait_time = initial_wait_time
         self.initial_pos = initial_pos
-
+        
         self.restart()
 
     def restart(self):
@@ -31,6 +32,7 @@ class Vehicle(object):
         self.destination = self.initial_pos
         self.wait_time = self.initial_wait_time
         self.state = States.AT_DEST
+        self.idle_history = []
 
 
 class ElectricVehicle(Vehicle):
@@ -45,6 +47,7 @@ class ElectricVehicle(Vehicle):
         # Metrics we want to store
         self.seeking_history = []
         self.queueing_history = []
+        self.charging_history = []
 
         # Station that the vehicle is headed to.
         self.station = None
@@ -56,5 +59,6 @@ class ElectricVehicle(Vehicle):
         self.battery = self.initial_battery
         self.seeking_history = []
         self.queueing_history = []
+        self.charging_history = []
         self.station = None
         super(ElectricVehicle, self).restart()
