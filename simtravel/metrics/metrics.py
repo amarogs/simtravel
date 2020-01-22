@@ -148,6 +148,7 @@ class SimulationMetric(object):
         self.charging_distribution = [
             ev.charging_history for ev in ev_vehicles]
 
+
     def write_results(self, file, base_directory, ev_vehicles):
         """Given a openned and writable HDF5 file, and the 
         base directory where we are going to write, takes the
