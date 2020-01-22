@@ -3,8 +3,9 @@ class Station(object):
     def __init__(self, pos, N_CHARGERS):
         self.pos = pos
         self.N_CHARGERS = N_CHARGERS
-        self.available = self.N_CHARGERS
-        self.occupation = 0
+        self.available = None
+        self.occupation = None
+        self.restart()
 
     def charger_available(self):
         """Returns True if the station has an available charger and reserves it. """

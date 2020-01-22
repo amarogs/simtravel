@@ -285,7 +285,7 @@ class SquareCity(CityBuilder):
                                  ])
 
         # Create the city
-        self.city = self.create_city()
+        self.city_matrix = self.create_city_matrix()
         self.city_map = self.create_city_map()
         # Once the city map has been create we can use it on the graphs module
         # Configure the global parameters of the a_star
@@ -312,7 +312,7 @@ class SquareCity(CityBuilder):
 
         return np.concatenate(base, axis=0)
 
-    def create_city(self):
+    def create_city_matrix(self):
         base_array = self.combine_tiles()
         matrix = []
         for _ in range(self.scale):
@@ -377,10 +377,10 @@ class SquareCity(CityBuilder):
         for i in range(self.SIZE):
             for j in range(self.SIZE):
                 # Check if the position is not a house:
-                if self.city[(i, j)][4] != CellType.HOUSE:
-                    movements = self.city[(i, j)][0:4] == Direction.ALLOWED
+                if self.city_matrix[(i, j)][4] != CellType.HOUSE:
+                    movements = self.city_matrix[(i, j)][0:4] == Direction.ALLOWED
                     allowed = self.get_neigh(i, j)[movements]
-                    city_map[(i, j)] = [(pos, self.city[pos][4].value)
+                    city_map[(i, j)] = [(pos, self.city_matrix[pos][4].value)
                                         for pos in allowed]
 
 
@@ -477,11 +477,11 @@ class SquareCity(CityBuilder):
         avenues, roundabouts, streets = set(), set(), set()
         for i in range(self.SIZE):
             for j in range(self.SIZE):
-                if self.city[(i, j)][-1] == 1:
+                if self.city_matrix[(i, j)][-1] == 1:
                     avenues.add((i, j))
-                elif self.city[(i, j)][-1] == 2:
+                elif self.city_matrix[(i, j)][-1] == 2:
                     streets.add((i, j))
-                elif self.city[(i, j)][-1] == 3:
+                elif self.city_matrix[(i, j)][-1] == 3:
                     roundabouts.add((i, j))
         
         return (avenues, streets, roundabouts)

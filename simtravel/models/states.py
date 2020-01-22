@@ -11,5 +11,5 @@ class States(Enum):
     NO_BATTERY = 5
     def moving_states():
         return [States.TOWARDS_DEST, States.TOWARDS_ST]
-    def idle_states(self):
+    def idle_states():
         return [States.CHARGING, States.QUEUEING, States.AT_DEST]

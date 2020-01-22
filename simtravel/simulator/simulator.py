@@ -4,32 +4,22 @@ import numpy as np
 import random
 
 from simtravel.models.states import States
-from simtravel.models.station import Station
-from simtravel.models.vehicle import ElectricVehicle, Vehicle
 from simtravel.simulator import graphs
+from simtravel.metrics.metrics import SimulationMetric, SimulationSnapshot
 
 
 class Simulator:
 
-    def __init__(self, city_map, avenues, CHAR_RATE):
+    def __init__(self, simulation):
         """
-        :param city_map: is the graph of the city, given a position returns the list of
-            neighboring cells.
-        :param avenues: is a set of cell that are avenues
-
+        :param simulation: A simulation object
          """
         super().__init__()
 
         # Set attributes
-        self.city_map = city_map
-        self.city_state = {pos: 1 for pos in self.city_map}
-        self.city_positions = list(city_map.keys())
-        self.avenues = avenues
-        self.CHARGING_RATE = CHAR_RATE
-        self.vehicles = None  # List of vehicles
-        self.ev_vehicles = None  # Set of ev vehicles
-        self.stations = None  # List of stations
-        self.stations_map = None #Dictionary where each position of the city has a list of stations
+        self.simulation = simulation
+        self.city_state = {pos: 1 for pos in self.simulation.city_map}
+        self.city_positions = list(simulation.city_map.keys())
 
         # Dictionary where the key is a state and the value the function
         # associated with that state
@@ -39,77 +29,15 @@ class Simulator:
                               States.QUEUEING: self.queueing, States.CHARGING: self.charging,
                               States.NO_BATTERY: self.no_battery}
 
-    def create_vehicles(self, EV_DEN, TF_DEN, SIZE, STR_RATE):
-        """Creates the vehicles and places them around the city.
-        Initially all the vehicles are in the AT_DEST
-        state waiting to be released. The realeasing follows the
-        same distribution as the idle time spent at a destination."""
-
-        # Add constants to the simulator object
-        self.EV_DEN = EV_DEN
-        self.TF_DEN = TF_DEN
-        self.TOTAL_VEHICLES = int(STR_RATE * SIZE * SIZE * TF_DEN)
-        self.TOTAL_EV = int(EV_DEN * self.TOTAL_VEHICLES)
-
-        # Create the vehicles, place them on the city.
-        # Initially all the vehicles are in a AT_DEST
-        # state and so they don't occupy a place.
-
-        city_positions_copy = copy.copy(self.city_positions)
-        random.shuffle(city_positions_copy)
-        ev_vehicles = set()
-        vehicles = []
-
-        for _ in range(self.TOTAL_EV):
-            v = ElectricVehicle(city_positions_copy.pop(),
-                                self.compute_idle(), self.compute_battery())
-            vehicles.append(v)
-            ev_vehicles.add(v)
-        for _ in range(self.TOTAL_VEHICLES-self.TOTAL_EV):
-            v = Vehicle(city_positions_copy.pop(), self.compute_idle())
-            vehicles.append(v)
-
-        self.vehicles = vehicles
-        self.ev_vehicles = ev_vehicles
-
-        return self.vehicles
-
-    def create_stations(self,stations_per_district, num_plugs):
-        """:param stations_per_district: a dictionary where the
-        keys are tuple of 4 elements defining a district and the value is
-        a list of positions where a station must be placed.
-        :param num_plugs: is the number of plugs that a station can have.
-         """
-        stations = []
-        stations_map = {}
-        for district, positions in stations_per_district.items():
-            # For each station position in the district, create a Station object
-            district_stations = [Station(pos, num_plugs) for pos in positions]
-            # For each position inside the district, if it is a drivable cell
-            # reference the list of stations.
-            (C1, C2, R1, R2) = district
-            for i in range(C1, C2):
-                for j in range(R1, R2):
-                    if (i, j) in self.city_map:
-                        stations_map[(i, j)] = district_stations
-            # Add the stations to the list of stations
-            stations.extend(district_stations)
-
-        # Save the data as class attributes
-        self.stations = stations
-        self.stations_map = stations_map
-        return self.stations
+    def restart(self):
+        self.city_state = {pos: 1 for pos in self.simulation.city_map}
     def choose_station(self, pos):
-        return random.choice(self.stations_map[pos])
-    def next_step(self):
-        """For each vehicle, computes the next step in their algorithm."""
-        for vehicle in self.vehicles:
-            self.next_function[vehicle.state](vehicle)
+        return random.choice(self.simulation.stations_map[pos])
 
     def towards_destination(self, vehicle):
         """Function called when a vehicle has State.TOWARDS_DEST."""
         electric = False
-        if vehicle in self.ev_vehicles:
+        if vehicle in self.simulation.ev_vehicles:
             electric = True
 
         if self.compute_next_position(vehicle, vehicle.destination, electric):
@@ -123,7 +51,7 @@ class Simulator:
             vehicle.wait_time = self.compute_idle()
             vehicle.idle_history.append(vehicle.wait_time)
         elif electric:
-            if vehicle.battery <= self.BATTERY_LOWER:
+            if vehicle.battery <= self.simulation.BATTERY_LOWER:
                 # The vehicle is running out of battery and needs to recharge
                 vehicle.state = States.TOWARDS_ST  # Set the state to "towards station"
                 vehicle.station = self.choose_station(
@@ -134,7 +62,7 @@ class Simulator:
                 # The vehicle has run out of battery
                 # Set the vehicle's position as free.
                 self.no_battery(vehicle)
-    
+
     def no_battery(self, vehicle):
         """Operations made when a vehicle runs out of battery.
 
@@ -184,9 +112,8 @@ class Simulator:
             vehicle.desired_charge = self.compute_battery()
             vehicle.charging_history.append(vehicle.desired_charge)
             # Compute the charge time
-            vehicle.wait_time = int(self.CHARGING_RATE * \
-                (vehicle.desired_charge-vehicle.battery))
-
+            vehicle.wait_time = int(self.simulation.units.steps_to_recharge(
+                vehicle.desired_charge-vehicle.battery))
         return charger_available
 
     def queueing(self, vehicle):
@@ -205,14 +132,6 @@ class Simulator:
             vehicle.state = States.TOWARDS_DEST
             vehicle.path = graphs.a_star(vehicle.pos, vehicle.destination)
 
-    def set_idle_distribution(self, upper, lower, std):
-        """Sets the parameters of the normal distribution of the time the
-        vehicles spend at idle."""
-        self.IDLE_UPPER = upper
-        self.IDLE_LOWER = lower
-        self.IDLE_STD = std
-        self.IDLE_MEAN = (upper + lower) // 2
-
     def compute_idle(self):
         """Returns the time a vehicle must spent idle when it reaches a
         destination.
@@ -221,71 +140,61 @@ class Simulator:
         """
 
         # Compute a normal random number
-        r = int(np.random.normal(self.IDLE_MEAN, self.IDLE_STD))
+        r = int(np.random.normal(
+            self.simulation.IDLE_MEAN, self.simulation.IDLE_STD))
 
         # Truncate the maximum and minimum values of the distribution.
-        while r < self.IDLE_LOWER or r > self.IDLE_UPPER:
-            r = int(np.random.normal(self.IDLE_MEAN, self.IDLE_STD))
+        while r < self.simulation.IDLE_LOWER or r > self.simulation.IDLE_UPPER:
+            r = int(np.random.normal(
+                self.simulation.IDLE_MEAN, self.simulation.IDLE_STD))
 
         return r
-
-    def set_battery_distribution(self, upper, lower, std):
-        """Sets the parameters of the normal distribution of the charge the
-        vehicle's have/recharge.
-
-        The battery is expressed as simulation time.
-        """
-
-        self.BATTERY_UPPER = upper
-        self.BATTERY_LOWER = lower
-        self.BATTERY_STD = std
-        self.BATTERY_MEAN = (lower + upper) // 2
 
     def compute_battery(self):
         """Returns the amount of charge that an EV has in its battery.
 
         This follows a normal distribution.
         """
-        r=int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
+        r = int(np.random.normal(self.simulation.BATTERY_MEAN,
+                                 self.simulation.BATTERY_STD))
 
         # Truncate the maximum and minimum values of the distribution.
-        while r < self.BATTERY_LOWER or r > self.BATTERY_UPPER:
-            r=int(np.random.normal(self.BATTERY_MEAN, self.BATTERY_STD))
+        while r < self.simulation.BATTERY_LOWER or r > self.simulation.BATTERY_UPPER:
+            r = int(np.random.normal(self.simulation.BATTERY_MEAN,
+                                     self.simulation.BATTERY_STD))
 
         return r
 
-
-    def compute_next_position(self, vehicle,  target, electric = True):
+    def compute_next_position(self, vehicle,  target, electric=True):
         """Given a."""
 
         # Recompute the path if we have moved to a random position in the previous step
         if vehicle.recompute_path:
-            vehicle.path=graphs.recompute_path(vehicle.path, vehicle.pos, target)
-            vehicle.recompute_path=False
+            vehicle.path = graphs.recompute_path(
+                vehicle.path, vehicle.pos, target)
+            vehicle.recompute_path = False
 
         # Get the next step in the path to our goal
-        choice=vehicle.path.pop(-1)
+        choice = vehicle.path.pop(-1)
 
-        vehicle_moved=False
+        vehicle_moved = False
 
         if self.city_state[choice]:
             # If the position of the next step in the path is available, move to it
             self.update_city_and_vehicle(vehicle, choice)
-            vehicle_moved=True
+            vehicle_moved = True
         else:
             # With a 20% chance we move to a random position if any is available
             if random.random() >= 0.65:
-                vehicle_moved=self.move_to_random(vehicle)
-
+                vehicle_moved = self.move_to_random(vehicle)
 
         if not vehicle_moved:
             # The vehicle's position is the same as before entering this function.
-                vehicle.path.append(choice)  # restore the path
+            vehicle.path.append(choice)  # restore the path
         else:
             # The vehicle did move. If the path is changed then it must be recomputed in the next step.
             if electric:
                 vehicle.battery -= 1
-
 
         return vehicle.pos == target
 
@@ -293,7 +202,7 @@ class Simulator:
         """Move the vehicle to an available position in the neighbourhood. Returns True if there is
         at least one position available, False otherwise."""
         candidates = [
-            pos for (pos, tp) in self.city_map[vehicle.pos] if self.city_state[pos]]
+            pos for (pos, tp) in self.simulation.city_map[vehicle.pos] if self.city_state[pos]]
 
         if len(candidates):
             self.update_city_and_vehicle(vehicle, random.choice(candidates))
@@ -308,3 +217,35 @@ class Simulator:
         self.city_state[choice] = 0  # Set the chosen position as occuppied
         # vehicle.ppos = vehicle.pos  # Record the previous position
         vehicle.pos = choice  # Update the vehicle position
+
+    def next_step(self):
+        """For each vehicle, computes the next step in their algorithm."""
+        for vehicle in self.simulation.vehicles:
+            self.next_function[vehicle.state](vehicle)
+
+    def run_simulation(self, total_tsetps, delta_tsteps):
+
+        previous_snapshot = SimulationSnapshot(self.simulation.vehicles)
+
+        for i in range(1, total_tsetps+1):
+            self.next_step()
+
+            # Check if we have to update the data collection
+            if i % delta_tsteps == 0:
+                current_snapshot = SimulationSnapshot(self.simulation.vehicles)
+                self.simulation.update_data(current_snapshot, previous_snapshot, i)
+                previous_snapshot = current_snapshot
+
+    def run_simulation_visual(self, total_tsetps, delta_tsteps, visual):
+        previous_snapshot = SimulationSnapshot(self.simulation.vehicles)
+
+        for i in range(1, total_tsetps+1):
+            self.next_step()
+
+            # Check if we have to update the data collection
+            if i % delta_tsteps == 0:
+                current_snapshot = SimulationSnapshot(self.simulation.vehicles)
+                self.simulation.update_data(
+                    current_snapshot, previous_snapshot, i)
+                previous_snapshot = current_snapshot
+            visual.update_vehicles()

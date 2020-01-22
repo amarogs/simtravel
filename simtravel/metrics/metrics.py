@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from simtravel.models.states import States
-from simtravel.simulation.graphs import lattice_distance
+from simtravel.simulator.graphs import lattice_distance
 
 import copy
 import numpy as np
@@ -207,8 +207,9 @@ class SimulationMetric(object):
         directory = base_directory + "idle/"
         for ev in ev_vehicles:
             data = ev.idle_history
-            dset = file.create_dataset(directory + str(ev.id), (len(data),), dtype="uint32")
-            dset.write_direct(np.array(data))
+            if len(data) > 0:
+                dset = file.create_dataset(directory + str(ev.id), (len(data),), dtype="uint32")
+                dset.write_direct(np.array(data))
         
         # Write charging data
         directory = base_directory + "charging/"
