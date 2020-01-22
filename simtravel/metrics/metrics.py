@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from simtravel.models.states import States
 from simtravel.simulation.graphs import lattice_distance
 

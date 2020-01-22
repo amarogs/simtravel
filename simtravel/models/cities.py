@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 from enum import Enum
 import simtravel.simulation.graphs as graphs

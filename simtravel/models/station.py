@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Station(object):
     def __init__(self, pos, N_CHARGERS):
         self.pos = pos

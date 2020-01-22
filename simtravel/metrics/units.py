@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class Units():
     def __init__(self, speed=10, cell_length=5, simulation_speed=1, battery=24, cs_power=7, autonomy=135):
         """
