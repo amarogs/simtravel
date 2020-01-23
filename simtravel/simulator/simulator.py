@@ -87,6 +87,8 @@ class Simulator:
         vehicle.seeking += 1
 
         if self.compute_next_position(vehicle, vehicle.station.pos):
+            # Free up the position
+            self.city_state[vehicle.pos] = 1
             # Store the seeking time
             vehicle.seeking_history.append(vehicle.seeking)
             # Start the counter for queueing
@@ -228,6 +230,8 @@ class Simulator:
         previous_snapshot = SimulationSnapshot(self.simulation.vehicles)
 
         for i in range(1, total_tsetps+1):
+
+            # Compute next step of the simulation
             self.next_step()
 
             # Check if we have to update the data collection
@@ -235,6 +239,10 @@ class Simulator:
                 current_snapshot = SimulationSnapshot(self.simulation.vehicles)
                 self.simulation.update_data(current_snapshot, previous_snapshot, i)
                 previous_snapshot = current_snapshot
+
+            # Check if we have to display a progress message
+            if i in self.simulation.progress_tsteps:
+                self.simulation.print_progress(i)
 
     def run_simulation_visual(self, total_tsetps, delta_tsteps, visual):
         previous_snapshot = SimulationSnapshot(self.simulation.vehicles)

@@ -4,12 +4,12 @@
 {
     "distutils": {
         "depends": [],
-        "name": "simulation.graphs",
+        "name": "simulator.graphs",
         "sources": [
             "graphs.pyx"
         ]
     },
-    "module_name": "simulation.graphs"
+    "module_name": "simulator.graphs"
 }
 END: Cython Metadata */
 
@@ -603,8 +603,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__simulation__graphs
-#define __PYX_HAVE_API__simulation__graphs
+#define __PYX_HAVE__simulator__graphs
+#define __PYX_HAVE_API__simulator__graphs
 /* Early includes */
 #include <math.h>
 #ifdef _OPENMP
@@ -820,18 +820,18 @@ static const char *__pyx_f[] = {
 };
 
 /*--- Type declarations ---*/
-struct __pyx_obj_10simulation_6graphs_PriorityMinHeap;
+struct __pyx_obj_9simulator_6graphs_PriorityMinHeap;
 
-/* "simulation/graphs.pyx":17
+/* "simulator/graphs.pyx":17
  *     SIZE = city_size
  * 
  * cdef class PriorityMinHeap(object):             # <<<<<<<<<<<<<<
  *     """This class has been made using the example in https://docs.python.org/2/library/heapq.html """
  *     cdef list pq
  */
-struct __pyx_obj_10simulation_6graphs_PriorityMinHeap {
+struct __pyx_obj_9simulator_6graphs_PriorityMinHeap {
   PyObject_HEAD
-  struct __pyx_vtabstruct_10simulation_6graphs_PriorityMinHeap *__pyx_vtab;
+  struct __pyx_vtabstruct_9simulator_6graphs_PriorityMinHeap *__pyx_vtab;
   PyObject *pq;
   PyObject *entry_finder;
   PyObject *REMOVED;
@@ -840,10 +840,10 @@ struct __pyx_obj_10simulation_6graphs_PriorityMinHeap {
 
 
 
-struct __pyx_vtabstruct_10simulation_6graphs_PriorityMinHeap {
-  PyObject *(*insert)(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *, PyObject *, int);
+struct __pyx_vtabstruct_9simulator_6graphs_PriorityMinHeap {
+  PyObject *(*insert)(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *, PyObject *, int);
 };
-static struct __pyx_vtabstruct_10simulation_6graphs_PriorityMinHeap *__pyx_vtabptr_10simulation_6graphs_PriorityMinHeap;
+static struct __pyx_vtabstruct_9simulator_6graphs_PriorityMinHeap *__pyx_vtabptr_9simulator_6graphs_PriorityMinHeap;
 
 /* --- Runtime support code (head) --- */
 /* Refnanny.proto */
@@ -1375,25 +1375,25 @@ static int __Pyx_check_binary_version(void);
 /* InitStrings.proto */
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
-static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item, int __pyx_v_priority); /* proto*/
+static PyObject *__pyx_f_9simulator_6graphs_15PriorityMinHeap_insert(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item, int __pyx_v_priority); /* proto*/
 
 /* Module declarations from 'libc.math' */
 
-/* Module declarations from 'simulation.graphs' */
-static PyTypeObject *__pyx_ptype_10simulation_6graphs_PriorityMinHeap = 0;
-static PyObject *__pyx_v_10simulation_6graphs_CITY = 0;
-static int __pyx_v_10simulation_6graphs_SIZE;
-static PyObject *__pyx_f_10simulation_6graphs_configure_a_star(PyObject *, int, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *, PyObject *, PyObject *); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *, PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
-static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs___pyx_unpickle_PriorityMinHeap__set_state(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *, PyObject *); /*proto*/
-#define __Pyx_MODULE_NAME "simulation.graphs"
-extern int __pyx_module_is_main_simulation__graphs;
-int __pyx_module_is_main_simulation__graphs = 0;
+/* Module declarations from 'simulator.graphs' */
+static PyTypeObject *__pyx_ptype_9simulator_6graphs_PriorityMinHeap = 0;
+static PyObject *__pyx_v_9simulator_6graphs_CITY = 0;
+static int __pyx_v_9simulator_6graphs_SIZE;
+static PyObject *__pyx_f_9simulator_6graphs_configure_a_star(PyObject *, int, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs_reconstruct_path(PyObject *, PyObject *, PyObject *); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs_a_star(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs_recompute_path(PyObject *, PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static int __pyx_f_9simulator_6graphs_lattice_distance(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs___pyx_unpickle_PriorityMinHeap__set_state(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *, PyObject *); /*proto*/
+#define __Pyx_MODULE_NAME "simulator.graphs"
+extern int __pyx_module_is_main_simulator__graphs;
+int __pyx_module_is_main_simulator__graphs = 0;
 
-/* Implementation of 'simulation.graphs' */
+/* Implementation of 'simulator.graphs' */
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_pop[] = "pop";
 static const char __pyx_k_pos[] = "pos";
@@ -1433,7 +1433,7 @@ static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_PriorityMinHeap[] = "PriorityMinHeap";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
-static const char __pyx_k_simulation_graphs[] = "simulation.graphs";
+static const char __pyx_k_simulator_graphs[] = "simulator.graphs";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_pyx_unpickle_PriorityMinHeap[] = "__pyx_unpickle_PriorityMinHeap";
 static const char __pyx_k_Incompatible_checksums_s_vs_0xd8[] = "Incompatible checksums (%s vs 0xd8b0ca4 = (REMOVED, counter, entry_finder, pq))";
@@ -1474,24 +1474,24 @@ static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_n_s_remove_item;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
-static PyObject *__pyx_n_s_simulation_graphs;
+static PyObject *__pyx_n_s_simulator_graphs;
 static PyObject *__pyx_n_s_start;
 static PyObject *__pyx_kp_s_stringsource;
 static PyObject *__pyx_n_s_target;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_update;
-static PyObject *__pyx_pf_10simulation_6graphs_configure_a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_city_map, int __pyx_v_city_size); /* proto */
-static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_6is_empty(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_8__reduce_cython__(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cython__(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_2a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_start, PyObject *__pyx_v_goal); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_4recompute_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_current_path, PyObject *__pyx_v_pos, PyObject *__pyx_v_target); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_6lattice_distance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_pos1, PyObject *__pyx_v_pos2); /* proto */
-static PyObject *__pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_10simulation_6graphs_PriorityMinHeap(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_pf_9simulator_6graphs_configure_a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_city_map, int __pyx_v_city_size); /* proto */
+static int __pyx_pf_9simulator_6graphs_15PriorityMinHeap___init__(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_2remove_item(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_4pop(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_6is_empty(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_8__reduce_cython__(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_10__setstate_cython__(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_2a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_start, PyObject *__pyx_v_goal); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_4recompute_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_current_path, PyObject *__pyx_v_pos, PyObject *__pyx_v_target); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_6lattice_distance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_pos1, PyObject *__pyx_v_pos2); /* proto */
+static PyObject *__pyx_pf_9simulator_6graphs_8__pyx_unpickle_PriorityMinHeap(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_tp_new_9simulator_6graphs_PriorityMinHeap(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop = {0, &__pyx_n_s_pop, 0, 0, 0};
 static __Pyx_CachedCFunction __pyx_umethod_PyList_Type_pop = {0, &__pyx_n_s_pop, 0, 0, 0};
 static PyObject *__pyx_int_0;
@@ -1502,7 +1502,7 @@ static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_codeobj__3;
 /* Late includes */
 
-/* "simulation/graphs.pyx":12
+/* "simulator/graphs.pyx":12
  * cdef dict CITY
  * cdef int SIZE
  * cpdef configure_a_star(dict city_map, int city_size):             # <<<<<<<<<<<<<<
@@ -1510,13 +1510,13 @@ static PyObject *__pyx_codeobj__3;
  *     CITY = city_map
  */
 
-static PyObject *__pyx_pw_10simulation_6graphs_1configure_a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs_configure_a_star(PyObject *__pyx_v_city_map, int __pyx_v_city_size, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_9simulator_6graphs_1configure_a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs_configure_a_star(PyObject *__pyx_v_city_map, int __pyx_v_city_size, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("configure_a_star", 0);
 
-  /* "simulation/graphs.pyx":14
+  /* "simulator/graphs.pyx":14
  * cpdef configure_a_star(dict city_map, int city_size):
  *     global CITY, SIZE
  *     CITY = city_map             # <<<<<<<<<<<<<<
@@ -1524,20 +1524,20 @@ static PyObject *__pyx_f_10simulation_6graphs_configure_a_star(PyObject *__pyx_v
  * 
  */
   __Pyx_INCREF(__pyx_v_city_map);
-  __Pyx_XGOTREF(__pyx_v_10simulation_6graphs_CITY);
-  __Pyx_DECREF_SET(__pyx_v_10simulation_6graphs_CITY, __pyx_v_city_map);
+  __Pyx_XGOTREF(__pyx_v_9simulator_6graphs_CITY);
+  __Pyx_DECREF_SET(__pyx_v_9simulator_6graphs_CITY, __pyx_v_city_map);
   __Pyx_GIVEREF(__pyx_v_city_map);
 
-  /* "simulation/graphs.pyx":15
+  /* "simulator/graphs.pyx":15
  *     global CITY, SIZE
  *     CITY = city_map
  *     SIZE = city_size             # <<<<<<<<<<<<<<
  * 
  * cdef class PriorityMinHeap(object):
  */
-  __pyx_v_10simulation_6graphs_SIZE = __pyx_v_city_size;
+  __pyx_v_9simulator_6graphs_SIZE = __pyx_v_city_size;
 
-  /* "simulation/graphs.pyx":12
+  /* "simulator/graphs.pyx":12
  * cdef dict CITY
  * cdef int SIZE
  * cpdef configure_a_star(dict city_map, int city_size):             # <<<<<<<<<<<<<<
@@ -1553,8 +1553,8 @@ static PyObject *__pyx_f_10simulation_6graphs_configure_a_star(PyObject *__pyx_v
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_1configure_a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_1configure_a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_9simulator_6graphs_1configure_a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_1configure_a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_city_map = 0;
   int __pyx_v_city_size;
   PyObject *__pyx_r = 0;
@@ -1602,12 +1602,12 @@ static PyObject *__pyx_pw_10simulation_6graphs_1configure_a_star(PyObject *__pyx
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("configure_a_star", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 12, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("simulation.graphs.configure_a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.configure_a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_city_map), (&PyDict_Type), 1, "city_map", 1))) __PYX_ERR(0, 12, __pyx_L1_error)
-  __pyx_r = __pyx_pf_10simulation_6graphs_configure_a_star(__pyx_self, __pyx_v_city_map, __pyx_v_city_size);
+  __pyx_r = __pyx_pf_9simulator_6graphs_configure_a_star(__pyx_self, __pyx_v_city_map, __pyx_v_city_size);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1618,13 +1618,13 @@ static PyObject *__pyx_pw_10simulation_6graphs_1configure_a_star(PyObject *__pyx
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_configure_a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_city_map, int __pyx_v_city_size) {
+static PyObject *__pyx_pf_9simulator_6graphs_configure_a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_city_map, int __pyx_v_city_size) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("configure_a_star", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10simulation_6graphs_configure_a_star(__pyx_v_city_map, __pyx_v_city_size, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_9simulator_6graphs_configure_a_star(__pyx_v_city_map, __pyx_v_city_size, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1633,7 +1633,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_configure_a_star(CYTHON_UNUSED Py
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.configure_a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.configure_a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -1641,7 +1641,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_configure_a_star(CYTHON_UNUSED Py
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":24
+/* "simulator/graphs.pyx":24
  *     cdef int counter
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -1650,28 +1650,28 @@ static PyObject *__pyx_pf_10simulation_6graphs_configure_a_star(CYTHON_UNUSED Py
  */
 
 /* Python wrapper */
-static int __pyx_pw_10simulation_6graphs_15PriorityMinHeap_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_10simulation_6graphs_15PriorityMinHeap_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_9simulator_6graphs_15PriorityMinHeap_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_9simulator_6graphs_15PriorityMinHeap_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
   if (unlikely(PyTuple_GET_SIZE(__pyx_args) > 0)) {
     __Pyx_RaiseArgtupleInvalid("__init__", 1, 0, 0, PyTuple_GET_SIZE(__pyx_args)); return -1;}
   if (unlikely(__pyx_kwds) && unlikely(PyDict_Size(__pyx_kwds) > 0) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__init__", 0))) return -1;
-  __pyx_r = __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9simulator_6graphs_15PriorityMinHeap___init__(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self) {
+static int __pyx_pf_9simulator_6graphs_15PriorityMinHeap___init__(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "simulation/graphs.pyx":25
+  /* "simulator/graphs.pyx":25
  * 
  *     def __init__(self):
  *         self.pq = [] #List arranged as a min heap             # <<<<<<<<<<<<<<
@@ -1686,7 +1686,7 @@ static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx
   __pyx_v_self->pq = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":26
+  /* "simulator/graphs.pyx":26
  *     def __init__(self):
  *         self.pq = [] #List arranged as a min heap
  *         self.entry_finder = {} #mapping of items to enties             # <<<<<<<<<<<<<<
@@ -1701,7 +1701,7 @@ static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx
   __pyx_v_self->entry_finder = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":27
+  /* "simulator/graphs.pyx":27
  *         self.pq = [] #List arranged as a min heap
  *         self.entry_finder = {} #mapping of items to enties
  *         self.REMOVED = (99999,99999) #placeholder for a removed task             # <<<<<<<<<<<<<<
@@ -1714,7 +1714,7 @@ static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx
   __Pyx_DECREF(__pyx_v_self->REMOVED);
   __pyx_v_self->REMOVED = __pyx_tuple_;
 
-  /* "simulation/graphs.pyx":28
+  /* "simulator/graphs.pyx":28
  *         self.entry_finder = {} #mapping of items to enties
  *         self.REMOVED = (99999,99999) #placeholder for a removed task
  *         self.counter = 0 #Number of elements that are not removed in the heap             # <<<<<<<<<<<<<<
@@ -1723,7 +1723,7 @@ static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx
  */
   __pyx_v_self->counter = 0;
 
-  /* "simulation/graphs.pyx":24
+  /* "simulator/graphs.pyx":24
  *     cdef int counter
  * 
  *     def __init__(self):             # <<<<<<<<<<<<<<
@@ -1736,14 +1736,14 @@ static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":30
+/* "simulator/graphs.pyx":30
  *         self.counter = 0 #Number of elements that are not removed in the heap
  * 
  *     cdef insert(self, tuple item, int priority):             # <<<<<<<<<<<<<<
@@ -1751,7 +1751,7 @@ static int __pyx_pf_10simulation_6graphs_15PriorityMinHeap___init__(struct __pyx
  *             self.remove_item(item)
  */
 
-static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item, int __pyx_v_priority) {
+static PyObject *__pyx_f_9simulator_6graphs_15PriorityMinHeap_insert(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item, int __pyx_v_priority) {
   PyObject *__pyx_v_entry = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -1764,7 +1764,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   PyObject *__pyx_t_7 = NULL;
   __Pyx_RefNannySetupContext("insert", 0);
 
-  /* "simulation/graphs.pyx":31
+  /* "simulator/graphs.pyx":31
  * 
  *     cdef insert(self, tuple item, int priority):
  *         if item in self.entry_finder:             # <<<<<<<<<<<<<<
@@ -1779,7 +1779,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "simulation/graphs.pyx":32
+    /* "simulator/graphs.pyx":32
  *     cdef insert(self, tuple item, int priority):
  *         if item in self.entry_finder:
  *             self.remove_item(item)             # <<<<<<<<<<<<<<
@@ -1805,7 +1805,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "simulation/graphs.pyx":31
+    /* "simulator/graphs.pyx":31
  * 
  *     cdef insert(self, tuple item, int priority):
  *         if item in self.entry_finder:             # <<<<<<<<<<<<<<
@@ -1814,7 +1814,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
  */
   }
 
-  /* "simulation/graphs.pyx":34
+  /* "simulator/graphs.pyx":34
  *             self.remove_item(item)
  * 
  *         cdef list entry = [priority, item]             # <<<<<<<<<<<<<<
@@ -1834,7 +1834,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   __pyx_v_entry = ((PyObject*)__pyx_t_4);
   __pyx_t_4 = 0;
 
-  /* "simulation/graphs.pyx":36
+  /* "simulator/graphs.pyx":36
  *         cdef list entry = [priority, item]
  * 
  *         self.entry_finder[item] = entry             # <<<<<<<<<<<<<<
@@ -1847,7 +1847,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   }
   if (unlikely(PyDict_SetItem(__pyx_v_self->entry_finder, __pyx_v_item, __pyx_v_entry) < 0)) __PYX_ERR(0, 36, __pyx_L1_error)
 
-  /* "simulation/graphs.pyx":37
+  /* "simulator/graphs.pyx":37
  * 
  *         self.entry_finder[item] = entry
  *         heapq.heappush(self.pq, entry)             # <<<<<<<<<<<<<<
@@ -1906,7 +1906,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "simulation/graphs.pyx":38
+  /* "simulator/graphs.pyx":38
  *         self.entry_finder[item] = entry
  *         heapq.heappush(self.pq, entry)
  *         self.counter += 1             # <<<<<<<<<<<<<<
@@ -1915,7 +1915,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
  */
   __pyx_v_self->counter = (__pyx_v_self->counter + 1);
 
-  /* "simulation/graphs.pyx":30
+  /* "simulator/graphs.pyx":30
  *         self.counter = 0 #Number of elements that are not removed in the heap
  * 
  *     cdef insert(self, tuple item, int priority):             # <<<<<<<<<<<<<<
@@ -1931,7 +1931,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.insert", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.insert", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_entry);
@@ -1940,7 +1940,7 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":40
+/* "simulator/graphs.pyx":40
  *         self.counter += 1
  * 
  *     def remove_item(self, tuple item):             # <<<<<<<<<<<<<<
@@ -1949,14 +1949,14 @@ static PyObject *__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert(struct __
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_3remove_item(PyObject *__pyx_v_self, PyObject *__pyx_v_item); /*proto*/
-static char __pyx_doc_10simulation_6graphs_15PriorityMinHeap_2remove_item[] = "Mark an existing task as REMOVED";
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_3remove_item(PyObject *__pyx_v_self, PyObject *__pyx_v_item) {
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_3remove_item(PyObject *__pyx_v_self, PyObject *__pyx_v_item); /*proto*/
+static char __pyx_doc_9simulator_6graphs_15PriorityMinHeap_2remove_item[] = "Mark an existing task as REMOVED";
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_3remove_item(PyObject *__pyx_v_self, PyObject *__pyx_v_item) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("remove_item (wrapper)", 0);
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_item), (&PyTuple_Type), 1, "item", 1))) __PYX_ERR(0, 40, __pyx_L1_error)
-  __pyx_r = __pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v_self), ((PyObject*)__pyx_v_item));
+  __pyx_r = __pyx_pf_9simulator_6graphs_15PriorityMinHeap_2remove_item(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v_self), ((PyObject*)__pyx_v_item));
 
   /* function exit code */
   goto __pyx_L0;
@@ -1967,14 +1967,14 @@ static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_3remove_item(Py
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item) {
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_2remove_item(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v_item) {
   PyObject *__pyx_v_entry = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("remove_item", 0);
 
-  /* "simulation/graphs.pyx":42
+  /* "simulator/graphs.pyx":42
  *     def remove_item(self, tuple item):
  *         "Mark an existing task as REMOVED"
  *         cdef list entry = self.entry_finder.pop(item)             # <<<<<<<<<<<<<<
@@ -1991,7 +1991,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(st
   __pyx_v_entry = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":43
+  /* "simulator/graphs.pyx":43
  *         "Mark an existing task as REMOVED"
  *         cdef list entry = self.entry_finder.pop(item)
  *         entry[-1] = self.REMOVED             # <<<<<<<<<<<<<<
@@ -2007,7 +2007,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(st
   if (unlikely(__Pyx_SetItemInt(__pyx_v_entry, -1L, __pyx_t_1, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":44
+  /* "simulator/graphs.pyx":44
  *         cdef list entry = self.entry_finder.pop(item)
  *         entry[-1] = self.REMOVED
  *         self.counter -= 1             # <<<<<<<<<<<<<<
@@ -2016,7 +2016,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(st
  */
   __pyx_v_self->counter = (__pyx_v_self->counter - 1);
 
-  /* "simulation/graphs.pyx":40
+  /* "simulator/graphs.pyx":40
  *         self.counter += 1
  * 
  *     def remove_item(self, tuple item):             # <<<<<<<<<<<<<<
@@ -2029,7 +2029,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(st
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.remove_item", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.remove_item", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_entry);
@@ -2038,7 +2038,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(st
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":46
+/* "simulator/graphs.pyx":46
  *         self.counter -= 1
  * 
  *     def pop(self):             # <<<<<<<<<<<<<<
@@ -2047,20 +2047,20 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_2remove_item(st
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_5pop(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_10simulation_6graphs_15PriorityMinHeap_4pop[] = "Remove and return the lowest priority item that is not REMOVED";
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_5pop(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_5pop(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_9simulator_6graphs_15PriorityMinHeap_4pop[] = "Remove and return the lowest priority item that is not REMOVED";
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_5pop(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("pop (wrapper)", 0);
-  __pyx_r = __pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9simulator_6graphs_15PriorityMinHeap_4pop(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self) {
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_4pop(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self) {
   PyObject *__pyx_v_item = 0;
   CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
   PyObject *__pyx_r = NULL;
@@ -2074,7 +2074,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
   int __pyx_t_7;
   __Pyx_RefNannySetupContext("pop", 0);
 
-  /* "simulation/graphs.pyx":50
+  /* "simulator/graphs.pyx":50
  *         cdef tuple item
  * 
  *         while self.pq:             # <<<<<<<<<<<<<<
@@ -2085,7 +2085,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
     __pyx_t_1 = (__pyx_v_self->pq != Py_None)&&(PyList_GET_SIZE(__pyx_v_self->pq) != 0);
     if (!__pyx_t_1) break;
 
-    /* "simulation/graphs.pyx":51
+    /* "simulator/graphs.pyx":51
  * 
  *         while self.pq:
  *             _ , item = heapq.heappop(self.pq)             # <<<<<<<<<<<<<<
@@ -2164,7 +2164,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
     __Pyx_XDECREF_SET(__pyx_v_item, ((PyObject*)__pyx_t_3));
     __pyx_t_3 = 0;
 
-    /* "simulation/graphs.pyx":52
+    /* "simulator/graphs.pyx":52
  *         while self.pq:
  *             _ , item = heapq.heappop(self.pq)
  *             if item is not self.REMOVED:             # <<<<<<<<<<<<<<
@@ -2175,7 +2175,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
     __pyx_t_7 = (__pyx_t_1 != 0);
     if (__pyx_t_7) {
 
-      /* "simulation/graphs.pyx":53
+      /* "simulator/graphs.pyx":53
  *             _ , item = heapq.heappop(self.pq)
  *             if item is not self.REMOVED:
  *                 self.counter -= 1             # <<<<<<<<<<<<<<
@@ -2184,7 +2184,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
  */
       __pyx_v_self->counter = (__pyx_v_self->counter - 1);
 
-      /* "simulation/graphs.pyx":54
+      /* "simulator/graphs.pyx":54
  *             if item is not self.REMOVED:
  *                 self.counter -= 1
  *                 del self.entry_finder[item]             # <<<<<<<<<<<<<<
@@ -2197,7 +2197,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
       }
       if (unlikely(PyDict_DelItem(__pyx_v_self->entry_finder, __pyx_v_item) < 0)) __PYX_ERR(0, 54, __pyx_L1_error)
 
-      /* "simulation/graphs.pyx":55
+      /* "simulator/graphs.pyx":55
  *                 self.counter -= 1
  *                 del self.entry_finder[item]
  *                 return item             # <<<<<<<<<<<<<<
@@ -2209,7 +2209,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
       __pyx_r = __pyx_v_item;
       goto __pyx_L0;
 
-      /* "simulation/graphs.pyx":52
+      /* "simulator/graphs.pyx":52
  *         while self.pq:
  *             _ , item = heapq.heappop(self.pq)
  *             if item is not self.REMOVED:             # <<<<<<<<<<<<<<
@@ -2219,7 +2219,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
     }
   }
 
-  /* "simulation/graphs.pyx":46
+  /* "simulator/graphs.pyx":46
  *         self.counter -= 1
  * 
  *     def pop(self):             # <<<<<<<<<<<<<<
@@ -2235,7 +2235,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.pop", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.pop", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_item);
@@ -2245,7 +2245,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":56
+/* "simulator/graphs.pyx":56
  *                 del self.entry_finder[item]
  *                 return item
  *     def is_empty(self):             # <<<<<<<<<<<<<<
@@ -2254,25 +2254,25 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_4pop(struct __p
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_7is_empty(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_7is_empty(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_7is_empty(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_7is_empty(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("is_empty (wrapper)", 0);
-  __pyx_r = __pyx_pf_10simulation_6graphs_15PriorityMinHeap_6is_empty(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9simulator_6graphs_15PriorityMinHeap_6is_empty(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_6is_empty(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self) {
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_6is_empty(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("is_empty", 0);
 
-  /* "simulation/graphs.pyx":57
+  /* "simulator/graphs.pyx":57
  *                 return item
  *     def is_empty(self):
  *         return self.counter == 0             # <<<<<<<<<<<<<<
@@ -2286,7 +2286,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_6is_empty(struc
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "simulation/graphs.pyx":56
+  /* "simulator/graphs.pyx":56
  *                 del self.entry_finder[item]
  *                 return item
  *     def is_empty(self):             # <<<<<<<<<<<<<<
@@ -2297,7 +2297,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_6is_empty(struc
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.is_empty", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.is_empty", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2312,19 +2312,19 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_6is_empty(struc
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_9__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_9__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_9__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_9__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_10simulation_6graphs_15PriorityMinHeap_8__reduce_cython__(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v_self));
+  __pyx_r = __pyx_pf_9simulator_6graphs_15PriorityMinHeap_8__reduce_cython__(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_8__reduce_cython__(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self) {
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_8__reduce_cython__(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self) {
   PyObject *__pyx_v_state = 0;
   PyObject *__pyx_v__dict = 0;
   int __pyx_v_use_setstate;
@@ -2555,7 +2555,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_8__reduce_cytho
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_state);
@@ -2573,19 +2573,19 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_8__reduce_cytho
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_11__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_15PriorityMinHeap_11__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_11__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_15PriorityMinHeap_11__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cython__(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_9simulator_6graphs_15PriorityMinHeap_10__setstate_cython__(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cython__(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_9simulator_6graphs_15PriorityMinHeap_10__setstate_cython__(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -2597,7 +2597,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cy
  *     __pyx_unpickle_PriorityMinHeap__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
  */
   if (!(likely(PyTuple_CheckExact(__pyx_v___pyx_state))||((__pyx_v___pyx_state) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "tuple", Py_TYPE(__pyx_v___pyx_state)->tp_name), 0))) __PYX_ERR(1, 17, __pyx_L1_error)
-  __pyx_t_1 = __pyx_f_10simulation_6graphs___pyx_unpickle_PriorityMinHeap__set_state(__pyx_v_self, ((PyObject*)__pyx_v___pyx_state)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 17, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_9simulator_6graphs___pyx_unpickle_PriorityMinHeap__set_state(__pyx_v_self, ((PyObject*)__pyx_v___pyx_state)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
@@ -2613,7 +2613,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cy
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.PriorityMinHeap.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.PriorityMinHeap.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2621,7 +2621,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cy
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":60
+/* "simulator/graphs.pyx":60
  * 
  * 
  * cdef list reconstruct_path(came_from, start, current):             # <<<<<<<<<<<<<<
@@ -2629,7 +2629,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_15PriorityMinHeap_10__setstate_cy
  * 
  */
 
-static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v_came_from, PyObject *__pyx_v_start, PyObject *__pyx_v_current) {
+static PyObject *__pyx_f_9simulator_6graphs_reconstruct_path(PyObject *__pyx_v_came_from, PyObject *__pyx_v_start, PyObject *__pyx_v_current) {
   PyObject *__pyx_v_total = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -2639,7 +2639,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
   __Pyx_RefNannySetupContext("reconstruct_path", 0);
   __Pyx_INCREF(__pyx_v_current);
 
-  /* "simulation/graphs.pyx":61
+  /* "simulator/graphs.pyx":61
  * 
  * cdef list reconstruct_path(came_from, start, current):
  *     cdef list total = [current]             # <<<<<<<<<<<<<<
@@ -2654,7 +2654,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
   __pyx_v_total = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":63
+  /* "simulator/graphs.pyx":63
  *     cdef list total = [current]
  * 
  *     while True:             # <<<<<<<<<<<<<<
@@ -2663,7 +2663,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
  */
   while (1) {
 
-    /* "simulation/graphs.pyx":64
+    /* "simulator/graphs.pyx":64
  * 
  *     while True:
  *         current = came_from[current]             # <<<<<<<<<<<<<<
@@ -2675,7 +2675,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
     __Pyx_DECREF_SET(__pyx_v_current, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "simulation/graphs.pyx":65
+    /* "simulator/graphs.pyx":65
  *     while True:
  *         current = came_from[current]
  *         if current==start:             # <<<<<<<<<<<<<<
@@ -2687,7 +2687,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_2) {
 
-      /* "simulation/graphs.pyx":66
+      /* "simulator/graphs.pyx":66
  *         current = came_from[current]
  *         if current==start:
  *             break             # <<<<<<<<<<<<<<
@@ -2696,7 +2696,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
  */
       goto __pyx_L4_break;
 
-      /* "simulation/graphs.pyx":65
+      /* "simulator/graphs.pyx":65
  *     while True:
  *         current = came_from[current]
  *         if current==start:             # <<<<<<<<<<<<<<
@@ -2705,7 +2705,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
  */
     }
 
-    /* "simulation/graphs.pyx":68
+    /* "simulator/graphs.pyx":68
  *             break
  *         else:
  *             total.append(current)             # <<<<<<<<<<<<<<
@@ -2718,7 +2718,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
   }
   __pyx_L4_break:;
 
-  /* "simulation/graphs.pyx":69
+  /* "simulator/graphs.pyx":69
  *         else:
  *             total.append(current)
  *     return total             # <<<<<<<<<<<<<<
@@ -2730,7 +2730,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
   __pyx_r = __pyx_v_total;
   goto __pyx_L0;
 
-  /* "simulation/graphs.pyx":60
+  /* "simulator/graphs.pyx":60
  * 
  * 
  * cdef list reconstruct_path(came_from, start, current):             # <<<<<<<<<<<<<<
@@ -2741,7 +2741,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.reconstruct_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.reconstruct_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_total);
@@ -2751,7 +2751,7 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":73
+/* "simulator/graphs.pyx":73
  * 
  * 
  * cpdef list a_star(tuple start, tuple goal):             # <<<<<<<<<<<<<<
@@ -2759,10 +2759,10 @@ static PyObject *__pyx_f_10simulation_6graphs_reconstruct_path(PyObject *__pyx_v
  *     cdef set closed_set = set() #Set of positions already visited
  */
 
-static PyObject *__pyx_pw_10simulation_6graphs_3a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, PyObject *__pyx_v_goal, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_9simulator_6graphs_3a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs_a_star(PyObject *__pyx_v_start, PyObject *__pyx_v_goal, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_v_closed_set = 0;
-  struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v_open_set = NULL;
+  struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v_open_set = NULL;
   PyObject *__pyx_v_g_score = 0;
   PyObject *__pyx_v_came_from = 0;
   int __pyx_v_depth;
@@ -2787,7 +2787,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
   int __pyx_t_13;
   __Pyx_RefNannySetupContext("a_star", 0);
 
-  /* "simulation/graphs.pyx":75
+  /* "simulator/graphs.pyx":75
  * cpdef list a_star(tuple start, tuple goal):
  *     global CITY
  *     cdef set closed_set = set() #Set of positions already visited             # <<<<<<<<<<<<<<
@@ -2799,30 +2799,30 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
   __pyx_v_closed_set = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":76
+  /* "simulator/graphs.pyx":76
  *     global CITY
  *     cdef set closed_set = set() #Set of positions already visited
  *     open_set = PriorityMinHeap() #Min heap of posible positions available for expansion             # <<<<<<<<<<<<<<
  *     open_set.insert(start, lattice_distance(start, goal))
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_10simulation_6graphs_PriorityMinHeap)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallNoArg(((PyObject *)__pyx_ptype_9simulator_6graphs_PriorityMinHeap)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_v_open_set = ((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_t_1);
+  __pyx_v_open_set = ((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":77
+  /* "simulator/graphs.pyx":77
  *     cdef set closed_set = set() #Set of positions already visited
  *     open_set = PriorityMinHeap() #Min heap of posible positions available for expansion
  *     open_set.insert(start, lattice_distance(start, goal))             # <<<<<<<<<<<<<<
  * 
  *     #Dictionary containing (position:distance), which is the distance to
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_10simulation_6graphs_PriorityMinHeap *)__pyx_v_open_set->__pyx_vtab)->insert(__pyx_v_open_set, __pyx_v_start, __pyx_f_10simulation_6graphs_lattice_distance(__pyx_v_start, __pyx_v_goal, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_9simulator_6graphs_PriorityMinHeap *)__pyx_v_open_set->__pyx_vtab)->insert(__pyx_v_open_set, __pyx_v_start, __pyx_f_9simulator_6graphs_lattice_distance(__pyx_v_start, __pyx_v_goal, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":81
+  /* "simulator/graphs.pyx":81
  *     #Dictionary containing (position:distance), which is the distance to
  *     #the goal from the position
  *     cdef dict g_score = {start:0}             # <<<<<<<<<<<<<<
@@ -2835,7 +2835,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
   __pyx_v_g_score = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":84
+  /* "simulator/graphs.pyx":84
  * 
  *     #Dictionary containing the relationship between posititions
  *     cdef dict came_from = {start:start}             # <<<<<<<<<<<<<<
@@ -2848,7 +2848,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
   __pyx_v_came_from = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":86
+  /* "simulator/graphs.pyx":86
  *     cdef dict came_from = {start:start}
  * 
  *     cdef int depth = 0 #Controls the number of entries in the path we want to compute             # <<<<<<<<<<<<<<
@@ -2857,7 +2857,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
   __pyx_v_depth = 0;
 
-  /* "simulation/graphs.pyx":90
+  /* "simulator/graphs.pyx":90
  * 
  * 
  *     while not open_set.is_empty():             # <<<<<<<<<<<<<<
@@ -2887,7 +2887,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
     __pyx_t_5 = ((!__pyx_t_4) != 0);
     if (!__pyx_t_5) break;
 
-    /* "simulation/graphs.pyx":92
+    /* "simulator/graphs.pyx":92
  *     while not open_set.is_empty():
  *         #If there are available nodos, take the most promising one (lowest f_score)
  *         current = open_set.pop()             # <<<<<<<<<<<<<<
@@ -2900,7 +2900,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
     __Pyx_XDECREF_SET(__pyx_v_current, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "simulation/graphs.pyx":93
+    /* "simulator/graphs.pyx":93
  *         #If there are available nodos, take the most promising one (lowest f_score)
  *         current = open_set.pop()
  *         depth += 1             # <<<<<<<<<<<<<<
@@ -2909,7 +2909,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
     __pyx_v_depth = (__pyx_v_depth + 1);
 
-    /* "simulation/graphs.pyx":96
+    /* "simulator/graphs.pyx":96
  * 
  * 
  *         if current == goal: #or depth==MAX_DEPTH:             # <<<<<<<<<<<<<<
@@ -2921,7 +2921,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_5) {
 
-      /* "simulation/graphs.pyx":98
+      /* "simulator/graphs.pyx":98
  *         if current == goal: #or depth==MAX_DEPTH:
  *             #If the nodo is the goal, we have finished
  *             return reconstruct_path(came_from,start, current)             # <<<<<<<<<<<<<<
@@ -2929,13 +2929,13 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  *             #Otherwise we need to explore the current node
  */
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_1 = __pyx_f_10simulation_6graphs_reconstruct_path(__pyx_v_came_from, __pyx_v_start, __pyx_v_current); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+      __pyx_t_1 = __pyx_f_9simulator_6graphs_reconstruct_path(__pyx_v_came_from, __pyx_v_start, __pyx_v_current); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_r = ((PyObject*)__pyx_t_1);
       __pyx_t_1 = 0;
       goto __pyx_L0;
 
-      /* "simulation/graphs.pyx":96
+      /* "simulator/graphs.pyx":96
  * 
  * 
  *         if current == goal: #or depth==MAX_DEPTH:             # <<<<<<<<<<<<<<
@@ -2944,7 +2944,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
     }
 
-    /* "simulation/graphs.pyx":101
+    /* "simulator/graphs.pyx":101
  *         else:
  *             #Otherwise we need to explore the current node
  *             closed_set.add(current)             # <<<<<<<<<<<<<<
@@ -2955,18 +2955,18 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
       __pyx_t_6 = PySet_Add(__pyx_v_closed_set, __pyx_v_current); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(0, 101, __pyx_L1_error)
     }
 
-    /* "simulation/graphs.pyx":103
+    /* "simulator/graphs.pyx":103
  *             closed_set.add(current)
  * 
  *         for (neighbour,road_type) in CITY[current]:             # <<<<<<<<<<<<<<
  * 
  *             if neighbour not in closed_set:
  */
-    if (unlikely(__pyx_v_10simulation_6graphs_CITY == Py_None)) {
+    if (unlikely(__pyx_v_9simulator_6graphs_CITY == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(0, 103, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_10simulation_6graphs_CITY, __pyx_v_current); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_9simulator_6graphs_CITY, __pyx_v_current); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     if (likely(PyList_CheckExact(__pyx_t_1)) || PyTuple_CheckExact(__pyx_t_1)) {
       __pyx_t_2 = __pyx_t_1; __Pyx_INCREF(__pyx_t_2); __pyx_t_7 = 0;
@@ -3060,7 +3060,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
       __Pyx_XDECREF_SET(__pyx_v_road_type, __pyx_t_9);
       __pyx_t_9 = 0;
 
-      /* "simulation/graphs.pyx":105
+      /* "simulator/graphs.pyx":105
  *         for (neighbour,road_type) in CITY[current]:
  * 
  *             if neighbour not in closed_set:             # <<<<<<<<<<<<<<
@@ -3071,7 +3071,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
       __pyx_t_4 = (__pyx_t_5 != 0);
       if (__pyx_t_4) {
 
-        /* "simulation/graphs.pyx":108
+        /* "simulator/graphs.pyx":108
  *                 #If the neighbour hasn't been visited
  *                 #Compute the possible g_score
  *                 new_g_score = g_score[current] + road_type             # <<<<<<<<<<<<<<
@@ -3086,7 +3086,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
         __Pyx_XDECREF_SET(__pyx_v_new_g_score, __pyx_t_9);
         __pyx_t_9 = 0;
 
-        /* "simulation/graphs.pyx":110
+        /* "simulator/graphs.pyx":110
  *                 new_g_score = g_score[current] + road_type
  * 
  *                 if neighbour not in g_score or new_g_score < g_score[neighbour]:             # <<<<<<<<<<<<<<
@@ -3110,25 +3110,25 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
         __pyx_L12_bool_binop_done:;
         if (__pyx_t_4) {
 
-          /* "simulation/graphs.pyx":112
+          /* "simulator/graphs.pyx":112
  *                 if neighbour not in g_score or new_g_score < g_score[neighbour]:
  *                     #Add the neighbour with the g_score to the heap
  *                     open_set.insert(neighbour, new_g_score + lattice_distance(neighbour, goal))             # <<<<<<<<<<<<<<
  *                     g_score[neighbour] = new_g_score
  *                     came_from[neighbour] = current
  */
-          __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_10simulation_6graphs_lattice_distance(__pyx_v_neighbour, __pyx_v_goal, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_9simulator_6graphs_lattice_distance(__pyx_v_neighbour, __pyx_v_goal, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 112, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __pyx_t_9 = PyNumber_Add(__pyx_v_new_g_score, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 112, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __pyx_t_13 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_13 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_9 = ((struct __pyx_vtabstruct_10simulation_6graphs_PriorityMinHeap *)__pyx_v_open_set->__pyx_vtab)->insert(__pyx_v_open_set, __pyx_v_neighbour, __pyx_t_13); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 112, __pyx_L1_error)
+          __pyx_t_9 = ((struct __pyx_vtabstruct_9simulator_6graphs_PriorityMinHeap *)__pyx_v_open_set->__pyx_vtab)->insert(__pyx_v_open_set, __pyx_v_neighbour, __pyx_t_13); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 112, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-          /* "simulation/graphs.pyx":113
+          /* "simulator/graphs.pyx":113
  *                     #Add the neighbour with the g_score to the heap
  *                     open_set.insert(neighbour, new_g_score + lattice_distance(neighbour, goal))
  *                     g_score[neighbour] = new_g_score             # <<<<<<<<<<<<<<
@@ -3137,7 +3137,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
           if (unlikely(PyDict_SetItem(__pyx_v_g_score, __pyx_v_neighbour, __pyx_v_new_g_score) < 0)) __PYX_ERR(0, 113, __pyx_L1_error)
 
-          /* "simulation/graphs.pyx":114
+          /* "simulator/graphs.pyx":114
  *                     open_set.insert(neighbour, new_g_score + lattice_distance(neighbour, goal))
  *                     g_score[neighbour] = new_g_score
  *                     came_from[neighbour] = current             # <<<<<<<<<<<<<<
@@ -3146,7 +3146,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
           if (unlikely(PyDict_SetItem(__pyx_v_came_from, __pyx_v_neighbour, __pyx_v_current) < 0)) __PYX_ERR(0, 114, __pyx_L1_error)
 
-          /* "simulation/graphs.pyx":110
+          /* "simulator/graphs.pyx":110
  *                 new_g_score = g_score[current] + road_type
  * 
  *                 if neighbour not in g_score or new_g_score < g_score[neighbour]:             # <<<<<<<<<<<<<<
@@ -3155,7 +3155,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
         }
 
-        /* "simulation/graphs.pyx":105
+        /* "simulator/graphs.pyx":105
  *         for (neighbour,road_type) in CITY[current]:
  * 
  *             if neighbour not in closed_set:             # <<<<<<<<<<<<<<
@@ -3164,7 +3164,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
  */
       }
 
-      /* "simulation/graphs.pyx":103
+      /* "simulator/graphs.pyx":103
  *             closed_set.add(current)
  * 
  *         for (neighbour,road_type) in CITY[current]:             # <<<<<<<<<<<<<<
@@ -3175,7 +3175,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "simulation/graphs.pyx":73
+  /* "simulator/graphs.pyx":73
  * 
  * 
  * cpdef list a_star(tuple start, tuple goal):             # <<<<<<<<<<<<<<
@@ -3192,7 +3192,7 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("simulation.graphs.a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_closed_set);
@@ -3209,8 +3209,8 @@ static PyObject *__pyx_f_10simulation_6graphs_a_star(PyObject *__pyx_v_start, Py
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_3a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_3a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_9simulator_6graphs_3a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_3a_star(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_start = 0;
   PyObject *__pyx_v_goal = 0;
   PyObject *__pyx_r = 0;
@@ -3258,13 +3258,13 @@ static PyObject *__pyx_pw_10simulation_6graphs_3a_star(PyObject *__pyx_self, PyO
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("a_star", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 73, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("simulation.graphs.a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_start), (&PyTuple_Type), 1, "start", 1))) __PYX_ERR(0, 73, __pyx_L1_error)
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_goal), (&PyTuple_Type), 1, "goal", 1))) __PYX_ERR(0, 73, __pyx_L1_error)
-  __pyx_r = __pyx_pf_10simulation_6graphs_2a_star(__pyx_self, __pyx_v_start, __pyx_v_goal);
+  __pyx_r = __pyx_pf_9simulator_6graphs_2a_star(__pyx_self, __pyx_v_start, __pyx_v_goal);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3275,13 +3275,13 @@ static PyObject *__pyx_pw_10simulation_6graphs_3a_star(PyObject *__pyx_self, PyO
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_2a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_start, PyObject *__pyx_v_goal) {
+static PyObject *__pyx_pf_9simulator_6graphs_2a_star(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_start, PyObject *__pyx_v_goal) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("a_star", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10simulation_6graphs_a_star(__pyx_v_start, __pyx_v_goal, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_9simulator_6graphs_a_star(__pyx_v_start, __pyx_v_goal, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3290,7 +3290,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_2a_star(CYTHON_UNUSED PyObject *_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.a_star", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3298,7 +3298,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_2a_star(CYTHON_UNUSED PyObject *_
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":117
+/* "simulator/graphs.pyx":117
  * 
  * 
  * cpdef list recompute_path(list current_path, tuple pos, tuple target):             # <<<<<<<<<<<<<<
@@ -3306,8 +3306,8 @@ static PyObject *__pyx_pf_10simulation_6graphs_2a_star(CYTHON_UNUSED PyObject *_
  *     cdef tuple n_step
  */
 
-static PyObject *__pyx_pw_10simulation_6graphs_5recompute_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_current_path, PyObject *__pyx_v_pos, PyObject *__pyx_v_target, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_9simulator_6graphs_5recompute_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_f_9simulator_6graphs_recompute_path(PyObject *__pyx_v_current_path, PyObject *__pyx_v_pos, PyObject *__pyx_v_target, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyObject *__pyx_v_extension_path = 0;
   PyObject *__pyx_v_n_step = 0;
   PyObject *__pyx_r = NULL;
@@ -3320,7 +3320,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
   __Pyx_RefNannySetupContext("recompute_path", 0);
   __Pyx_INCREF(__pyx_v_current_path);
 
-  /* "simulation/graphs.pyx":121
+  /* "simulator/graphs.pyx":121
  *     cdef tuple n_step
  * 
  *     if len(current_path) > 1:             # <<<<<<<<<<<<<<
@@ -3335,7 +3335,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
   __pyx_t_2 = ((__pyx_t_1 > 1) != 0);
   if (__pyx_t_2) {
 
-    /* "simulation/graphs.pyx":122
+    /* "simulator/graphs.pyx":122
  * 
  *     if len(current_path) > 1:
  *         extension_path = a_star(pos, current_path[-2])             # <<<<<<<<<<<<<<
@@ -3349,13 +3349,13 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
     __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_v_current_path, -2L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     if (!(likely(PyTuple_CheckExact(__pyx_t_3))||((__pyx_t_3) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "tuple", Py_TYPE(__pyx_t_3)->tp_name), 0))) __PYX_ERR(0, 122, __pyx_L1_error)
-    __pyx_t_4 = __pyx_f_10simulation_6graphs_a_star(__pyx_v_pos, ((PyObject*)__pyx_t_3), 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 122, __pyx_L1_error)
+    __pyx_t_4 = __pyx_f_9simulator_6graphs_a_star(__pyx_v_pos, ((PyObject*)__pyx_t_3), 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 122, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_v_extension_path = ((PyObject*)__pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "simulation/graphs.pyx":123
+    /* "simulator/graphs.pyx":123
  *     if len(current_path) > 1:
  *         extension_path = a_star(pos, current_path[-2])
  *         del current_path[-1]             # <<<<<<<<<<<<<<
@@ -3368,7 +3368,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
     }
     if (unlikely(__Pyx_DelItemInt(__pyx_v_current_path, -1L, long, 1, __Pyx_PyInt_From_long, 1, 1, 1) < 0)) __PYX_ERR(0, 123, __pyx_L1_error)
 
-    /* "simulation/graphs.pyx":124
+    /* "simulator/graphs.pyx":124
  *         extension_path = a_star(pos, current_path[-2])
  *         del current_path[-1]
  *         for n_step in extension_path[1:]:             # <<<<<<<<<<<<<<
@@ -3395,7 +3395,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
       __Pyx_XDECREF_SET(__pyx_v_n_step, ((PyObject*)__pyx_t_4));
       __pyx_t_4 = 0;
 
-      /* "simulation/graphs.pyx":125
+      /* "simulator/graphs.pyx":125
  *         del current_path[-1]
  *         for n_step in extension_path[1:]:
  *             current_path.append(n_step)             # <<<<<<<<<<<<<<
@@ -3408,7 +3408,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
       }
       __pyx_t_5 = __Pyx_PyList_Append(__pyx_v_current_path, __pyx_v_n_step); if (unlikely(__pyx_t_5 == ((int)-1))) __PYX_ERR(0, 125, __pyx_L1_error)
 
-      /* "simulation/graphs.pyx":124
+      /* "simulator/graphs.pyx":124
  *         extension_path = a_star(pos, current_path[-2])
  *         del current_path[-1]
  *         for n_step in extension_path[1:]:             # <<<<<<<<<<<<<<
@@ -3418,7 +3418,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-    /* "simulation/graphs.pyx":121
+    /* "simulator/graphs.pyx":121
  *     cdef tuple n_step
  * 
  *     if len(current_path) > 1:             # <<<<<<<<<<<<<<
@@ -3428,7 +3428,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
     goto __pyx_L3;
   }
 
-  /* "simulation/graphs.pyx":127
+  /* "simulator/graphs.pyx":127
  *             current_path.append(n_step)
  *     else:
  *         current_path = a_star(pos, target)             # <<<<<<<<<<<<<<
@@ -3436,14 +3436,14 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
  * 
  */
   /*else*/ {
-    __pyx_t_3 = __pyx_f_10simulation_6graphs_a_star(__pyx_v_pos, __pyx_v_target, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_9simulator_6graphs_a_star(__pyx_v_pos, __pyx_v_target, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF_SET(__pyx_v_current_path, ((PyObject*)__pyx_t_3));
     __pyx_t_3 = 0;
   }
   __pyx_L3:;
 
-  /* "simulation/graphs.pyx":128
+  /* "simulator/graphs.pyx":128
  *     else:
  *         current_path = a_star(pos, target)
  *     return current_path             # <<<<<<<<<<<<<<
@@ -3455,7 +3455,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
   __pyx_r = __pyx_v_current_path;
   goto __pyx_L0;
 
-  /* "simulation/graphs.pyx":117
+  /* "simulator/graphs.pyx":117
  * 
  * 
  * cpdef list recompute_path(list current_path, tuple pos, tuple target):             # <<<<<<<<<<<<<<
@@ -3467,7 +3467,7 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("simulation.graphs.recompute_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.recompute_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_extension_path);
@@ -3479,8 +3479,8 @@ static PyObject *__pyx_f_10simulation_6graphs_recompute_path(PyObject *__pyx_v_c
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_5recompute_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_5recompute_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_9simulator_6graphs_5recompute_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_5recompute_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_current_path = 0;
   PyObject *__pyx_v_pos = 0;
   PyObject *__pyx_v_target = 0;
@@ -3539,14 +3539,14 @@ static PyObject *__pyx_pw_10simulation_6graphs_5recompute_path(PyObject *__pyx_s
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("recompute_path", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 117, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("simulation.graphs.recompute_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.recompute_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_current_path), (&PyList_Type), 1, "current_path", 1))) __PYX_ERR(0, 117, __pyx_L1_error)
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_pos), (&PyTuple_Type), 1, "pos", 1))) __PYX_ERR(0, 117, __pyx_L1_error)
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_target), (&PyTuple_Type), 1, "target", 1))) __PYX_ERR(0, 117, __pyx_L1_error)
-  __pyx_r = __pyx_pf_10simulation_6graphs_4recompute_path(__pyx_self, __pyx_v_current_path, __pyx_v_pos, __pyx_v_target);
+  __pyx_r = __pyx_pf_9simulator_6graphs_4recompute_path(__pyx_self, __pyx_v_current_path, __pyx_v_pos, __pyx_v_target);
 
   /* function exit code */
   goto __pyx_L0;
@@ -3557,13 +3557,13 @@ static PyObject *__pyx_pw_10simulation_6graphs_5recompute_path(PyObject *__pyx_s
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_4recompute_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_current_path, PyObject *__pyx_v_pos, PyObject *__pyx_v_target) {
+static PyObject *__pyx_pf_9simulator_6graphs_4recompute_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_current_path, PyObject *__pyx_v_pos, PyObject *__pyx_v_target) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("recompute_path", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_10simulation_6graphs_recompute_path(__pyx_v_current_path, __pyx_v_pos, __pyx_v_target, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_9simulator_6graphs_recompute_path(__pyx_v_current_path, __pyx_v_pos, __pyx_v_target, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3572,7 +3572,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_4recompute_path(CYTHON_UNUSED PyO
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.recompute_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.recompute_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3580,7 +3580,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_4recompute_path(CYTHON_UNUSED PyO
   return __pyx_r;
 }
 
-/* "simulation/graphs.pyx":130
+/* "simulator/graphs.pyx":130
  *     return current_path
  * 
  * cpdef int lattice_distance(pos1, pos2):             # <<<<<<<<<<<<<<
@@ -3588,8 +3588,8 @@ static PyObject *__pyx_pf_10simulation_6graphs_4recompute_path(CYTHON_UNUSED PyO
  *     cdef int dx, dy
  */
 
-static PyObject *__pyx_pw_10simulation_6graphs_7lattice_distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1, PyObject *__pyx_v_pos2, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_9simulator_6graphs_7lattice_distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_f_9simulator_6graphs_lattice_distance(PyObject *__pyx_v_pos1, PyObject *__pyx_v_pos2, CYTHON_UNUSED int __pyx_skip_dispatch) {
   int __pyx_v_dx;
   int __pyx_v_dy;
   int __pyx_r;
@@ -3601,7 +3601,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   int __pyx_t_5;
   __Pyx_RefNannySetupContext("lattice_distance", 0);
 
-  /* "simulation/graphs.pyx":133
+  /* "simulator/graphs.pyx":133
  *     global SIZE
  *     cdef int dx, dy
  *     dx = cabs(pos1[0] - pos2[0])             # <<<<<<<<<<<<<<
@@ -3623,7 +3623,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_dx = __pyx_t_4;
 
-  /* "simulation/graphs.pyx":134
+  /* "simulator/graphs.pyx":134
  *     cdef int dx, dy
  *     dx = cabs(pos1[0] - pos2[0])
  *     if dx > int(SIZE/2):             # <<<<<<<<<<<<<<
@@ -3632,7 +3632,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
  */
   __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_dx); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyInt_From_long(__Pyx_div_long(__pyx_v_10simulation_6graphs_SIZE, 2)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_long(__Pyx_div_long(__pyx_v_9simulator_6graphs_SIZE, 2)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyInt_Type)), __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3644,16 +3644,16 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_5) {
 
-    /* "simulation/graphs.pyx":135
+    /* "simulator/graphs.pyx":135
  *     dx = cabs(pos1[0] - pos2[0])
  *     if dx > int(SIZE/2):
  *         dx = SIZE - dx             # <<<<<<<<<<<<<<
  *     dy = cabs(pos1[1] - pos2[1])
  *     if dy > int(SIZE/2):
  */
-    __pyx_v_dx = (__pyx_v_10simulation_6graphs_SIZE - __pyx_v_dx);
+    __pyx_v_dx = (__pyx_v_9simulator_6graphs_SIZE - __pyx_v_dx);
 
-    /* "simulation/graphs.pyx":134
+    /* "simulator/graphs.pyx":134
  *     cdef int dx, dy
  *     dx = cabs(pos1[0] - pos2[0])
  *     if dx > int(SIZE/2):             # <<<<<<<<<<<<<<
@@ -3662,7 +3662,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
  */
   }
 
-  /* "simulation/graphs.pyx":136
+  /* "simulator/graphs.pyx":136
  *     if dx > int(SIZE/2):
  *         dx = SIZE - dx
  *     dy = cabs(pos1[1] - pos2[1])             # <<<<<<<<<<<<<<
@@ -3684,7 +3684,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_dy = __pyx_t_4;
 
-  /* "simulation/graphs.pyx":137
+  /* "simulator/graphs.pyx":137
  *         dx = SIZE - dx
  *     dy = cabs(pos1[1] - pos2[1])
  *     if dy > int(SIZE/2):             # <<<<<<<<<<<<<<
@@ -3693,7 +3693,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
  */
   __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_dy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_long(__Pyx_div_long(__pyx_v_10simulation_6graphs_SIZE, 2)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_long(__Pyx_div_long(__pyx_v_9simulator_6graphs_SIZE, 2)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyInt_Type)), __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -3705,16 +3705,16 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   if (__pyx_t_5) {
 
-    /* "simulation/graphs.pyx":138
+    /* "simulator/graphs.pyx":138
  *     dy = cabs(pos1[1] - pos2[1])
  *     if dy > int(SIZE/2):
  *         dy = SIZE - dy             # <<<<<<<<<<<<<<
  *     return (dx + dy)
  * 
  */
-    __pyx_v_dy = (__pyx_v_10simulation_6graphs_SIZE - __pyx_v_dy);
+    __pyx_v_dy = (__pyx_v_9simulator_6graphs_SIZE - __pyx_v_dy);
 
-    /* "simulation/graphs.pyx":137
+    /* "simulator/graphs.pyx":137
  *         dx = SIZE - dx
  *     dy = cabs(pos1[1] - pos2[1])
  *     if dy > int(SIZE/2):             # <<<<<<<<<<<<<<
@@ -3723,7 +3723,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
  */
   }
 
-  /* "simulation/graphs.pyx":139
+  /* "simulator/graphs.pyx":139
  *     if dy > int(SIZE/2):
  *         dy = SIZE - dy
  *     return (dx + dy)             # <<<<<<<<<<<<<<
@@ -3733,7 +3733,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   __pyx_r = (__pyx_v_dx + __pyx_v_dy);
   goto __pyx_L0;
 
-  /* "simulation/graphs.pyx":130
+  /* "simulator/graphs.pyx":130
  *     return current_path
  * 
  * cpdef int lattice_distance(pos1, pos2):             # <<<<<<<<<<<<<<
@@ -3746,7 +3746,7 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_WriteUnraisable("simulation.graphs.lattice_distance", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __Pyx_WriteUnraisable("simulator.graphs.lattice_distance", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -3754,8 +3754,8 @@ static int __pyx_f_10simulation_6graphs_lattice_distance(PyObject *__pyx_v_pos1,
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_7lattice_distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_10simulation_6graphs_7lattice_distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_9simulator_6graphs_7lattice_distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_9simulator_6graphs_7lattice_distance(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_pos1 = 0;
   PyObject *__pyx_v_pos2 = 0;
   PyObject *__pyx_r = 0;
@@ -3803,24 +3803,24 @@ static PyObject *__pyx_pw_10simulation_6graphs_7lattice_distance(PyObject *__pyx
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("lattice_distance", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 130, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("simulation.graphs.lattice_distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.lattice_distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10simulation_6graphs_6lattice_distance(__pyx_self, __pyx_v_pos1, __pyx_v_pos2);
+  __pyx_r = __pyx_pf_9simulator_6graphs_6lattice_distance(__pyx_self, __pyx_v_pos1, __pyx_v_pos2);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_6lattice_distance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_pos1, PyObject *__pyx_v_pos2) {
+static PyObject *__pyx_pf_9simulator_6graphs_6lattice_distance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_pos1, PyObject *__pyx_v_pos2) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("lattice_distance", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_10simulation_6graphs_lattice_distance(__pyx_v_pos1, __pyx_v_pos2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_f_9simulator_6graphs_lattice_distance(__pyx_v_pos1, __pyx_v_pos2, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3829,7 +3829,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_6lattice_distance(CYTHON_UNUSED P
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("simulation.graphs.lattice_distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.lattice_distance", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3844,9 +3844,9 @@ static PyObject *__pyx_pf_10simulation_6graphs_6lattice_distance(CYTHON_UNUSED P
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_10simulation_6graphs_9__pyx_unpickle_PriorityMinHeap(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_10simulation_6graphs_9__pyx_unpickle_PriorityMinHeap = {"__pyx_unpickle_PriorityMinHeap", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10simulation_6graphs_9__pyx_unpickle_PriorityMinHeap, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_10simulation_6graphs_9__pyx_unpickle_PriorityMinHeap(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_9simulator_6graphs_9__pyx_unpickle_PriorityMinHeap(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_9simulator_6graphs_9__pyx_unpickle_PriorityMinHeap = {"__pyx_unpickle_PriorityMinHeap", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_9simulator_6graphs_9__pyx_unpickle_PriorityMinHeap, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_9simulator_6graphs_9__pyx_unpickle_PriorityMinHeap(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v___pyx_type = 0;
   long __pyx_v___pyx_checksum;
   PyObject *__pyx_v___pyx_state = 0;
@@ -3905,18 +3905,18 @@ static PyObject *__pyx_pw_10simulation_6graphs_9__pyx_unpickle_PriorityMinHeap(P
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__pyx_unpickle_PriorityMinHeap", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 1, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("simulation.graphs.__pyx_unpickle_PriorityMinHeap", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.__pyx_unpickle_PriorityMinHeap", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(__pyx_self, __pyx_v___pyx_type, __pyx_v___pyx_checksum, __pyx_v___pyx_state);
+  __pyx_r = __pyx_pf_9simulator_6graphs_8__pyx_unpickle_PriorityMinHeap(__pyx_self, __pyx_v___pyx_type, __pyx_v___pyx_checksum, __pyx_v___pyx_state);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_9simulator_6graphs_8__pyx_unpickle_PriorityMinHeap(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_v___pyx_PickleError = 0;
   PyObject *__pyx_v___pyx_result = 0;
   PyObject *__pyx_r = NULL;
@@ -4010,7 +4010,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(C
  *     if __pyx_state is not None:
  *         __pyx_unpickle_PriorityMinHeap__set_state(<PriorityMinHeap> __pyx_result, __pyx_state)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_10simulation_6graphs_PriorityMinHeap), __pyx_n_s_new); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 7, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_ptype_9simulator_6graphs_PriorityMinHeap), __pyx_n_s_new); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -4049,7 +4049,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(C
  * cdef __pyx_unpickle_PriorityMinHeap__set_state(PriorityMinHeap __pyx_result, tuple __pyx_state):
  */
     if (!(likely(PyTuple_CheckExact(__pyx_v___pyx_state))||((__pyx_v___pyx_state) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "tuple", Py_TYPE(__pyx_v___pyx_state)->tp_name), 0))) __PYX_ERR(1, 9, __pyx_L1_error)
-    __pyx_t_3 = __pyx_f_10simulation_6graphs___pyx_unpickle_PriorityMinHeap__set_state(((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)__pyx_v___pyx_result), ((PyObject*)__pyx_v___pyx_state)); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 9, __pyx_L1_error)
+    __pyx_t_3 = __pyx_f_9simulator_6graphs___pyx_unpickle_PriorityMinHeap__set_state(((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)__pyx_v___pyx_result), ((PyObject*)__pyx_v___pyx_state)); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 9, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
@@ -4086,7 +4086,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(C
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_AddTraceback("simulation.graphs.__pyx_unpickle_PriorityMinHeap", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.__pyx_unpickle_PriorityMinHeap", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v___pyx_PickleError);
@@ -4104,7 +4104,7 @@ static PyObject *__pyx_pf_10simulation_6graphs_8__pyx_unpickle_PriorityMinHeap(C
  *     if len(__pyx_state) > 4 and hasattr(__pyx_result, '__dict__'):
  */
 
-static PyObject *__pyx_f_10simulation_6graphs___pyx_unpickle_PriorityMinHeap__set_state(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *__pyx_v___pyx_result, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_f_9simulator_6graphs___pyx_unpickle_PriorityMinHeap__set_state(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *__pyx_v___pyx_result, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4252,17 +4252,17 @@ static PyObject *__pyx_f_10simulation_6graphs___pyx_unpickle_PriorityMinHeap__se
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("simulation.graphs.__pyx_unpickle_PriorityMinHeap__set_state", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("simulator.graphs.__pyx_unpickle_PriorityMinHeap__set_state", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-static struct __pyx_vtabstruct_10simulation_6graphs_PriorityMinHeap __pyx_vtable_10simulation_6graphs_PriorityMinHeap;
+static struct __pyx_vtabstruct_9simulator_6graphs_PriorityMinHeap __pyx_vtable_9simulator_6graphs_PriorityMinHeap;
 
-static PyObject *__pyx_tp_new_10simulation_6graphs_PriorityMinHeap(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
-  struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *p;
+static PyObject *__pyx_tp_new_9simulator_6graphs_PriorityMinHeap(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
+  struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *p;
   PyObject *o;
   if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
     o = (*t->tp_alloc)(t, 0);
@@ -4270,16 +4270,16 @@ static PyObject *__pyx_tp_new_10simulation_6graphs_PriorityMinHeap(PyTypeObject 
     o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
   }
   if (unlikely(!o)) return 0;
-  p = ((struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)o);
-  p->__pyx_vtab = __pyx_vtabptr_10simulation_6graphs_PriorityMinHeap;
+  p = ((struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)o);
+  p->__pyx_vtab = __pyx_vtabptr_9simulator_6graphs_PriorityMinHeap;
   p->pq = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->entry_finder = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->REMOVED = ((PyObject*)Py_None); Py_INCREF(Py_None);
   return o;
 }
 
-static void __pyx_tp_dealloc_10simulation_6graphs_PriorityMinHeap(PyObject *o) {
-  struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *p = (struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)o;
+static void __pyx_tp_dealloc_9simulator_6graphs_PriorityMinHeap(PyObject *o) {
+  struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *p = (struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)o;
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && !_PyGC_FINALIZED(o)) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
@@ -4292,9 +4292,9 @@ static void __pyx_tp_dealloc_10simulation_6graphs_PriorityMinHeap(PyObject *o) {
   (*Py_TYPE(o)->tp_free)(o);
 }
 
-static int __pyx_tp_traverse_10simulation_6graphs_PriorityMinHeap(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_9simulator_6graphs_PriorityMinHeap(PyObject *o, visitproc v, void *a) {
   int e;
-  struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *p = (struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)o;
+  struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *p = (struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)o;
   if (p->pq) {
     e = (*v)(p->pq, a); if (e) return e;
   }
@@ -4307,9 +4307,9 @@ static int __pyx_tp_traverse_10simulation_6graphs_PriorityMinHeap(PyObject *o, v
   return 0;
 }
 
-static int __pyx_tp_clear_10simulation_6graphs_PriorityMinHeap(PyObject *o) {
+static int __pyx_tp_clear_9simulator_6graphs_PriorityMinHeap(PyObject *o) {
   PyObject* tmp;
-  struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *p = (struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *)o;
+  struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *p = (struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *)o;
   tmp = ((PyObject*)p->pq);
   p->pq = ((PyObject*)Py_None); Py_INCREF(Py_None);
   Py_XDECREF(tmp);
@@ -4322,21 +4322,21 @@ static int __pyx_tp_clear_10simulation_6graphs_PriorityMinHeap(PyObject *o) {
   return 0;
 }
 
-static PyMethodDef __pyx_methods_10simulation_6graphs_PriorityMinHeap[] = {
-  {"remove_item", (PyCFunction)__pyx_pw_10simulation_6graphs_15PriorityMinHeap_3remove_item, METH_O, __pyx_doc_10simulation_6graphs_15PriorityMinHeap_2remove_item},
-  {"pop", (PyCFunction)__pyx_pw_10simulation_6graphs_15PriorityMinHeap_5pop, METH_NOARGS, __pyx_doc_10simulation_6graphs_15PriorityMinHeap_4pop},
-  {"is_empty", (PyCFunction)__pyx_pw_10simulation_6graphs_15PriorityMinHeap_7is_empty, METH_NOARGS, 0},
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_10simulation_6graphs_15PriorityMinHeap_9__reduce_cython__, METH_NOARGS, 0},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_10simulation_6graphs_15PriorityMinHeap_11__setstate_cython__, METH_O, 0},
+static PyMethodDef __pyx_methods_9simulator_6graphs_PriorityMinHeap[] = {
+  {"remove_item", (PyCFunction)__pyx_pw_9simulator_6graphs_15PriorityMinHeap_3remove_item, METH_O, __pyx_doc_9simulator_6graphs_15PriorityMinHeap_2remove_item},
+  {"pop", (PyCFunction)__pyx_pw_9simulator_6graphs_15PriorityMinHeap_5pop, METH_NOARGS, __pyx_doc_9simulator_6graphs_15PriorityMinHeap_4pop},
+  {"is_empty", (PyCFunction)__pyx_pw_9simulator_6graphs_15PriorityMinHeap_7is_empty, METH_NOARGS, 0},
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_9simulator_6graphs_15PriorityMinHeap_9__reduce_cython__, METH_NOARGS, 0},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_9simulator_6graphs_15PriorityMinHeap_11__setstate_cython__, METH_O, 0},
   {0, 0, 0, 0}
 };
 
-static PyTypeObject __pyx_type_10simulation_6graphs_PriorityMinHeap = {
+static PyTypeObject __pyx_type_9simulator_6graphs_PriorityMinHeap = {
   PyVarObject_HEAD_INIT(0, 0)
-  "simulation.graphs.PriorityMinHeap", /*tp_name*/
-  sizeof(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap), /*tp_basicsize*/
+  "simulator.graphs.PriorityMinHeap", /*tp_name*/
+  sizeof(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_10simulation_6graphs_PriorityMinHeap, /*tp_dealloc*/
+  __pyx_tp_dealloc_9simulator_6graphs_PriorityMinHeap, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -4363,13 +4363,13 @@ static PyTypeObject __pyx_type_10simulation_6graphs_PriorityMinHeap = {
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   "This class has been made using the example in https://docs.python.org/2/library/heapq.html ", /*tp_doc*/
-  __pyx_tp_traverse_10simulation_6graphs_PriorityMinHeap, /*tp_traverse*/
-  __pyx_tp_clear_10simulation_6graphs_PriorityMinHeap, /*tp_clear*/
+  __pyx_tp_traverse_9simulator_6graphs_PriorityMinHeap, /*tp_traverse*/
+  __pyx_tp_clear_9simulator_6graphs_PriorityMinHeap, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_10simulation_6graphs_PriorityMinHeap, /*tp_methods*/
+  __pyx_methods_9simulator_6graphs_PriorityMinHeap, /*tp_methods*/
   0, /*tp_members*/
   0, /*tp_getset*/
   0, /*tp_base*/
@@ -4377,9 +4377,9 @@ static PyTypeObject __pyx_type_10simulation_6graphs_PriorityMinHeap = {
   0, /*tp_descr_get*/
   0, /*tp_descr_set*/
   0, /*tp_dictoffset*/
-  __pyx_pw_10simulation_6graphs_15PriorityMinHeap_1__init__, /*tp_init*/
+  __pyx_pw_9simulator_6graphs_15PriorityMinHeap_1__init__, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_10simulation_6graphs_PriorityMinHeap, /*tp_new*/
+  __pyx_tp_new_9simulator_6graphs_PriorityMinHeap, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -4401,10 +4401,10 @@ static PyTypeObject __pyx_type_10simulation_6graphs_PriorityMinHeap = {
 };
 
 static PyMethodDef __pyx_methods[] = {
-  {"configure_a_star", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10simulation_6graphs_1configure_a_star, METH_VARARGS|METH_KEYWORDS, 0},
-  {"a_star", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10simulation_6graphs_3a_star, METH_VARARGS|METH_KEYWORDS, 0},
-  {"recompute_path", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10simulation_6graphs_5recompute_path, METH_VARARGS|METH_KEYWORDS, 0},
-  {"lattice_distance", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_10simulation_6graphs_7lattice_distance, METH_VARARGS|METH_KEYWORDS, 0},
+  {"configure_a_star", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_9simulator_6graphs_1configure_a_star, METH_VARARGS|METH_KEYWORDS, 0},
+  {"a_star", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_9simulator_6graphs_3a_star, METH_VARARGS|METH_KEYWORDS, 0},
+  {"recompute_path", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_9simulator_6graphs_5recompute_path, METH_VARARGS|METH_KEYWORDS, 0},
+  {"lattice_distance", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_9simulator_6graphs_7lattice_distance, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -4487,7 +4487,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_remove_item, __pyx_k_remove_item, sizeof(__pyx_k_remove_item), 0, 0, 1, 1},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
-  {&__pyx_n_s_simulation_graphs, __pyx_k_simulation_graphs, sizeof(__pyx_k_simulation_graphs), 0, 0, 1, 1},
+  {&__pyx_n_s_simulator_graphs, __pyx_k_simulator_graphs, sizeof(__pyx_k_simulator_graphs), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
   {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},
   {&__pyx_n_s_target, __pyx_k_target, sizeof(__pyx_k_target), 0, 0, 1, 1},
@@ -4503,7 +4503,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "simulation/graphs.pyx":27
+  /* "simulator/graphs.pyx":27
  *         self.pq = [] #List arranged as a min heap
  *         self.entry_finder = {} #mapping of items to enties
  *         self.REMOVED = (99999,99999) #placeholder for a removed task             # <<<<<<<<<<<<<<
@@ -4554,7 +4554,7 @@ static int __Pyx_modinit_global_init_code(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_modinit_global_init_code", 0);
   /*--- Global init code ---*/
-  __pyx_v_10simulation_6graphs_CITY = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  __pyx_v_9simulator_6graphs_CITY = ((PyObject*)Py_None); Py_INCREF(Py_None);
   __Pyx_RefNannyFinishContext();
   return 0;
 }
@@ -4579,19 +4579,19 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
-  __pyx_vtabptr_10simulation_6graphs_PriorityMinHeap = &__pyx_vtable_10simulation_6graphs_PriorityMinHeap;
-  __pyx_vtable_10simulation_6graphs_PriorityMinHeap.insert = (PyObject *(*)(struct __pyx_obj_10simulation_6graphs_PriorityMinHeap *, PyObject *, int))__pyx_f_10simulation_6graphs_15PriorityMinHeap_insert;
-  if (PyType_Ready(&__pyx_type_10simulation_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_vtabptr_9simulator_6graphs_PriorityMinHeap = &__pyx_vtable_9simulator_6graphs_PriorityMinHeap;
+  __pyx_vtable_9simulator_6graphs_PriorityMinHeap.insert = (PyObject *(*)(struct __pyx_obj_9simulator_6graphs_PriorityMinHeap *, PyObject *, int))__pyx_f_9simulator_6graphs_15PriorityMinHeap_insert;
+  if (PyType_Ready(&__pyx_type_9simulator_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
-  __pyx_type_10simulation_6graphs_PriorityMinHeap.tp_print = 0;
+  __pyx_type_9simulator_6graphs_PriorityMinHeap.tp_print = 0;
   #endif
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_10simulation_6graphs_PriorityMinHeap.tp_dictoffset && __pyx_type_10simulation_6graphs_PriorityMinHeap.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_10simulation_6graphs_PriorityMinHeap.tp_getattro = __Pyx_PyObject_GenericGetAttr;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_9simulator_6graphs_PriorityMinHeap.tp_dictoffset && __pyx_type_9simulator_6graphs_PriorityMinHeap.tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_type_9simulator_6graphs_PriorityMinHeap.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (__Pyx_SetVtable(__pyx_type_10simulation_6graphs_PriorityMinHeap.tp_dict, __pyx_vtabptr_10simulation_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_PriorityMinHeap, (PyObject *)&__pyx_type_10simulation_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_10simulation_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
-  __pyx_ptype_10simulation_6graphs_PriorityMinHeap = &__pyx_type_10simulation_6graphs_PriorityMinHeap;
+  if (__Pyx_SetVtable(__pyx_type_9simulator_6graphs_PriorityMinHeap.tp_dict, __pyx_vtabptr_9simulator_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_PriorityMinHeap, (PyObject *)&__pyx_type_9simulator_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_9simulator_6graphs_PriorityMinHeap) < 0) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_ptype_9simulator_6graphs_PriorityMinHeap = &__pyx_type_9simulator_6graphs_PriorityMinHeap;
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -4792,14 +4792,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_simulation__graphs) {
+  if (__pyx_module_is_main_simulator__graphs) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "simulation.graphs")) {
-      if (unlikely(PyDict_SetItemString(modules, "simulation.graphs", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "simulator.graphs")) {
+      if (unlikely(PyDict_SetItemString(modules, "simulator.graphs", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -4820,7 +4820,7 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "simulation/graphs.pyx":5
+  /* "simulator/graphs.pyx":5
  * from libc.math cimport exp as cexp
  * 
  * import heapq             # <<<<<<<<<<<<<<
@@ -4832,7 +4832,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_heapq, __pyx_t_1) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":6
+  /* "simulator/graphs.pyx":6
  * 
  * import heapq
  * import random             # <<<<<<<<<<<<<<
@@ -4849,12 +4849,12 @@ if (!__Pyx_RefNanny) {
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_10simulation_6graphs_9__pyx_unpickle_PriorityMinHeap, NULL, __pyx_n_s_simulation_graphs); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_9simulator_6graphs_9__pyx_unpickle_PriorityMinHeap, NULL, __pyx_n_s_simulator_graphs); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_PriorityMinHeap, __pyx_t_1) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "simulation/graphs.pyx":1
+  /* "simulator/graphs.pyx":1
  * from libc.math cimport abs as cabs             # <<<<<<<<<<<<<<
  * from libc.math cimport pow as cpow
  * from libc.math cimport exp as cexp
@@ -4871,11 +4871,11 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_1);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init simulation.graphs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init simulator.graphs", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     Py_CLEAR(__pyx_m);
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init simulation.graphs");
+    PyErr_SetString(PyExc_ImportError, "init simulator.graphs");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

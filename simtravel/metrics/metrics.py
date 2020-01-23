@@ -12,9 +12,9 @@ class SimulationSnapshot(object):
     def __init__(self, vehicles):
         super().__init__()
         # For each vehicle, store its position
-        self.v_pos = {v.id: v.pos for v in vehicles}
+        self.v_pos = {v.id: copy.copy(v.pos) for v in vehicles}
         # For each vehicle, store its state
-        self.v_state = {v.id: v.state for v in vehicles}
+        self.v_state = {v.id: copy.copy(v.state) for v in vehicles}
 
     def mean_velocities(self, previous, delta_tsteps):
         """Given a previous snapshot, computes the mean speed of
@@ -30,6 +30,8 @@ class SimulationSnapshot(object):
         for v, state in self.v_state.items():
             # Compute the distance from the two snapshots
             distance = lattice_distance(self.v_pos[v], previous_pos[v])
+            
+                
             total_distance += distance
 
             if state in States.moving_states() and previous_state[v] in States.moving_states():
@@ -40,7 +42,7 @@ class SimulationSnapshot(object):
         # Compute the aggregated speed and mobility
         moving_distance, total_distance = moving_distance / \
             delta_tsteps, total_distance/delta_tsteps
-
+        
         if moving_counter == 0:
             return (0, total_distance/len(previous_pos))
         else:
@@ -125,6 +127,7 @@ class SimulationMetric(object):
         the evolution lists for those parameters. """
 
         speed, mobility = current.mean_velocities(previous, self.delta_tsteps)
+        
         self.mean_speed_evolution.append(speed)
         self.mean_mobility_evolution.append(mobility)
 
@@ -169,11 +172,11 @@ class SimulationMetric(object):
         size = len(self.mean_speed_evolution)
 
         dset = file.create_dataset(
-            directory + "speed", (size,), dtype="uint32")
+            directory + "speed", (size,), dtype="float32")
         dset.write_direct(np.array(self.mean_speed_evolution))
 
         dset = file.create_dataset(
-            directory + "mobility", (size,), dtype="uint32")
+            directory + "mobility", (size,), dtype="float32")
         dset.write_direct(np.array(self.mean_mobility_evolution))
 
         # Write heat map data
@@ -197,25 +200,25 @@ class SimulationMetric(object):
         self.compute_seeking_queueing(ev_vehicles)
         directory = base_directory + "global/"
 
-        dset = file.create_dataset(directory + "seeking", (1,), dtype="uint32")
+        dset = file.create_dataset(directory + "seeking", (1,), dtype="float32")
         dset.write_direct(np.array(self.mean_seeking))
 
-        dset = file.create_dataset(directory + "queueing", (1,), dtype="uint32")
+        dset = file.create_dataset(directory + "queueing", (1,), dtype="float32")
         dset.write_direct(np.array(self.mean_queueing))
 
-        # Write idle data
-        directory = base_directory + "idle/"
-        for ev in ev_vehicles:
-            data = ev.idle_history
-            if len(data) > 0:
-                dset = file.create_dataset(directory + str(ev.id), (len(data),), dtype="uint32")
-                dset.write_direct(np.array(data))
+        # # Write idle data
+        # directory = base_directory + "idle/"
+        # for ev in ev_vehicles:
+        #     data = ev.idle_history
+        #     if len(data) > 0:
+        #         dset = file.create_dataset(directory + str(ev.id), (len(data),), dtype="uint32")
+        #         dset.write_direct(np.array(data))
         
-        # Write charging data
-        directory = base_directory + "charging/"
-        for ev in ev_vehicles:
-            data = ev.charging_history
-            if len(data) > 0:
-                dset = file.create_dataset(
-                    directory + str(ev.id), (len(data),), dtype="uint32")
-                dset.write_direct(np.array(data))
+        # # Write charging data
+        # directory = base_directory + "charging/"
+        # for ev in ev_vehicles:
+        #     data = ev.charging_history
+        #     if len(data) > 0:
+        #         dset = file.create_dataset(
+        #             directory + str(ev.id), (len(data),), dtype="uint32")
+        #         dset.write_direct(np.array(data))

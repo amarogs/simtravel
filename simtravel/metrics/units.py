@@ -27,7 +27,7 @@ class Units():
         self.time_fully_charge = self.battery/self.cs_power  # (s)
         self.autonomy = (autonomy * 10**3) * (1/self.cell_length)  # (cell)
         self.step_to_s = float(
-            (cell_length * simulation_speed) / speed)  # (s/ step)
+            (self.cell_length * self.simulation_speed) / self.speed)  # (s/ step)
         self.cs_step_to_cell = (
             self.time_fully_charge/self.step_to_s) / self.autonomy  # (step / cell)
 
@@ -54,6 +54,11 @@ class Units():
         in seconds """
         return self.step_to_s * steps
 
+    def steps_to_minutes(self, steps):
+        """Given a number of steps, returns the equivalent
+        in minutes """
+        return (self.step_to_s * steps)/60
+
     def minutes_to_steps(self, minutes):
         """Given a number of minutes, returns the equivalent
         in steps of the simulation."""
@@ -68,3 +73,9 @@ class Units():
         """Given a number of cells returns the
         seconds needed to recharge that amount """
         return self.steps_to_second(self.cs_step_to_cell * cells)
+
+    def simulation_speed_to_kmh(self, speed):
+        """Given a speed in (cell/step) returns the
+        same amount in (km/h). """
+
+        return (speed*self.cell_length*3600)/(self.step_to_s*1000)

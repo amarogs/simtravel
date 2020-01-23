@@ -16,8 +16,8 @@ class VisualObject(object):
         self.rectangle = None
 
 
-class VisualVehicle(VisualObject): 
-    def __init__(self, cell_size, vehicle, canvas):
+class VisualVehicle(VisualObject):
+    def __init__(self, cell_size, vehicle, canvas, show_destination):
         super().__init__(cell_size)
 
         self.vehicle = vehicle
@@ -27,6 +27,7 @@ class VisualVehicle(VisualObject):
         self.destination_rectangle = None
         self.colors = ["green", "blue", "orange", "purple"]
         self.canvas = canvas
+        self.show_destination = show_destination
 
         self.restart()
 
@@ -59,7 +60,14 @@ class VisualVehicle(VisualObject):
         dx = (self.vehicle.destination[1] -
               self.last_destination[1]) * self.cell_size
         self.canvas.move(self.destination_rectangle, dx, dy)
-        self.canvas.itemconfigure(self.destination_rectangle, state='normal')
+
+        # Control de visibility of the destination frame
+        if self.show_destination:
+            self.canvas.itemconfigure(
+                self.destination_rectangle, state='normal')
+        else:
+            self.canvas.itemconfigure(
+                self.destination_rectangle, state='hidden')
 
         # update the attributes
         self.last_destination = self.vehicle.destination
@@ -164,10 +172,16 @@ class VisualRepresentation(object):
                     self.canvas.create_rectangle(
                         p1[0], p1[1], p2[0], p2[1], fill='white')
 
-    def show_vehicles(self, vehicles):
+    def show_vehicles(self, vehicles, show_destination=True):
         self.visual_vehicles = [VisualVehicle(
-            self.cell_size, v, self.canvas) for v in vehicles]
+            self.cell_size, v, self.canvas, show_destination) for v in vehicles]
         self.canvas.update()
+
+        # Hide the destination rectangle from the canvas
+        if not show_destination:
+            for visual_vehicle in self.visual_vehicles:
+                self.canvas.itemconfigure(
+                    visual_vehicle.destination_rectangle, state='hidden')
 
     def show_intensity(self, points):
         for point in points:
@@ -211,10 +225,10 @@ class VisualRepresentation(object):
                 if visual_veh.last_destination != visual_veh.vehicle.destination:
                     # Update the destination rectangle
                     visual_veh.move_destination()
-                else:
-                    # Make it visible
-                    self.canvas.itemconfigure(
-                        visual_veh.destination_rectangle, state='normal')
+                # else:
+                #     # Make it visible
+                #     self.canvas.itemconfigure(
+                #         visual_veh.destination_rectangle, state='normal')
             elif visual_veh.vehicle.state == States.TOWARDS_ST:
                 # The vehicle is on the move
                 visual_veh.move_vehicle(state='normal')

@@ -189,7 +189,7 @@ class CityBuilder():
             # goint to create all the stations evenly distributed
             # across the city.
             sq_maximum_cs = total_d_st**0.5
-            print(sq_maximum_cs)
+            
             distance_appart = float(self.SIZE/sq_maximum_cs)
             positions = []
             for i in range(int(sq_maximum_cs)):
