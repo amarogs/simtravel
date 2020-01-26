@@ -5,7 +5,7 @@ import time
 
 import h5py
 
-from simtravel.metrics.metrics import SimulationMetric
+from simtravel.metrics.metrics import SimulationMetric, SimulationSnapshot
 from simtravel.metrics.units import Units
 from simtravel.models.station import Station
 from simtravel.models.vehicle import ElectricVehicle, Vehicle
@@ -266,14 +266,14 @@ class Simulation():
                 if key.isupper():
                     f.attrs[key] = value
 
-    def write_results(self, repetition):
+    def write_results(self, repetition, metrics):
         """Once the simulation is over, the results are written to a HDF5 file.
         The name of the file is made with the attributes EV_DEN#TF_DEN#ST_LAYOUT that
         identify a simulation. For each repetion a group is made with the index of
         the repetition and the data is saved into datasets."""
 
         with h5py.File(self.filename+".hdf5", "a") as f:
-            self.metrics.write_results(
+            metrics.write_results(
                 f, "/"+str(repetition)+"/", self.ev_vehicles)
 
     def run(self, total_time, measure_period, repetitions, visual=None):
@@ -310,28 +310,54 @@ class Simulation():
             for st in self.stations:
                 st.restart()
             self.simulator.restart()
+
             # Create a metrics object and initilize it
-            self.metrics = SimulationMetric(
+            metrics = SimulationMetric(
                 self.city_map, self.stations, 3, total_tsteps, delta_tsteps, self.SIZE)
-            self.metrics.initialize(
+            metrics.initialize(
                 self.vehicles, self.ev_vehicles, self.stations)
 
             # Run the simulation using the simulator object
-            if visual != None:
-                self.simulator.run_simulation_visual(
-                    total_tsteps, delta_tsteps, visual)
+            if visual == None:
+                self.run_simulator(metrics)
             else:
-                self.simulator.run_simulation(
-                    total_tsteps, delta_tsteps)
+                self.run_simulator_visual(visual)
 
             # Store the data into an HDF5 file.
-            self.write_results(i)
+            self.write_results(i, metrics)
 
         self.ELAPSED = round((time.time() - elapsed) / repetitions, 3)
 
         self.write_header_attr()
 
-    def update_data(self, current_snapshot, previous_snapshot, current_tstep):
-        """Computes and stores data, it's a direct call to SimulationMetric.update_data() """
-        self.metrics.update_data(self.vehicles, self.ev_vehicles, self.stations,
-                                 current_snapshot, previous_snapshot, current_tstep)
+    def run_simulator(self, metrics):
+        """This method controls the flow of the simulator, saving the
+        data and displaying a progress message. """
+
+        previous_snapshot = SimulationSnapshot(self.vehicles)
+
+        for current_tstep in range(1, self.TOTAL_TSTEPS+1):
+
+            # Compute next step of the simulation
+            self.simulator.next_step()
+
+            # Check if we have to update the data collection
+            if current_tstep % self.DELTA_TSTEPS == 0:
+                current_snapshot = SimulationSnapshot(self.vehicles)
+                metrics.update_data(self.vehicles, self.ev_vehicles, self.stations,
+                                    current_snapshot, previous_snapshot, current_tstep)
+
+
+                previous_snapshot = current_snapshot
+
+            # Check if we have to display a progress message
+            if current_tstep in self.progress_tsteps:
+                self.print_progress(current_tstep)
+
+    def run_simulator_visual(self, visual):
+        """Runs the simulation on the simulator and updates the
+        visual vehicles. It does not produce data as output. """
+        for current_tstep in range(1, self.TOTAL_TSTEPS+1):
+            self.simulator.next_step()
+            visual.update_vehicles()
+
