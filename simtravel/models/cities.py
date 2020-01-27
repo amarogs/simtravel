@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 from enum import Enum
-import simtravel.simulator.graphs as graphs
+from simtravel.simulator.simulator import lattice_distance, configure_a_star
 import numpy as np
 
 
@@ -165,7 +165,7 @@ class CityBuilder():
                     # candidates = [(i, j) for (i, j) in type_set
                     #                 if i == reference[0] or j == reference[1]]
                     return nearest_cell_type((reference[0]+1, reference[1]+1), type_set)
-                nearest = min(candidates, key=lambda p: graphs.lattice_distance(
+                nearest = min(candidates, key=lambda p: lattice_distance(
                     p, reference))
 
             return nearest
@@ -287,9 +287,9 @@ class SquareCity(CityBuilder):
         # Create the city
         self.city_matrix = self.create_city_matrix()
         self.city_map = self.create_city_map()
-        # Once the city map has been create we can use it on the graphs module
+        # Once the city map has been create we can use it on the simulator module
         # Configure the global parameters of the a_star
-        graphs.configure_a_star(self.city_map, self.SIZE)
+        configure_a_star(self.city_map, self.SIZE)
 
         # Split the cells by type
         self.avenues, self.streets, self.roundabouts = self.split_by_type()
@@ -373,6 +373,7 @@ class SquareCity(CityBuilder):
     def create_city_map(self):
         """Method that creates a dictionary where keys are the road
         cells and the attribute is a list of adjacent roads """
+        
         city_map = {}
         for i in range(self.SIZE):
             for j in range(self.SIZE):
@@ -412,7 +413,7 @@ class SquareCity(CityBuilder):
                 s_distance = 0
                 for t in segment_list:
                     if s != t:
-                        s_distance += graphs.lattice_distance(s, t)
+                        s_distance += lattice_distance(s, t)
 
                 segment_dist.append(s_distance/len(segment_list))
             mid_points.append(

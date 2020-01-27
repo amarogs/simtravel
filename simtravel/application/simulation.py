@@ -10,6 +10,7 @@ from simtravel.metrics.units import Units
 from simtravel.models.station import Station
 from simtravel.models.vehicle import ElectricVehicle, Vehicle
 from simtravel.simulator.simulator import Simulator
+from simtravel.simulator.simulator import *
 
 
 class Simulation():
