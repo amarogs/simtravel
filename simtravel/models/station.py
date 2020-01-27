@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 class Station(object):
     def __init__(self, pos, N_CHARGERS):
+        self.id = hash(str(pos))
         self.pos = pos
         self.N_CHARGERS = N_CHARGERS
         self.available = None
