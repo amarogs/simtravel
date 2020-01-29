@@ -36,8 +36,11 @@ class SimulationAnalysis(Simulation):
         self.load_data()
         # Prepare the data for the global report
         self.prepare_global_data()
+        # Create the pulse for the moving average convolution
+        self.pulse_ma = np.repeat(1.0, params.WINDOW_SIZE)/params.WINDOW_SIZE
+        self.half_window = int(params.WINDOW_SIZE/2)
         # generate the report of the simulation
-        # self.generate_report()
+        self.generate_report()
 
     def prepare_global_data(self):
         """This function takes the attributes that are going
@@ -173,10 +176,17 @@ class SimulationAnalysis(Simulation):
     def graph_states_evolution(self):
 
         fig = plt.figure(figsize=params.FIGSIZE)
-        x = self.steps_to_minutes(len(self.states_mean['States.AT_DEST']))
+        x = self.steps_to_minutes(len(self.states_mean['States.AT_DEST']))[
+            self.half_window:-self.half_window]
 
         for s in States:
-            plt.errorbar(x, self.states_mean[str(s)], yerr=self.states_std[str(s)], color=params.COLORS[s],
+            y = np.convolve(self.states_mean[str(s)],
+                            self.pulse_ma, mode="valid")
+            # print("Original:\n", self.states_mean[str(s)][self.half_window: -self.half_window][100:110])
+            # print("convolved:\n", y[100:110])
+            yerr = self.states_std[str(s)][self.half_window:-self.half_window]
+            
+            plt.errorbar(x, y, yerr=yerr, color=params.COLORS[s],
                          label=params.STATE_NAMES[s], linewidth=2)
 
         plt.xlabel("Time (minutes)")
@@ -208,7 +218,7 @@ class SimulationAnalysis(Simulation):
                     y = occupation[pos]
                     x = self.steps_to_minutes(len(y))
                     plt.plot(x, y, color='k')
-                    plt.xlabel("Time (minutes)")
+                    plt.xlabel("Simulation evolution (minutes)")
                     plt.ylabel("Station occupation (EVs)")
                     plt.title("Station at {} ".format(pos))
 
@@ -225,7 +235,7 @@ class SimulationAnalysis(Simulation):
             y = self.occupation_mean[stations[0]]
             x = self.steps_to_minutes(len(y))
             plt.plot(x, y, color='k')
-            plt.xlabel("Simulation evolution (steps)")
+            plt.xlabel("Simulation evolution (minutes)")
             plt.ylabel("Station occupation (EVs)")
             plt.title("Station at {} ".format(stations[0]))
 
@@ -262,6 +272,9 @@ class SimulationAnalysis(Simulation):
 
     def graph_velocities_evolution(self):
         """Code to plot the mean speed of the vehicles and mean mobility"""
+
+        total_measurements = len(self.velocities_mean['speed'])
+
         # Create a figure
         fig = plt.figure(figsize=params.FIGSIZE)
         plt.suptitle(self.sim_name)
@@ -273,13 +286,12 @@ class SimulationAnalysis(Simulation):
         plt.ylabel("Mean speed (km/h)")
 
         # Plot the data
-        y = self.units.simulation_speed_to_kmh(
-            self.velocities_mean['speed'])
+        y = np.convolve(self.units.simulation_speed_to_kmh(self.velocities_mean['speed']),self.pulse_ma, mode="valid")
 
-        yerr = self.units.simulation_speed_to_kmh(
-            self.velocities_std['speed'])
-        x = self.steps_to_minutes(len(y))
+        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])[self.half_window:-self.half_window]
 
+        x = self.steps_to_minutes(total_measurements)[self.half_window:-self.half_window]
+        
         plt.errorbar(x, y, yerr=yerr, color="k", label="Mean speed evolution")
 
         plt.legend()
@@ -289,14 +301,14 @@ class SimulationAnalysis(Simulation):
 
         plt.xlabel("Simulation evolution (minutes)")
         plt.ylabel("Mean mobility (km/h)")
-        y = self.units.simulation_speed_to_kmh(
-            self.velocities_mean['mobility'])
-        yerr = self.units.simulation_speed_to_kmh(
-            self.velocities_std['mobility'])
-        x = self.steps_to_minutes(len(y))
+        
+        y = np.convolve(self.units.simulation_speed_to_kmh(self.velocities_mean['mobility']),
+                        self.pulse_ma, mode="valid")
 
-        plt.errorbar(x, y, yerr=yerr, color="k",
-                     label="Mean mobility evolution")
+        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['mobility'])[self.half_window:-self.half_window]
+        x = self.steps_to_minutes(total_measurements)[self.half_window:-self.half_window]
+
+        plt.errorbar(x, y, yerr=yerr, color="k",label="Mean mobility evolution")
 
         plt.legend()
 
@@ -374,16 +386,15 @@ class GlobalAnalysis():
         self.traffic = ['seeking', 'queueing', 'total', 'elapsed']
         self.velocities = ['speed', 'mobility']
         self.suptitles = {'seeking': 'Mean time spent seeking EV rate = {}',
-                        'queueing': 'Mean time spent queueing EV rate = {}',
-                        'total':"Total time spent recharging EV rate = {} " ,
-                        'elapsed':"Time elapsed" , 'speed':"Mean speed EV rate = {}" ,
-                        'mobility': "Mean mobility EV rate = {} " }
+                          'queueing': 'Mean time spent queueing EV rate = {}',
+                          'total': "Total time spent recharging EV rate = {} ",
+                          'elapsed': "Time elapsed", 'speed': "Mean speed EV rate = {}",
+                          'mobility': "Mean mobility EV rate = {} "}
 
         # Set the path to store the figures and pdf
         self.path = "results/analyzed/global"
         if not os.path.exists("results/analyzed/global"):
-            os.makedirs(path)
-        
+            os.makedirs(self.path)
 
     def global_matrix_shape(self, attrs):
         total_evd, total_tfd, total_layout = set(), set(), set()
@@ -431,7 +442,6 @@ class GlobalAnalysis():
             index = self.compute_index(simulation)
             matrix[index] = simulation.__dict__[attribute]
         self.__setattr__("matrix_"+attribute.lower(), matrix)
-
 
     def create_report(self):
         """Generates a pdf with all the figures produced. """
@@ -495,24 +505,5 @@ class GlobalAnalysis():
         plt.suptitle(self.suptitles[key].format(evd))
         # Set the legend
         plt.legend()
-        
+
         return fig, key+"_"+str(evd)
-
-
-
-def get_attributes_results(path):
-    """Given a path were the HDF5 files from simulations are stored, 
-    returns a tuple with the attributes needed for the object SimulationAnalysis
-    to be built.  """
-    filepath = [f for f in os.listdir(path) if f[-5:] == ".hdf5"]
-    attributes = []
-    for f in filepath:
-        config = f[0:-5].split("#")
-        config.append(path + "/" + str(f))
-        attributes.append(tuple(config))
-
-    return attributes
-
-
-def analize_simulation(attrs):
-    return SimulationAnalysis(*attrs)
