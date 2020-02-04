@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Results
+results*/*
+*.pdf
+*.svg
+*.json
+.vscode/
+
 # Distribution / packaging
 .Python
 build/
