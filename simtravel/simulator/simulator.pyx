@@ -4,19 +4,8 @@ import numpy as np
 import random
 
 from simtravel.models.states import States
+from simtravel.graphlib.pygraphFunctions import AStar
 
-
-from libc.math cimport abs as cabs
-from libc.math cimport pow as cpow
-from libc.math cimport exp as cexp
-
-import heapq
-
-#GLOBAL ATTRIBUTES OF THIS CLASS
-#A dictionary to use as a c type
-
-cdef dict CITY
-cdef int SIZE
 
 
 class Simulator:
@@ -31,6 +20,7 @@ class Simulator:
         self.simulation = simulation
         self.city_state = {pos: 1 for pos in self.simulation.city_map}
         self.city_positions = list(simulation.city_map.keys())
+        self.astar = AStar(200)
 
         # Dictionary where the key is a state and the value the function
         # associated with that state
@@ -67,7 +57,7 @@ class Simulator:
                 vehicle.state = States.TOWARDS_ST  # Set the state to "towards station"
                 vehicle.station = self.choose_station(
                     vehicle.pos)  # Choose the station
-                vehicle.path = a_star(vehicle.pos, vehicle.station.pos)
+                vehicle.path = self.astar.new_path(vehicle.pos, vehicle.station.pos)
                 vehicle.seeking = 0  # Start the seeking counter
             elif vehicle.battery == 0:
                 # The vehicle has run out of battery
@@ -91,7 +81,7 @@ class Simulator:
             # The waiting is over, choose a new destination
             vehicle.state = States.TOWARDS_DEST
             vehicle.destination = random.choice(self.city_positions)
-            vehicle.path = a_star(vehicle.pos, vehicle.destination)
+            vehicle.path = self.astar.new_path(vehicle.pos, vehicle.destination)
 
     def towards_station(self, vehicle):
         """Function called when a vehicle has State.TOWARDS_ST."""
@@ -143,7 +133,7 @@ class Simulator:
             vehicle.station = None
             vehicle.battery = vehicle.desired_charge
             vehicle.state = States.TOWARDS_DEST
-            vehicle.path = a_star(vehicle.pos, vehicle.destination)
+            vehicle.path = self.astar.new_path(vehicle.pos, vehicle.destination)
 
     def compute_idle(self):
         """Returns the time a vehicle must spent idle when it reaches a
@@ -183,9 +173,10 @@ class Simulator:
 
         # Recompute the path if we have moved to a random position in the previous step
         if vehicle.recompute_path:
-            vehicle.path = recompute_path(
+            vehicle.path = self.astar.recompute_path(
                 vehicle.path, vehicle.pos, target)
             vehicle.recompute_path = False
+            
 
         # Get the next step in the path to our goal
         choice = vehicle.path.pop(-1)
@@ -237,140 +228,6 @@ class Simulator:
             self.next_function[vehicle.state](vehicle)
 
 
-
-
-
-
-
-cpdef configure_a_star(dict city_map, int city_size):
-    global CITY, SIZE
-    CITY = city_map
-    SIZE = city_size
-
-cdef class PriorityMinHeap(object):
-    """This class has been made using the example in https://docs.python.org/2/library/heapq.html """
-    cdef list pq
-    cdef dict entry_finder
-    cdef tuple REMOVED
-    cdef int counter
-
-    def __init__(self):
-        self.pq = [] #List arranged as a min heap
-        self.entry_finder = {} #mapping of items to enties
-        self.REMOVED = (99999,99999) #placeholder for a removed task
-        self.counter = 0 #Number of elements that are not removed in the heap
-
-    cdef insert(self, tuple item, int priority):
-        if item in self.entry_finder:
-            self.remove_item(item)
-        
-        cdef list entry = [priority, item]
-       
-        self.entry_finder[item] = entry
-        heapq.heappush(self.pq, entry)
-        self.counter += 1
-
-    cdef remove_item(self, tuple item):
-        "Mark an existing task as REMOVED"
-        cdef list entry = self.entry_finder.pop(item)
-        entry[-1] = self.REMOVED
-        self.counter -= 1
-
-    cdef pop(self):
-        "Remove and return the lowest priority item that is not REMOVED"
-        cdef tuple item
-
-        while self.pq:
-            _ , item = heapq.heappop(self.pq)
-            if item is not self.REMOVED:
-                self.counter -= 1
-                del self.entry_finder[item]
-                return item
-    cdef is_empty(self):
-        return self.counter == 0
-
-
-cdef list reconstruct_path(dict came_from, tuple start, tuple current):
-    cdef list total = [current]
-
-    while True:
-        current = came_from[current]
-        if current==start:
-            break
-        else:
-            total.append(current)
-    return total
-
-
-
-cpdef list a_star(tuple start, tuple goal):
-    global CITY
-    cdef set closed_set = set() #Set of positions already visited
-    cdef PriorityMinHeap open_set = PriorityMinHeap() #Min heap of posible positions available for expansion
-
-    #Dictionary containing (position:distance), which is the distance to
-    #the goal from the position
-    cdef dict g_score = {start:0}
-
-    #Dictionary containing the relationship between posititions
-    cdef dict came_from = {start:start}
-
-    cdef int depth = 0 #Controls the number of entries in the path we want to compute
-    cdef tuple neighbour, current
-    
-    open_set.insert(start, lattice_distance(start, goal))
-
-
-    while not open_set.is_empty():
-        #If there are available nodos, take the most promising one (lowest f_score)
-        current = open_set.pop()
-        depth += 1
-        
-        
-        if current == goal: #or depth==MAX_DEPTH:
-            #If the nodo is the goal, we have finished
-            return reconstruct_path(came_from,start, current)
-        else:
-            #Otherwise we need to explore the current node
-            closed_set.add(current)
-        
-        for (neighbour,road_type) in CITY[current]:
-
-            if neighbour not in closed_set:
-                #If the neighbour hasn't been visited
-                #Compute the possible g_score
-                new_g_score = g_score[current] + road_type
-
-                if neighbour not in g_score or new_g_score < g_score[neighbour]:
-                    #Add the neighbour with the g_score to the heap
-                    open_set.insert(neighbour, new_g_score + lattice_distance(neighbour, goal))
-                    g_score[neighbour] = new_g_score
-                    came_from[neighbour] = current
-              
-
-cpdef list recompute_path(list current_path, tuple pos, tuple target):
-    cdef list extension_path
-    cdef tuple n_step
-
-    if len(current_path) > 1:
-        extension_path = a_star(pos, current_path[-2])
-        del current_path[-1]
-        for n_step in extension_path[1:]:
-            current_path.append(n_step) 
-    else:
-        current_path = a_star(pos, target)
-    return current_path
-
-cpdef int lattice_distance(pos1, pos2):
-    global SIZE
-    cdef int dx, dy
-    dx = cabs(pos1[0] - pos2[0])
-    if dx > int(SIZE/2):
-        dx = SIZE - dx
-    dy = cabs(pos1[1] - pos2[1])
-    if dy > int(SIZE/2):
-        dy = SIZE - dy
-    return (dx + dy)
 
 
 

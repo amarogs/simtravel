@@ -10,7 +10,7 @@ from simtravel.metrics.units import Units
 from simtravel.models.station import Station
 from simtravel.models.vehicle import ElectricVehicle, Vehicle
 from simtravel.simulator.simulator import Simulator
-from simtravel.simulator.simulator import *
+from simtravel.graphlib.pygraphFunctions import Graph
 
 
 class Simulation():
@@ -83,6 +83,9 @@ class Simulation():
         # Create the city builder
         self.city_builder = Builder(scale, block_scale)
         self.city_map = self.city_builder.city_map
+        self.city_map_graph = self.city_builder.city_map_graph
+        self.graph = Graph(self.city_map_graph)
+        
         self.city_matrix = self.city_builder.city_matrix
         self.SCALE = scale
         self.BLOCK_SCALE = block_scale
@@ -338,7 +341,7 @@ class Simulation():
         previous_snapshot = SimulationSnapshot(self.vehicles)
 
         for current_tstep in range(1, self.TOTAL_TSTEPS+1):
-
+            
             # Compute next step of the simulation
             self.simulator.next_step()
 

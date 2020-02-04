@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 from enum import Enum
-from simtravel.simulator.simulator import lattice_distance, configure_a_star
+from simtravel.graphlib.pygraphFunctions import lattice_distance, configure_lattice_size
 import numpy as np
 
 
@@ -287,9 +287,10 @@ class SquareCity(CityBuilder):
         # Create the city
         self.city_matrix = self.create_city_matrix()
         self.city_map = self.create_city_map()
+        self.city_map_graph = self.create_city_map_graph()
         # Once the city map has been create we can use it on the simulator module
         # Configure the global parameters of the a_star
-        configure_a_star(self.city_map, self.SIZE)
+        configure_lattice_size(self.SIZE)
 
         # Split the cells by type
         self.avenues, self.streets, self.roundabouts = self.split_by_type()
@@ -386,6 +387,17 @@ class SquareCity(CityBuilder):
 
 
         return city_map
+    def create_city_map_graph(self):
+        city_map_graph = {}
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                if self.city_matrix[(i, j)][4] != CellType.HOUSE:
+                    t = self.city_matrix[(i, j)][4].value
+                    movements = self.city_matrix[(i, j)][0:4] == Direction.ALLOWED
+                    allowed = self.get_neigh(i, j)[movements]
+                    city_map_graph[((i, j), t)] = [
+                        (pos, self.city_matrix[pos][4].value) for pos in allowed]
+        return city_map_graph
 
     def segment_by_type(self):
         types = [1, 2, 3]

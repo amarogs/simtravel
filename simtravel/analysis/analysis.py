@@ -176,18 +176,12 @@ class SimulationAnalysis(Simulation):
     def graph_states_evolution(self):
 
         fig = plt.figure(figsize=params.FIGSIZE)
-        x = self.steps_to_minutes(len(self.states_mean['States.AT_DEST']))[
-            self.half_window:-self.half_window]
+        x = self.steps_to_minutes(len(self.states_mean['States.AT_DEST']))
 
         for s in States:
-            y = np.convolve(self.states_mean[str(s)],
-                            self.pulse_ma, mode="valid")
-            # print("Original:\n", self.states_mean[str(s)][self.half_window: -self.half_window][100:110])
-            # print("convolved:\n", y[100:110])
-            yerr = self.states_std[str(s)][self.half_window:-self.half_window]
-            
-            plt.errorbar(x, y, yerr=yerr, color=params.COLORS[s],
-                         label=params.STATE_NAMES[s], linewidth=2)
+            plt.errorbar(x, self.states_mean[str(s)],
+                        yerr=self.states_std[str(s)], color=params.COLORS[s],
+                        label=params.STATE_NAMES[s], linewidth=2)
 
         plt.xlabel("Time (minutes)")
         plt.ylabel("Number of EVs at each state (EVs)")
@@ -272,9 +266,6 @@ class SimulationAnalysis(Simulation):
 
     def graph_velocities_evolution(self):
         """Code to plot the mean speed of the vehicles and mean mobility"""
-
-        total_measurements = len(self.velocities_mean['speed'])
-
         # Create a figure
         fig = plt.figure(figsize=params.FIGSIZE)
         plt.suptitle(self.sim_name)
@@ -286,12 +277,11 @@ class SimulationAnalysis(Simulation):
         plt.ylabel("Mean speed (km/h)")
 
         # Plot the data
-        y = np.convolve(self.units.simulation_speed_to_kmh(self.velocities_mean['speed']),self.pulse_ma, mode="valid")
+        y = self.units.simulation_speed_to_kmh(self.velocities_mean['speed'])
 
-        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])[self.half_window:-self.half_window]
+        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])
+        x = self.steps_to_minutes(len(y))
 
-        x = self.steps_to_minutes(total_measurements)[self.half_window:-self.half_window]
-        
         plt.errorbar(x, y, yerr=yerr, color="k", label="Mean speed evolution")
 
         plt.legend()
@@ -301,12 +291,11 @@ class SimulationAnalysis(Simulation):
 
         plt.xlabel("Simulation evolution (minutes)")
         plt.ylabel("Mean mobility (km/h)")
-        
-        y = np.convolve(self.units.simulation_speed_to_kmh(self.velocities_mean['mobility']),
-                        self.pulse_ma, mode="valid")
 
-        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['mobility'])[self.half_window:-self.half_window]
-        x = self.steps_to_minutes(total_measurements)[self.half_window:-self.half_window]
+        y = self.units.simulation_speed_to_kmh(self.velocities_mean['mobility'])
+
+        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['mobility'])
+        x = self.steps_to_minutes(len(y))
 
         plt.errorbar(x, y, yerr=yerr, color="k",label="Mean mobility evolution")
 
@@ -331,7 +320,7 @@ class SimulationAnalysis(Simulation):
 
         for (fig, name) in zip(figures, names):
             pp.savefig(fig)
-            fig.savefig(path+"/" + name+".eps", format="eps", dpi=100)
+            fig.savefig(path+"/" + name+".svg", format="svg", dpi=100)
             fig.clear()
             plt.close(fig)
         pp.close()
@@ -453,7 +442,7 @@ class GlobalAnalysis():
 
         for (fig, name) in zip(figures, names):
             pp.savefig(fig)
-            fig.savefig(self.path+"/" + name+".eps", format="eps", dpi=100)
+            fig.savefig(self.path+"/" + name+".svg", format="svg", dpi=150)
             fig.clear()
             plt.close(fig)
         pp.close()
