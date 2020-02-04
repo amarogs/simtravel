@@ -4,7 +4,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
-from simtravel.application.simulation import Simulation
+from simtravel.simulator.simulation import Simulation
 from simtravel.models.cities import SquareCity
 import pyximport
 pyximport.install()

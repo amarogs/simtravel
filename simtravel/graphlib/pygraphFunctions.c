@@ -830,6 +830,19 @@ static const char *__pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_16pygraphFunctions_Graph;
 struct __pyx_obj_16pygraphFunctions_AStar;
+struct __pyx_opt_args_16pygraphFunctions_configure_lattice_size;
+
+/* "pygraphFunctions.pyx":82
+ * 
+ * 
+ * cpdef void configure_lattice_size(size_t lattice_size, city_map=None):             # <<<<<<<<<<<<<<
+ * 
+ *     # Set the internal parameters of the C functions.
+ */
+struct __pyx_opt_args_16pygraphFunctions_configure_lattice_size {
+  int __pyx_n;
+  PyObject *city_map;
+};
 
 /* "pygraphFunctions.pyx":11
  * 
@@ -1309,7 +1322,7 @@ static PyObject *__pyx_f_16pygraphFunctions_5AStar_recompute_path(struct __pyx_o
 /* Module declarations from 'pygraphFunctions' */
 static PyTypeObject *__pyx_ptype_16pygraphFunctions_Graph = 0;
 static PyTypeObject *__pyx_ptype_16pygraphFunctions_AStar = 0;
-static void __pyx_f_16pygraphFunctions_configure_lattice_size(size_t, int __pyx_skip_dispatch); /*proto*/
+static void __pyx_f_16pygraphFunctions_configure_lattice_size(size_t, int __pyx_skip_dispatch, struct __pyx_opt_args_16pygraphFunctions_configure_lattice_size *__pyx_optional_args); /*proto*/
 static int __pyx_f_16pygraphFunctions_lattice_distance(PyObject *, PyObject *, int __pyx_skip_dispatch); /*proto*/
 #define __Pyx_MODULE_NAME "pygraphFunctions"
 extern int __pyx_module_is_main_pygraphFunctions;
@@ -1341,6 +1354,7 @@ static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
 static const char __pyx_k_visualize[] = "visualize";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_current_path[] = "current_path";
+static const char __pyx_k_lattice_size[] = "lattice_size";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_recompute_path[] = "recompute_path";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
@@ -1356,6 +1370,7 @@ static PyObject *__pyx_n_s_end;
 static PyObject *__pyx_n_s_getstate;
 static PyObject *__pyx_n_s_items;
 static PyObject *__pyx_n_s_keys;
+static PyObject *__pyx_n_s_lattice_size;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_new_path;
@@ -1384,7 +1399,7 @@ static PyObject *__pyx_pf_16pygraphFunctions_5AStar_4recompute_path(struct __pyx
 static void __pyx_pf_16pygraphFunctions_5AStar_6__dealloc__(struct __pyx_obj_16pygraphFunctions_AStar *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_16pygraphFunctions_5AStar_8__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_16pygraphFunctions_AStar *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_16pygraphFunctions_5AStar_10__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_16pygraphFunctions_AStar *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_pf_16pygraphFunctions_configure_lattice_size(CYTHON_UNUSED PyObject *__pyx_self, size_t __pyx_v_lattice_size); /* proto */
+static PyObject *__pyx_pf_16pygraphFunctions_configure_lattice_size(CYTHON_UNUSED PyObject *__pyx_self, size_t __pyx_v_lattice_size, PyObject *__pyx_v_city_map); /* proto */
 static PyObject *__pyx_pf_16pygraphFunctions_2lattice_distance(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_start, PyObject *__pyx_v_end); /* proto */
 static PyObject *__pyx_tp_new_16pygraphFunctions_Graph(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_16pygraphFunctions_AStar(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3397,15 +3412,17 @@ static PyObject *__pyx_pf_16pygraphFunctions_5AStar_10__setstate_cython__(CYTHON
 /* "pygraphFunctions.pyx":82
  * 
  * 
- * cpdef void configure_lattice_size(size_t lattice_size):             # <<<<<<<<<<<<<<
+ * cpdef void configure_lattice_size(size_t lattice_size, city_map=None):             # <<<<<<<<<<<<<<
  * 
  *     # Set the internal parameters of the C functions.
  */
 
-static PyObject *__pyx_pw_16pygraphFunctions_1configure_lattice_size(PyObject *__pyx_self, PyObject *__pyx_arg_lattice_size); /*proto*/
-static void __pyx_f_16pygraphFunctions_configure_lattice_size(size_t __pyx_v_lattice_size, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyObject *__pyx_pw_16pygraphFunctions_1configure_lattice_size(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static void __pyx_f_16pygraphFunctions_configure_lattice_size(size_t __pyx_v_lattice_size, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_16pygraphFunctions_configure_lattice_size *__pyx_optional_args) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("configure_lattice_size", 0);
+  if (__pyx_optional_args) {
+  }
 
   /* "pygraphFunctions.pyx":85
  * 
@@ -3419,7 +3436,7 @@ static void __pyx_f_16pygraphFunctions_configure_lattice_size(size_t __pyx_v_lat
   /* "pygraphFunctions.pyx":82
  * 
  * 
- * cpdef void configure_lattice_size(size_t lattice_size):             # <<<<<<<<<<<<<<
+ * cpdef void configure_lattice_size(size_t lattice_size, city_map=None):             # <<<<<<<<<<<<<<
  * 
  *     # Set the internal parameters of the C functions.
  */
@@ -3429,43 +3446,89 @@ static void __pyx_f_16pygraphFunctions_configure_lattice_size(size_t __pyx_v_lat
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_16pygraphFunctions_1configure_lattice_size(PyObject *__pyx_self, PyObject *__pyx_arg_lattice_size); /*proto*/
-static PyObject *__pyx_pw_16pygraphFunctions_1configure_lattice_size(PyObject *__pyx_self, PyObject *__pyx_arg_lattice_size) {
+static PyObject *__pyx_pw_16pygraphFunctions_1configure_lattice_size(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_16pygraphFunctions_1configure_lattice_size(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   size_t __pyx_v_lattice_size;
+  PyObject *__pyx_v_city_map = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("configure_lattice_size (wrapper)", 0);
-  assert(__pyx_arg_lattice_size); {
-    __pyx_v_lattice_size = __Pyx_PyInt_As_size_t(__pyx_arg_lattice_size); if (unlikely((__pyx_v_lattice_size == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(1, 82, __pyx_L3_error)
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_lattice_size,&__pyx_n_s_city_map,0};
+    PyObject* values[2] = {0,0};
+    values[1] = ((PyObject *)Py_None);
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_lattice_size)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_city_map);
+          if (value) { values[1] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "configure_lattice_size") < 0)) __PYX_ERR(1, 82, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_lattice_size = __Pyx_PyInt_As_size_t(values[0]); if (unlikely((__pyx_v_lattice_size == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(1, 82, __pyx_L3_error)
+    __pyx_v_city_map = values[1];
   }
   goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("configure_lattice_size", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 82, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("pygraphFunctions.configure_lattice_size", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_16pygraphFunctions_configure_lattice_size(__pyx_self, ((size_t)__pyx_v_lattice_size));
+  __pyx_r = __pyx_pf_16pygraphFunctions_configure_lattice_size(__pyx_self, __pyx_v_lattice_size, __pyx_v_city_map);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_16pygraphFunctions_configure_lattice_size(CYTHON_UNUSED PyObject *__pyx_self, size_t __pyx_v_lattice_size) {
+static PyObject *__pyx_pf_16pygraphFunctions_configure_lattice_size(CYTHON_UNUSED PyObject *__pyx_self, size_t __pyx_v_lattice_size, PyObject *__pyx_v_city_map) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
+  struct __pyx_opt_args_16pygraphFunctions_configure_lattice_size __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("configure_lattice_size", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_void_to_None(__pyx_f_16pygraphFunctions_configure_lattice_size(__pyx_v_lattice_size, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 82, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_t_1.__pyx_n = 1;
+  __pyx_t_1.city_map = __pyx_v_city_map;
+  __pyx_f_16pygraphFunctions_configure_lattice_size(__pyx_v_lattice_size, 0, &__pyx_t_1); 
+  __pyx_t_2 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 82, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_r = __pyx_t_2;
+  __pyx_t_2 = 0;
   goto __pyx_L0;
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_AddTraceback("pygraphFunctions.configure_lattice_size", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -3902,7 +3965,7 @@ static PyTypeObject __pyx_type_16pygraphFunctions_AStar = {
 };
 
 static PyMethodDef __pyx_methods[] = {
-  {"configure_lattice_size", (PyCFunction)__pyx_pw_16pygraphFunctions_1configure_lattice_size, METH_O, 0},
+  {"configure_lattice_size", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_16pygraphFunctions_1configure_lattice_size, METH_VARARGS|METH_KEYWORDS, 0},
   {"lattice_distance", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_16pygraphFunctions_3lattice_distance, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
@@ -3959,6 +4022,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_getstate, __pyx_k_getstate, sizeof(__pyx_k_getstate), 0, 0, 1, 1},
   {&__pyx_n_s_items, __pyx_k_items, sizeof(__pyx_k_items), 0, 0, 1, 1},
   {&__pyx_n_s_keys, __pyx_k_keys, sizeof(__pyx_k_keys), 0, 0, 1, 1},
+  {&__pyx_n_s_lattice_size, __pyx_k_lattice_size, sizeof(__pyx_k_lattice_size), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_new_path, __pyx_k_new_path, sizeof(__pyx_k_new_path), 0, 0, 1, 1},

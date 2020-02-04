@@ -1,8 +1,8 @@
-import pyximport
-pyximport.install()
+# import pyximport
+# pyximport.install()
 
 from simtravel.models.cities import SquareCity
-from simtravel.application.simulation import Simulation
+from simtravel.simulator.simulation import Simulation
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np

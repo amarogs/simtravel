@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 from enum import Enum
-from simtravel.graphlib.pygraphFunctions import lattice_distance, configure_lattice_size
+from simtravel.simulator.cythonGraphFunctions import lattice_distance, configure_lattice_size
 import numpy as np
 
 
@@ -290,7 +290,7 @@ class SquareCity(CityBuilder):
         self.city_map_graph = self.create_city_map_graph()
         # Once the city map has been create we can use it on the simulator module
         # Configure the global parameters of the a_star
-        configure_lattice_size(self.SIZE)
+        configure_lattice_size(self.SIZE, self.city_map)
 
         # Split the cells by type
         self.avenues, self.streets, self.roundabouts = self.split_by_type()

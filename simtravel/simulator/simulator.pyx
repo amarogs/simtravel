@@ -4,9 +4,7 @@ import numpy as np
 import random
 
 from simtravel.models.states import States
-from simtravel.graphlib.pygraphFunctions import AStar
-
-
+from simtravel.simulator.cythonGraphFunctions import AStar
 
 class Simulator:
 

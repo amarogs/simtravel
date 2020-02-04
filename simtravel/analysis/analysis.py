@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
 import simtravel.analysis.parameters_analysis as params
-from simtravel.application.simulation import Simulation
+from simtravel.simulator.simulation import Simulation
 from simtravel.metrics.units import Units
 from simtravel.models.states import States
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from simtravel.models.states import States
-from simtravel.graphlib.pygraphFunctions import lattice_distance
+from simtravel.simulator.cythonGraphFunctions import lattice_distance
 
 import copy
 import numpy as np

@@ -79,7 +79,7 @@ cdef class AStar():
         PyMem_Free(self.y_arr)
 
     
-cpdef void configure_lattice_size(size_t lattice_size):
+cpdef void configure_lattice_size(size_t lattice_size, city_map=None):
     
     # Set the internal parameters of the C functions.
     graphFunctions.setLatticeSize(lattice_size)

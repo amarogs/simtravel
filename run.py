@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
+from simtravel.models.cities import SquareCity
+from simtravel.simulator.simulation import Simulation
+import parameters as params
 import sys
 from multiprocessing import Pool
 
 import pyximport
 pyximport.install()
-
-import parameters as params
-from simtravel.application.simulation import Simulation
-from simtravel.models.cities import SquareCity
-
 
 
 # Read the number of cores to use from the command line.
@@ -27,7 +25,7 @@ for ev in params.EV_DENSITY_VALUES:
 
 
 def run_simulation_with(args):
-    
+
     # Create the simulation object
     simulation = Simulation(*args)
     # Set the simulation units.
@@ -50,6 +48,7 @@ def run_simulation_with(args):
     # Run the simulation
     simulation.run(total_time=params.TOTAL_TIME,
                    measure_period=params.MEASURE_PERIOD, repetitions=params.REPETITIONS)
+
 
 if NUM_PROCESS == 1:
     for args in sim_args:
