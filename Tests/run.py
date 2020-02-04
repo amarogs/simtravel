@@ -6,7 +6,7 @@ import pyximport
 pyximport.install()
 
 import parameters as params
-from simtravel.application.simulation import Simulation
+from simtravel.simulator.simulation import Simulation
 from simtravel.models.cities import SquareCity
 
 

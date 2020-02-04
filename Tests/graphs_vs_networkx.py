@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 
 from simtravel.analysis.analysis import SimulationAnalysis
-from simtravel.application.simulation import Simulation
+from simtravel.simulator.simulation import Simulation
 
 from simtravel.models.cities import SquareCity
 from simtravel.simulator.simulator import *
