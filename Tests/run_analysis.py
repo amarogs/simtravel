@@ -6,7 +6,7 @@ import numpy as np
 import pyximport
 pyximport.install()
 
-from simtravel.analysis.analysis import GlobalAnalysis, SimulationAnalysis
+from src.analysis.analysis import GlobalAnalysis, SimulationAnalysis
 
 
 
