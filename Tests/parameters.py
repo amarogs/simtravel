@@ -12,7 +12,7 @@ MIN_D_STATIONS = 36 #Minimum number of stations that must be placed when choosin
 SPEED = 10 # km/h
 CELL_LENGTH = 5 # meters
 SIMULATION_SPEED = 1 #cell/tstep
-BATTERY = 24 #kWh
+BATTERY = 0.1 #kWh
 CS_POWER = 7 #kW
 
 """BATTERY DISTRIBUTION """
@@ -27,9 +27,9 @@ IDLE_STD = 0.25 #percentage of deviation from the mean
 
 """VALUES TO TRY """
 #For each combination of ev_density, tf_density and st_layout we run a different simulation
-EV_DENSITY_VALUES = [0.1, 0.4, 1]
-TF_DENSITY_VALUES = [0.1, 0.3, 0.5]
-ST_LAYOUT_VALUES = ["central", "distributed", "four"]
+EV_DENSITY_VALUES = [0.1]#, 0.4, 1]
+TF_DENSITY_VALUES = [0.1, 0.3]#, 0.5]
+ST_LAYOUT_VALUES = ["central"]#, "distributed", "four"]
 
 """GRAPHICS PARAMETERS """
 WIDTH = 700 #Window width
@@ -38,7 +38,7 @@ DELAY = 0 #Number of ms between different frames
 
 """GENERAL PARAMETERS """
 REPETITIONS = 2 #Number of times each simulation is run
-TOTAL_TIME = 4  # Number of hours to simulate
-MEASURE_PERIOD = 1 # Number of minutes between two consecutive snapshots of the system.
+TOTAL_TIME = 2  # Number of hours to simulate
+MEASURE_PERIOD = 0 # Number of minutes between two consecutive snapshots of the system.
 
 
