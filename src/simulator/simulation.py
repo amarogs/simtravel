@@ -292,7 +292,8 @@ class Simulation():
         # Convert the time to simulation steps
         total_tsteps = int(self.units.minutes_to_steps(total_time*60))
         delta_tsteps = int(self.units.minutes_to_steps(measure_period))
-
+        if delta_tsteps == 0:
+            delta_tsteps = 1
         self.TOTAL_TSTEPS = total_tsteps
         self.DELTA_TSTEPS = delta_tsteps
         self.REPETITIONS = repetitions
