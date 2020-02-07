@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
+from src.models.cities import SquareCity
+from src.simulator.simulation import Simulation
+import parameters as params
 import sys
 from multiprocessing import Pool
 
 import pyximport
 pyximport.install()
-
-import parameters as params
-from src.simulator.simulation import Simulation
-from src.models.cities import SquareCity
-
 
 
 # Read the number of cores to use from the command line.
@@ -27,7 +25,7 @@ for ev in params.EV_DENSITY_VALUES:
 
 
 def run_simulation_with(args):
-    
+
     # Create the simulation object
     simulation = Simulation(*args)
     # Set the simulation units.
@@ -51,9 +49,10 @@ def run_simulation_with(args):
     simulation.run(total_time=params.TOTAL_TIME,
                    measure_period=params.MEASURE_PERIOD, repetitions=params.REPETITIONS)
 
+
 if NUM_PROCESS == 1:
     for args in sim_args:
-        run_simulation_with(args)
+        run_simulation_with(*args)
 else:
     pool = Pool(NUM_PROCESS)
     results = pool.map_async(run_simulation_with, sim_args)
