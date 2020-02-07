@@ -8,16 +8,15 @@ import h5py
 
 
 class SimulationSnapshot(object):
-    
+
     def __init__(self, vehicles):
         super().__init__()
         # For each vehicle, store its position and state
         self.x_pos, self.y_pos, self.state = [], [], []
         for v in vehicles:
-            self.state.append(v.state)    
+            self.state.append(v.state)
             self.x_pos.append(v.pos[0])
             self.y_pos.append(v.pos[1])
-        
 
     def mean_velocities(self, previous, delta_tsteps):
         """Given a previous snapshot, computes the mean speed of
@@ -28,18 +27,24 @@ class SimulationSnapshot(object):
         moving_vehicles = 0
 
         for i in range(len(self.x_pos)):
-            curr_x,curr_y, curr_st = self.x_pos[i], self.y_pos[i], self.state[i]
-            prev_x, prev_y, prev_st = previous.x_pos[i], previous.y_pos[i], previous.state[i]
+            curr_st, prev_st = self.state[i], previous.state[i]
+            total_distance +=  lattice_distance(self.x_pos[i],
+                                               self.y_pos[i],
+                                               previous.x_pos[i],
+                                               previous.y_pos[i])
+            
+            
 
-            total_distance += lattice_distance(curr_x, curr_y, prev_x, prev_y)
-            if curr_st in States.moving_states() and prev_st in States.moving_states():
+            if curr_st in States.moving_states() or prev_st in States.moving_states():
                 moving_vehicles += 1
-
+        # if moving_vehicles != 0:
+        #     print("Total distance: {} Moving vehicles: {} Total vehicles: {} speed: {} delta:{}".format(total_distance, moving_vehicles, len(self.x_pos), total_distance/(delta_tsteps * moving_vehicles), delta_tsteps))
+        # else:
+        #     print("Nadie se mueve")
         if moving_vehicles == 0:
-             return 0, total_distance/(delta_tsteps*len(self.x_pos))
+            return 0, total_distance/(delta_tsteps*len(self.x_pos))
         else:
             return total_distance/(delta_tsteps*moving_vehicles), total_distance/(delta_tsteps*len(self.x_pos))
-        
 
 
 class SimulationMetric(object):
@@ -60,7 +65,6 @@ class SimulationMetric(object):
         self.delta_tsteps = delta_tsteps
         self.heat_map_evolution = []
 
- 
         # Compute the global metrics
         self.mean_seeking = None
         self.mean_queueing = None
@@ -138,14 +142,29 @@ class SimulationMetric(object):
         vehicle compute the mean number of steps used in seeking
         and the mean number of steps used in queueing, then compute
         a global average mean of the simulation. """
+        
+        sum_seeking = []
+        total_times = 0
+        for _, seeking in seeking_history.items():
+            sum_seeking.append(np.sum(seeking))
+            total_times = np.sum(len(seeking))
 
-        self.mean_seeking = np.mean([np.mean(seeking) for (
-            _, seeking) in seeking_history.items() if len(seeking)])
+        if total_times == 0:
+            self.mean_seeking = 0
+        else:
+            self.mean_seeking = np.mean(sum_seeking)
+        
+        sum_queueing = []
+        total_times = 0
+        for _, queueing in queueing_history.items():
+            sum_queueing.append(np.sum(queueing))
+            total_times = np.sum(len(queueing))
 
-        self.mean_queueing = np.mean([np.mean(queueing) for (
-            _, queueing) in queueing_history.items() if len(queueing)])
+        if total_times == 0:
+            self.mean_queueing = 0
+        else:
+            self.mean_queueing = np.mean(sum_queueing)
 
- 
     def write_results(self, file, base_directory, seeking_history, queueing_history):
         """Given a openned and writable HDF5 file, and the 
         base directory where we are going to write, takes the
@@ -200,5 +219,3 @@ class SimulationMetric(object):
         dset = file.create_dataset(
             directory + "queueing", (1,), dtype="float32")
         dset.write_direct(np.array(self.mean_queueing))
-
-

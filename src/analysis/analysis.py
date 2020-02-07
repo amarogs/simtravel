@@ -278,7 +278,7 @@ class SimulationAnalysis(Simulation):
 
         # Plot the data
         y = self.units.simulation_speed_to_kmh(self.velocities_mean['speed'])
-
+        
         yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])
         x = self.steps_to_minutes(len(y))
 

@@ -19,6 +19,7 @@ class Simulator:
         self.avenues = self.simulation.avenues
         # Controls the update.
         self.current_city_state = {pos: 1 for pos in self.simulation.city_map}
+
         self.new_occupations = []
         self.new_releases = []
 
@@ -57,7 +58,8 @@ class Simulator:
         if self.compute_next_position(vehicle, vehicle.destination, electric):
             # If we have reached the destination:
             # set the position as a free position
-            self.new_releases.append(vehicle.pos)
+            self.current_city_state[vehicle.pos]  =1
+            #self.new_releases.append(vehicle.pos)
             # set the vehicles' state to at destination
             vehicle.state = States.AT_DEST
             # set the amount of time the vehicle must
@@ -82,7 +84,8 @@ class Simulator:
 
         It makes the vehicle invisible to the traffic.
         """
-        self.new_releases.append(vehicle.pos) 
+        self.current_city_state[vehicle.pos] = 1
+        #self.new_releases.append(vehicle.pos) 
         
         vehicle.state = States.NO_BATTERY
 
@@ -103,7 +106,8 @@ class Simulator:
 
         if self.compute_next_position(vehicle, vehicle.station.pos):
             # Free up the position
-            self.new_releases.append(vehicle.pos)
+            self.current_city_state[vehicle.pos] = 1
+            #self.new_releases.append(vehicle.pos)
             # Store the seeking time
             self.seeking_history[vehicle.id].append(vehicle.seeking)
             
@@ -234,8 +238,10 @@ class Simulator:
 
     def update_city_and_vehicle(self, vehicle, choice):
         """Function that updates the city state and the vehicle position """
-        self.new_releases.append(vehicle.pos) # Set the current position as free
-        self.new_occupations.append(choice) # Set the chosen position as occuppied
+        self.current_city_state[vehicle.pos] =1
+        self.current_city_state[choice] = 0
+        #self.new_releases.append(vehicle.pos) # Set the current position as free
+        #self.new_occupations.append(vehicle.) # Set the chosen position as occuppied
         vehicle.pos = choice  # Update the vehicle position
     def update_city_state(self):
         """Based on the cells marked by the vehicles, update the dictionary of the
@@ -257,14 +263,14 @@ class Simulator:
                 self.next_function[vehicle.state](vehicle)
             
         # Update the city state
-        self.update_city_state()
+        #self.update_city_state()
 
         # Now advance all the vehicles
         for vehicle in self.simulation.vehicles:
             self.next_function[vehicle.state](vehicle)
 
         # Set the current city state to the new one
-        self.update_city_state()
+        #self.update_city_state()
 
         
  
