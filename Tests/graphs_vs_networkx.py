@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 
-from simtravel.analysis.analysis import SimulationAnalysis
-from simtravel.simulator.simulation import Simulation
+from src.analysis.analysis import SimulationAnalysis
+from src.simulator.simulation import Simulation
 
-from simtravel.models.cities import SquareCity
-from simtravel.simulator.simulator import *
-from simtravel.visual.graphics import VisualRepresentation
+from src.models.cities import SquareCity
+from src.simulator.simulator import *
+from src.visual.graphics import VisualRepresentation
 
 start = time.time()
 simulation = Simulation(0.5, 0.3, "four")

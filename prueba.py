@@ -1,15 +1,15 @@
-from simtravel.analysis.analysis import SimulationAnalysis, GlobalAnalysis
-from simtravel.visual.graphics import VisualRepresentation
+from src.analysis.analysis import SimulationAnalysis, GlobalAnalysis
+from src.visual.graphics import VisualRepresentation
 import time
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
-from simtravel.simulator.simulation import Simulation
-from simtravel.models.cities import SquareCity
+from src.simulator.simulation import Simulation
+from src.models.cities import SquareCity
 import pyximport
 pyximport.install()
 
-from simtravel.graphlib.pygraphFunctions import Graph
+from src.graphlib.pygraphFunctions import Graph
 simulation = Simulation(0.5, 0.3, "four")
 
 simulation.set_simulation_units(

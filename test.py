@@ -1,16 +1,16 @@
 # import pyximport
 # pyximport.install()
 
-from simtravel.models.cities import SquareCity
-from simtravel.simulator.simulation import Simulation
+from src.models.cities import SquareCity
+from src.simulator.simulation import Simulation
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
 
 import time
 
-from simtravel.visual.graphics import VisualRepresentation
-from simtravel.analysis.analysis import SimulationAnalysis, GlobalAnalysis
+from src.visual.graphics import VisualRepresentation
+from src.analysis.analysis import SimulationAnalysis, GlobalAnalysis
 
 times = []
 for _ in range(10):
@@ -47,7 +47,7 @@ print("Media: ", np.mean(times))
 
 # import pyximport
 # pyximport.install()
-# from simtravel.analysis.analysis import *
+# from src.analysis.analysis import *
 # import numpy as np
 
 # attrs = get_attributes_results("results")

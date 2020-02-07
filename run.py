@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from simtravel.models.cities import SquareCity
-from simtravel.simulator.simulation import Simulation
+from src.models.cities import SquareCity
+from src.simulator.simulation import Simulation
 import parameters as params
 import sys
 from multiprocessing import Pool

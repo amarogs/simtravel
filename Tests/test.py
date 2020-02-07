@@ -1,5 +1,5 @@
-from simtravel.models.cities import SquareCity
-from simtravel.simulator.simulation import Simulation
+from src.models.cities import SquareCity
+from src.simulator.simulation import Simulation
 import h5py
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,8 +7,8 @@ import pyximport
 pyximport.install()
 import time
 
-from simtravel.visual.graphics import VisualRepresentation
-from simtravel.analysis.analysis import SimulationAnalysis, GlobalAnalysis
+from src.visual.graphics import VisualRepresentation
+from src.analysis.analysis import SimulationAnalysis, GlobalAnalysis
 
 start = time.time()
 simulation = Simulation(0.5, 0.3, "four")
@@ -43,7 +43,7 @@ print("Total: ", time.time()-start)
 
 import pyximport
 pyximport.install()
-from simtravel.analysis.analysis import *
+from src.analysis.analysis import *
 import numpy as np
 
 attrs = get_attributes_results("results")

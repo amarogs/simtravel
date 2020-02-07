@@ -1429,7 +1429,7 @@ static const char __pyx_k_towards_destination[] = "towards_destination";
 static const char __pyx_k_Simulator_no_battery[] = "Simulator.no_battery";
 static const char __pyx_k_compute_next_position[] = "compute_next_position";
 static const char __pyx_k_Simulator_compute_idle[] = "Simulator.compute_idle";
-static const char __pyx_k_simtravel_models_states[] = "simtravel.models.states";
+static const char __pyx_k_simtravel_models_states[] = "src.models.states";
 static const char __pyx_k_update_city_and_vehicle[] = "update_city_and_vehicle";
 static const char __pyx_k_Simulator_at_destination[] = "Simulator.at_destination";
 static const char __pyx_k_Simulator_choose_station[] = "Simulator.choose_station";
@@ -1440,7 +1440,7 @@ static const char __pyx_k_Simulator_check_for_a_charger[] = "Simulator.check_for
 static const char __pyx_k_Simulator_towards_destination[] = "Simulator.towards_destination";
 static const char __pyx_k_Simulator_compute_next_position[] = "Simulator.compute_next_position";
 static const char __pyx_k_Simulator_update_city_and_vehicl[] = "Simulator.update_city_and_vehicle";
-static const char __pyx_k_simtravel_simulator_cythonGraphF[] = "simtravel.simulator.cythonGraphFunctions";
+static const char __pyx_k_simtravel_simulator_cythonGraphF[] = "src.simulator.cythonGraphFunctions";
 static PyObject *__pyx_n_s_AStar;
 static PyObject *__pyx_n_s_AT_DEST;
 static PyObject *__pyx_n_s_BATTERY_LOWER;
@@ -6823,7 +6823,7 @@ if (!__Pyx_RefNanny) {
  * import numpy as np
  * import random             # <<<<<<<<<<<<<<
  * 
- * from simtravel.models.states import States
+ * from src.models.states import States
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_random, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6833,8 +6833,8 @@ if (!__Pyx_RefNanny) {
   /* "simulator.pyx":6
  * import random
  * 
- * from simtravel.models.states import States             # <<<<<<<<<<<<<<
- * from simtravel.simulator.cythonGraphFunctions import AStar
+ * from src.models.states import States             # <<<<<<<<<<<<<<
+ * from src.simulator.cythonGraphFunctions import AStar
  * 
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
@@ -6853,8 +6853,8 @@ if (!__Pyx_RefNanny) {
 
   /* "simulator.pyx":7
  * 
- * from simtravel.models.states import States
- * from simtravel.simulator.cythonGraphFunctions import AStar             # <<<<<<<<<<<<<<
+ * from src.models.states import States
+ * from src.simulator.cythonGraphFunctions import AStar             # <<<<<<<<<<<<<<
  * 
  * class Simulator:
  */
@@ -6873,7 +6873,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "simulator.pyx":9
- * from simtravel.simulator.cythonGraphFunctions import AStar
+ * from src.simulator.cythonGraphFunctions import AStar
  * 
  * class Simulator:             # <<<<<<<<<<<<<<
  * 
@@ -7081,7 +7081,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
   /* "simulator.pyx":9
- * from simtravel.simulator.cythonGraphFunctions import AStar
+ * from src.simulator.cythonGraphFunctions import AStar
  * 
  * class Simulator:             # <<<<<<<<<<<<<<
  * 
