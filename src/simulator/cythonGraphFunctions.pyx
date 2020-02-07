@@ -14,13 +14,13 @@ cpdef void configure_lattice_size(int lattice_size,dict city_map):
     CITY = city_map
     LATTICE_SIZE = lattice_size
 
-cpdef int lattice_distance(tuple pos1, tuple pos2):
+cpdef int lattice_distance(int x1, int y1, int x2, int y2):
     global LATTICE_SIZE
     cdef int dx, dy
-    dx = cabs(pos1[0] - pos2[0])
+    dx = cabs(x1-x2)
     if dx > int(LATTICE_SIZE/2):
         dx = LATTICE_SIZE - dx
-    dy = cabs(pos1[1] - pos2[1])
+    dy = cabs(y1-y2)
     if dy > int(LATTICE_SIZE/2):
         dy = LATTICE_SIZE - dy
     return (dx + dy)
@@ -103,7 +103,7 @@ cdef class AStar():
         cdef int depth = 0 #Controls the number of entries in the path we want to compute
         cdef tuple neighbour, current
         
-        open_set.insert(start, lattice_distance(start, goal))
+        open_set.insert(start, lattice_distance(start[0], start[1], goal[0], goal[1]))
 
 
         while not open_set.is_empty():
@@ -128,7 +128,7 @@ cdef class AStar():
 
                     if neighbour not in g_score or new_g_score < g_score[neighbour]:
                         #Add the neighbour with the g_score to the heap
-                        open_set.insert(neighbour, new_g_score + lattice_distance(neighbour, goal))
+                        open_set.insert(neighbour, new_g_score + lattice_distance(neighbour[0],neighbour[1], goal[0], goal[1]))
                         g_score[neighbour] = new_g_score
                         came_from[neighbour] = current
                 

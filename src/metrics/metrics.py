@@ -8,45 +8,38 @@ import h5py
 
 
 class SimulationSnapshot(object):
-
+    
     def __init__(self, vehicles):
         super().__init__()
-        # For each vehicle, store its position
-        self.v_pos = {v.id: copy.copy(v.pos) for v in vehicles}
-        # For each vehicle, store its state
-        self.v_state = {v.id: copy.copy(v.state) for v in vehicles}
+        # For each vehicle, store its position and state
+        self.x_pos, self.y_pos, self.state = [], [], []
+        for v in vehicles:
+            self.state.append(v.state)    
+            self.x_pos.append(v.pos[0])
+            self.y_pos.append(v.pos[1])
+        
 
     def mean_velocities(self, previous, delta_tsteps):
         """Given a previous snapshot, computes the mean speed of
         the vehicles moving (mean_speed) and the mean speed of all
         vehicles (mean_mobility). """
 
-        previous_state = previous.v_state
-        previous_pos = previous.v_pos
+        total_distance = 0
+        moving_vehicles = 0
 
-        moving_distance, total_distance = 0, 0
-        moving_counter = 0
+        for i in range(len(self.x_pos)):
+            curr_x,curr_y, curr_st = self.x_pos[i], self.y_pos[i], self.state[i]
+            prev_x, prev_y, prev_st = previous.x_pos[i], previous.y_pos[i], previous.state[i]
 
-        for v, state in self.v_state.items():
-            # Compute the distance from the two snapshots
-            distance = lattice_distance(self.v_pos[v], previous_pos[v])
-            
-                
-            total_distance += distance
+            total_distance += lattice_distance(curr_x, curr_y, prev_x, prev_y)
+            if curr_st in States.moving_states() and prev_st in States.moving_states():
+                moving_vehicles += 1
 
-            if state in States.moving_states() and previous_state[v] in States.moving_states():
-                # If the vehicle is moving rigth now and was moving before, take it into account
-                moving_distance += distance
-                moving_counter += 1
-
-        # Compute the aggregated speed and mobility
-        moving_distance, total_distance = moving_distance / \
-            delta_tsteps, total_distance/delta_tsteps
-        
-        if moving_counter == 0:
-            return (0, total_distance/len(previous_pos))
+        if moving_vehicles == 0:
+             return 0, total_distance/(delta_tsteps*len(self.x_pos))
         else:
-            return (moving_distance/moving_counter, total_distance/len(previous_pos))
+            return total_distance/(delta_tsteps*moving_vehicles), total_distance/(delta_tsteps*len(self.x_pos))
+        
 
 
 class SimulationMetric(object):
@@ -67,6 +60,7 @@ class SimulationMetric(object):
         self.delta_tsteps = delta_tsteps
         self.heat_map_evolution = []
 
+ 
         # Compute the global metrics
         self.mean_seeking = None
         self.mean_queueing = None
@@ -81,6 +75,8 @@ class SimulationMetric(object):
         self.update_states(ev_vehicles)
         self.update_heat_map(vehicles, 0)
         self.update_occupation(stations)
+        self.seeking_history = {v.id: [] for v in ev_vehicles}
+        self.queueing_history = {v.id: [] for v in ev_vehicles}
 
     def update_data(self, vehicles, ev_vehicles, stations, current, previous, tstep):
         """Method that updates the internal variables with the
@@ -127,7 +123,7 @@ class SimulationMetric(object):
         the evolution lists for those parameters. """
 
         speed, mobility = current.mean_velocities(previous, self.delta_tsteps)
-        
+
         self.mean_speed_evolution.append(speed)
         self.mean_mobility_evolution.append(mobility)
 
@@ -137,23 +133,20 @@ class SimulationMetric(object):
         for st in stations:
             self.occupation_history[st.pos].append(st.occupation)
 
-    def compute_seeking_queueing(self, ev_vehicles):
+    def compute_seeking_queueing(self, seeking_history, queueing_history):
         """Aggregates the data from the vehicles. For each
         vehicle compute the mean number of steps used in seeking
         and the mean number of steps used in queueing, then compute
         a global average mean of the simulation. """
-        self.mean_seeking = np.mean([np.sum(ev.seeking_history)
-                                     for ev in ev_vehicles])
-        self.mean_queueing = np.mean([np.sum(ev.queueing_history)
-                                      for ev in ev_vehicles])
 
-    def store_idle_charging(self, ev_vehicles):
-        self.idle_distribution = [ev.idle_history for ev in ev_vehicles]
-        self.charging_distribution = [
-            ev.charging_history for ev in ev_vehicles]
+        self.mean_seeking = np.mean([np.mean(seeking) for (
+            _, seeking) in seeking_history.items() if len(seeking)])
 
+        self.mean_queueing = np.mean([np.mean(queueing) for (
+            _, queueing) in queueing_history.items() if len(queueing)])
 
-    def write_results(self, file, base_directory, ev_vehicles):
+ 
+    def write_results(self, file, base_directory, seeking_history, queueing_history):
         """Given a openned and writable HDF5 file, and the 
         base directory where we are going to write, takes the
         data from the simulation and stores it in the file. """
@@ -197,28 +190,15 @@ class SimulationMetric(object):
             dset.write_direct(np.array(station_occupation))
 
         # Write seeking and queueing
-        self.compute_seeking_queueing(ev_vehicles)
+        self.compute_seeking_queueing(seeking_history, queueing_history)
         directory = base_directory + "global/"
 
-        dset = file.create_dataset(directory + "seeking", (1,), dtype="float32")
+        dset = file.create_dataset(
+            directory + "seeking", (1,), dtype="float32")
         dset.write_direct(np.array(self.mean_seeking))
 
-        dset = file.create_dataset(directory + "queueing", (1,), dtype="float32")
+        dset = file.create_dataset(
+            directory + "queueing", (1,), dtype="float32")
         dset.write_direct(np.array(self.mean_queueing))
 
-        # # Write idle data
-        # directory = base_directory + "idle/"
-        # for ev in ev_vehicles:
-        #     data = ev.idle_history
-        #     if len(data) > 0:
-        #         dset = file.create_dataset(directory + str(ev.id), (len(data),), dtype="uint32")
-        #         dset.write_direct(np.array(data))
-        
-        # # Write charging data
-        # directory = base_directory + "charging/"
-        # for ev in ev_vehicles:
-        #     data = ev.charging_history
-        #     if len(data) > 0:
-        #         dset = file.create_dataset(
-        #             directory + str(ev.id), (len(data),), dtype="uint32")
-        #         dset.write_direct(np.array(data))
+

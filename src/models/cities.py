@@ -166,7 +166,7 @@ class CityBuilder():
                     #                 if i == reference[0] or j == reference[1]]
                     return nearest_cell_type((reference[0]+1, reference[1]+1), type_set)
                 nearest = min(candidates, key=lambda p: lattice_distance(
-                    p, reference))
+                    p[0], p[1], reference[0], reference[1]))
 
             return nearest
 
@@ -425,7 +425,7 @@ class SquareCity(CityBuilder):
                 s_distance = 0
                 for t in segment_list:
                     if s != t:
-                        s_distance += lattice_distance(s, t)
+                        s_distance += lattice_distance(s[0], s[1], t[0], t[1])
 
                 segment_dist.append(s_distance/len(segment_list))
             mid_points.append(

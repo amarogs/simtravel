@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import copy
-import numpy as np
-import random
 from .states import States
 
 
 class Vehicle(object):
+
+
     def __init__(self, initial_pos, initial_wait_time):
         """pos is the vehicle's original position and wait_time is the amount of
         time a vehicle must spent before taking the first destination """
@@ -19,7 +18,7 @@ class Vehicle(object):
         self.state = None
         # Time left waiting at the destination or reacharging if applied to an EV.
         self.wait_time = None
-        self.idle_history = None
+        
         # Attributes to restart the vehicle
         self.initial_wait_time = initial_wait_time
         self.initial_pos = initial_pos
@@ -33,33 +32,31 @@ class Vehicle(object):
         self.destination = self.initial_pos
         self.wait_time = self.initial_wait_time
         self.state = States.AT_DEST
-        self.idle_history = []
+        
 
 
 class ElectricVehicle(Vehicle):
     def __init__(self, initial_pos, initial_wait_time, initial_battery):
         
-
+        # Total battery in time steps that the vehicle has
         self.battery = None
         self.initial_battery = initial_battery
 
-        self.desired_charge = None  # Desired charge that the vehicle will top up
-
-        # Metrics we want to store
-        self.seeking_history = []
-        self.queueing_history = []
-        self.charging_history = []
+        # Last time spent seeking or queueing
+        self.seeking = None
+        self.queueing = None
 
         # Station that the vehicle is headed to.
         self.station = None
 
-
         super(ElectricVehicle, self).__init__(initial_pos, initial_wait_time)
         self.restart()
+
     def restart(self):
         self.battery = self.initial_battery
-        self.seeking_history = []
-        self.queueing_history = []
-        self.charging_history = []
+
+        self.seeking = None
+        self.queueing = None
+
         self.station = None
         super(ElectricVehicle, self).restart()

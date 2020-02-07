@@ -16,10 +16,19 @@ class Simulator:
 
         # Set attributes
         self.simulation = simulation
-        self.city_state = {pos: 1 for pos in self.simulation.city_map}
-        self.city_positions = list(simulation.city_map.keys())
-        self.astar = AStar(200)
+        self.avenues = self.simulation.avenues
+        # Controls the update.
+        self.current_city_state = {pos: 1 for pos in self.simulation.city_map}
+        self.new_occupations = []
+        self.new_releases = []
 
+        # A list of positions to take random destinations.
+        self.city_positions = list(simulation.city_map.keys())
+        # Object that models the A* path algorithm 
+        self.astar = AStar(200)
+        # Global data from the simulation
+        self.seeking_history = None
+        self.queueing_history = None
         # Dictionary where the key is a state and the value the function
         # associated with that state
         self.next_function = {States.AT_DEST: self.at_destination,
@@ -29,7 +38,13 @@ class Simulator:
                               States.NO_BATTERY: self.no_battery}
 
     def restart(self):
-        self.city_state = {pos: 1 for pos in self.simulation.city_map}
+        self.current_city_state = {pos: 1 for pos in self.simulation.city_map}
+        self.new_occupations = []
+        self.new_releases = []
+        
+        self.seeking_history = {v.id:[] for v in self.simulation.ev_vehicles}
+        self.queueing_history = {v.id: [] for v in self.simulation.ev_vehicles}
+
     def choose_station(self, pos):
         return random.choice(self.simulation.stations_map[pos])
 
@@ -42,13 +57,13 @@ class Simulator:
         if self.compute_next_position(vehicle, vehicle.destination, electric):
             # If we have reached the destination:
             # set the position as a free position
-            self.city_state[vehicle.pos] = 1
+            self.new_releases.append(vehicle.pos)
             # set the vehicles' state to at destination
             vehicle.state = States.AT_DEST
             # set the amount of time the vehicle must
             # stay idle at destination
             vehicle.wait_time = self.compute_idle()
-            vehicle.idle_history.append(vehicle.wait_time)
+            
         elif electric:
             if vehicle.battery <= self.simulation.BATTERY_LOWER:
                 # The vehicle is running out of battery and needs to recharge
@@ -67,7 +82,8 @@ class Simulator:
 
         It makes the vehicle invisible to the traffic.
         """
-        self.city_state[vehicle.pos] = 1
+        self.new_releases.append(vehicle.pos) 
+        
         vehicle.state = States.NO_BATTERY
 
     def at_destination(self, vehicle):
@@ -87,9 +103,10 @@ class Simulator:
 
         if self.compute_next_position(vehicle, vehicle.station.pos):
             # Free up the position
-            self.city_state[vehicle.pos] = 1
+            self.new_releases.append(vehicle.pos)
             # Store the seeking time
-            vehicle.seeking_history.append(vehicle.seeking)
+            self.seeking_history[vehicle.id].append(vehicle.seeking)
+            
             # Start the counter for queueing
             vehicle.queueing = 0
             # Increase the occupation counter
@@ -106,15 +123,18 @@ class Simulator:
         charger_available = False
         if vehicle.station.charger_available():
             charger_available = True
-            vehicle.queueing_history.append(vehicle.queueing)
+            self.queueing_history[vehicle.id].append(vehicle.queueing)
+            
             # Set the next state to charging
             vehicle.state = States.CHARGING
             # Set the goal charge
-            vehicle.desired_charge = self.compute_battery()
-            vehicle.charging_history.append(vehicle.desired_charge)
+            goal_charge = self.compute_battery()
+            
             # Compute the charge time
             vehicle.wait_time = int(self.simulation.units.steps_to_recharge(
-                vehicle.desired_charge-vehicle.battery))
+                goal_charge-vehicle.battery))
+            # Update the battery of the vehicle
+            vehicle.battery = goal_charge
         return charger_available
 
     def queueing(self, vehicle):
@@ -129,7 +149,6 @@ class Simulator:
             # The vehicle has waited long enough
             vehicle.station.vehicle_leaving()
             vehicle.station = None
-            vehicle.battery = vehicle.desired_charge
             vehicle.state = States.TOWARDS_DEST
             vehicle.path = self.astar.new_path(vehicle.pos, vehicle.destination)
 
@@ -181,7 +200,7 @@ class Simulator:
 
         vehicle_moved = False
 
-        if self.city_state[choice]:
+        if self.current_city_state[choice]:
             # If the position of the next step in the path is available, move to it
             self.update_city_and_vehicle(vehicle, choice)
             vehicle_moved = True
@@ -204,7 +223,7 @@ class Simulator:
         """Move the vehicle to an available position in the neighbourhood. Returns True if there is
         at least one position available, False otherwise."""
         candidates = [
-            pos for (pos, tp) in self.simulation.city_map[vehicle.pos] if self.city_state[pos]]
+            pos for (pos, tp) in self.simulation.city_map[vehicle.pos] if self.current_city_state[pos]]
 
         if len(candidates):
             self.update_city_and_vehicle(vehicle, random.choice(candidates))
@@ -215,15 +234,40 @@ class Simulator:
 
     def update_city_and_vehicle(self, vehicle, choice):
         """Function that updates the city state and the vehicle position """
-        self.city_state[vehicle.pos] = 1  # Set the current position as free
-        self.city_state[choice] = 0  # Set the chosen position as occuppied
-        # vehicle.ppos = vehicle.pos  # Record the previous position
+        self.new_releases.append(vehicle.pos) # Set the current position as free
+        self.new_occupations.append(choice) # Set the chosen position as occuppied
         vehicle.pos = choice  # Update the vehicle position
+    def update_city_state(self):
+        """Based on the cells marked by the vehicles, update the dictionary of the
+        state of the city accordingly."""
+
+        for pos in self.new_occupations:
+            self.current_city_state[pos] = 0
+        for pos in self.new_releases:
+            self.current_city_state[pos] = 1
+
+        self.new_releases, self.new_occupations = [], []
 
     def next_step(self):
         """For each vehicle, computes the next step in their algorithm."""
+        
+        # Advance only the vehicles in the avenues
+        for vehicle in self.simulation.vehicles:
+            if vehicle.pos in self.avenues:
+                self.next_function[vehicle.state](vehicle)
+            
+        # Update the city state
+        self.update_city_state()
+
+        # Now advance all the vehicles
         for vehicle in self.simulation.vehicles:
             self.next_function[vehicle.state](vehicle)
+
+        # Set the current city state to the new one
+        self.update_city_state()
+
+        
+ 
 
 
 

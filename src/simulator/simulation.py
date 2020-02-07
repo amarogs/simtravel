@@ -56,8 +56,10 @@ class Simulation():
         self.BLOCK_SCALE = None
         self.city_map = None
         self.city_matrix = None
+        self.avenues = None
         self.SIZE = None
         self.STR_RATE = None
+        
 
         # Attributes filled in the method stations_placement()
         self.TOTAL_PLUGS = None  # Total number of plugs in the city
@@ -88,6 +90,7 @@ class Simulation():
         #self.graph = Graph(self.city_map_graph)
         
         self.city_matrix = self.city_builder.city_matrix
+        self.avenues = self.city_builder.avenues
         self.SCALE = scale
         self.BLOCK_SCALE = block_scale
         self.SIZE = self.city_builder.SIZE
@@ -279,7 +282,7 @@ class Simulation():
 
         with h5py.File(self.filename+".hdf5", "a") as f:
             metrics.write_results(
-                f, "/"+str(repetition)+"/", self.ev_vehicles)
+                f, "/"+str(repetition)+"/", self.simulator.seeking_history, self.simulator.queueing_history)
 
     def run(self, total_time, measure_period, repetitions, visual=None):
         """ Method to execute the simulation. The attributes are given
@@ -292,8 +295,10 @@ class Simulation():
         # Convert the time to simulation steps
         total_tsteps = int(self.units.minutes_to_steps(total_time*60))
         delta_tsteps = int(self.units.minutes_to_steps(measure_period))
+
         if delta_tsteps == 0:
             delta_tsteps = 1
+
         self.TOTAL_TSTEPS = total_tsteps
         self.DELTA_TSTEPS = delta_tsteps
         self.REPETITIONS = repetitions
@@ -352,8 +357,6 @@ class Simulation():
                 current_snapshot = SimulationSnapshot(self.vehicles)
                 metrics.update_data(self.vehicles, self.ev_vehicles, self.stations,
                                     current_snapshot, previous_snapshot, current_tstep)
-
-
                 previous_snapshot = current_snapshot
 
             # Check if we have to display a progress message
