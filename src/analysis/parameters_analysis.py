@@ -12,6 +12,7 @@ COLORS = {States.TOWARDS_DEST: 'blue', States.AT_DEST: 'purple', States.TOWARDS_
 
 # To make the graphs look better we can perform a moving average.
 WINDOW_SIZE = 201 # This value must be odd
+N_BINS = 200
 # This is the size of the window of the moving average.
 
 """RUN configuration """

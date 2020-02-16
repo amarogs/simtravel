@@ -37,10 +37,7 @@ class SimulationSnapshot(object):
 
             if curr_st in States.moving_states() or prev_st in States.moving_states():
                 moving_vehicles += 1
-        # if moving_vehicles != 0:
-        #     print("Total distance: {} Moving vehicles: {} Total vehicles: {} speed: {} delta:{}".format(total_distance, moving_vehicles, len(self.x_pos), total_distance/(delta_tsteps * moving_vehicles), delta_tsteps))
-        # else:
-        #     print("Nadie se mueve")
+
         if moving_vehicles == 0:
             return 0, total_distance/(delta_tsteps*len(self.x_pos))
         else:

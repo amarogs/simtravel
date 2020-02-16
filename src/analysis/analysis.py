@@ -27,10 +27,6 @@ class SimulationAnalysis(Simulation):
 
         self.filepath = filepath
 
-        # Check if the analyzed folder exists
-        path = "results/analyzed"
-        if not os.path.exists(path):
-            os.makedirs(path)
 
         # load the data into the object
         self.load_data()
@@ -172,6 +168,15 @@ class SimulationAnalysis(Simulation):
 
     def steps_to_minutes(self, length):
         return self.units.steps_to_minutes(np.arange(length)*self.DELTA_TSTEPS)
+    def binning_data(self, x, y):
+        indices = np.linspace(0, len(x), params.N_BINS, dtype='uint32')
+    
+        new_x, new_y = [], []
+        for i in range(0,len(indices)-1,2):
+            new_y.append(np.mean(y[indices[i]: indices[i+1]]))
+            
+            new_x.append(np.mean(x[indices[i]: indices[i+1]]))
+        return new_x, new_y
 
     def graph_states_evolution(self):
 
@@ -179,8 +184,10 @@ class SimulationAnalysis(Simulation):
         x = self.steps_to_minutes(len(self.states_mean['States.AT_DEST']))
 
         for s in States:
-            plt.errorbar(x, self.states_mean[str(s)],
-                        yerr=self.states_std[str(s)], color=params.COLORS[s],
+            new_x, new_y = self.binning_data(x, self.states_mean[str(s)])
+            _, new_err = self.binning_data(x, self.states_std[str(s)])
+
+            plt.errorbar(new_x, new_y, yerr=new_err, color=params.COLORS[s],
                         label=params.STATE_NAMES[s], linewidth=2)
 
         plt.xlabel("Time (minutes)")
@@ -278,11 +285,14 @@ class SimulationAnalysis(Simulation):
 
         # Plot the data
         y = self.units.simulation_speed_to_kmh(self.velocities_mean['speed'])
-        
-        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])
         x = self.steps_to_minutes(len(y))
+        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])
+        
+        new_x, new_y = self.binning_data(x,y)
+        _, new_yerr = self.binning_data(x, yerr)
 
-        plt.errorbar(x, y, yerr=yerr, color="k", label="Mean speed evolution")
+        plt.errorbar(new_x, new_y, yerr=new_yerr, color="k",
+                     label="Mean speed evolution")
 
         plt.legend()
 
@@ -293,11 +303,14 @@ class SimulationAnalysis(Simulation):
         plt.ylabel("Mean mobility (km/h)")
 
         y = self.units.simulation_speed_to_kmh(self.velocities_mean['mobility'])
-
-        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['mobility'])
         x = self.steps_to_minutes(len(y))
+        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['mobility'])
+        
+        new_x, new_y = self.binning_data(x, y)
+        _, new_yerr = self.binning_data(x, yerr)
 
-        plt.errorbar(x, y, yerr=yerr, color="k",label="Mean mobility evolution")
+
+        plt.errorbar(new_x, new_y, yerr=new_yerr, color="k",label="Mean mobility evolution")
 
         plt.legend()
 
@@ -382,8 +395,6 @@ class GlobalAnalysis():
 
         # Set the path to store the figures and pdf
         self.path = "results/analyzed/global"
-        if not os.path.exists("results/analyzed/global"):
-            os.makedirs(self.path)
 
     def global_matrix_shape(self, attrs):
         total_evd, total_tfd, total_layout = set(), set(), set()

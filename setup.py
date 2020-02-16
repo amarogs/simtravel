@@ -6,6 +6,7 @@ from Cython.Build import cythonize
 setup(
     ext_modules=cythonize([
         Extension("src.simulator.simulator", ["src/simulator/simulator.pyx"]), Extension(
-            "src.simulator.cythonGraphFunctions", ["src/simulator/cythonGraphFunctions.pyx"])
+            "src.simulator.cythonGraphFunctions", ["src/simulator/cythonGraphFunctions.pyx"]),
+        Extension("src.simulator.simulation", ["src/simulator/simulation.pyx"])
     ])
 )
