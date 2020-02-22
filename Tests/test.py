@@ -43,36 +43,3 @@ for _ in range(1):
 
 print("Media: ", np.mean(times))
 
-# with h5py.File(simulation.filename + ".hdf5", "r") as f:
-#     for k, vl in f.attrs.items():
-#         print(k,vl)
-#     direct = "/0/heat_map/2"
-#     dst = f[direct]
-#     a = np.zeros(dst.shape)
-#     dst.read_direct(a)
-#     plt.imshow(a, cmap="hot")
-#     plt.show()
-
-
-
-# import pyximport
-# pyximport.install()
-# from src.analysis.analysis import *
-# import numpy as np
-
-# attrs = get_attributes_results("results")
-# simulations = [analize_simulation(attr) for attr in attrs]
-# g = GlobalAnalysis(attrs, 'seeking', 'queueing', 'speed', 'mobility', 'total', 'elapsed')
-# g.load_matrices(simulations)
-# g.load_single_attribute(simulations, 'TOTAL_VEHICLES')
-# g.create_report()
-
-# analysis = SimulationAnalysis(0.5, 0.3, 'four')
-# analysis.load_data("results/0.5#0.3#four.hdf5")
-# analysis.generate_report()
-# analysis.graph_states_evolution()
-
-# analysis.graph_occupation_evolution()
-# analysis.heat_map_graph()
-# analysis.graph_velocities()
-

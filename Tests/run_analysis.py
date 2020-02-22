@@ -16,6 +16,12 @@ if len(sys.argv) == 2:
 else:
     NUM_PROCESS = 1
 
+# Create the paths to store the results
+paths = ["results/analyzed", "results/analyzed/global"]
+for path in paths:
+    if not os.path.exists(path):
+        os.makedirs(path)
+
 
 def get_attributes_results(path):
     """Given a path were the HDF5 files from simulations are stored, 
