@@ -333,7 +333,9 @@ class Simulation():
             if visual == None:
                 self.run_simulator(metrics)
             else:
-                self.run_simulator_visual(visual)
+                self.run_simulator_visual(metrics, visual)
+                
+                
 
             # Store the data into an HDF5 file.
             self.write_results(i, metrics)
@@ -364,10 +366,38 @@ class Simulation():
             if current_tstep in self.progress_tsteps:
                 self.print_progress(current_tstep)
 
-    def run_simulator_visual(self, visual):
-        """Runs the simulation on the simulator and updates the
-        visual vehicles. It does not produce data as output. """
-        for current_tstep in range(1, self.TOTAL_TSTEPS+1):
+    def run_simulator_visual(self, metrics, visual):
+        """This method controls the flow of the simulator, saving the
+        data and displaying a progress message. """
+
+        
+        self.previous_snapshot = SimulationSnapshot(self.vehicles)
+        def next_frame():
+
+            # Compute next step of the simulation
             self.simulator.next_step()
-            visual.update_vehicles()
+            visual.update()
+            current_tstep = visual.current_tstep
+            # Check if we have to update the data collection
+            if current_tstep % self.DELTA_TSTEPS == 0:
+                current_snapshot = SimulationSnapshot(self.vehicles)
+                metrics.update_data(self.vehicles, self.ev_vehicles, self.stations, current_snapshot, self.previous_snapshot, current_tstep)
+                self.previous_snapshot = current_snapshot
+
+            # Check if we have to display a progress message
+            if current_tstep in self.progress_tsteps:
+                self.print_progress(current_tstep)
+
+            # Increment the steps counter
+            visual.current_tstep += 1
+
+            # Check for termination
+            if visual.current_tstep == self.TOTAL_TSTEPS:
+                "Terminar la visualizacion"
+                pass
+
+
+            
+        visual.beginRepresentation(next_frame)
+            
 

@@ -258,9 +258,9 @@ class Simulator:
         """For each vehicle, computes the next step in their algorithm."""
         
         # Advance only the vehicles in the avenues
-        for vehicle in self.simulation.vehicles:
-            if vehicle.pos in self.avenues:
-                self.next_function[vehicle.state](vehicle)
+        #for vehicle in self.simulation.vehicles:
+        #    if vehicle.pos in self.avenues:
+        #        self.next_function[vehicle.state](vehicle)
             
         # Update the city state
         #self.update_city_state()
