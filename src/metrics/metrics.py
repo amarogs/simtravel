@@ -15,8 +15,8 @@ class SimulationSnapshot(object):
         self.x_pos, self.y_pos, self.state = [], [], []
         for v in vehicles:
             self.state.append(v.state)
-            self.x_pos.append(v.pos[0])
-            self.y_pos.append(v.pos[1])
+            self.x_pos.append(v.cell.pos[0])
+            self.y_pos.append(v.cell.pos[1])
 
     def mean_velocities(self, previous, delta_tsteps):
         """Given a previous snapshot, computes the mean speed of
@@ -54,7 +54,7 @@ class SimulationMetric(object):
         self.mean_speed_evolution = []
         self.mean_mobility_evolution = []
         # Compute metrics about the occupation of stations
-        self.occupation_history = {st.pos: [] for st in stations}
+        self.occupation_history = {st.cell.pos: [] for st in stations}
         # Compute metrics about the placement of vehicles
         self.heat_map = {pos: 0 for pos in city_map}
         self.heat_map_tsteps = [int(((i+1)*total_tsteps)/(num_heat_snapshots*delta_tsteps))*delta_tsteps
@@ -109,7 +109,7 @@ class SimulationMetric(object):
         # First update the global count of the placement of vehicles
         for v in vehicles:
             if v.state in States.moving_states():
-                self.heat_map[v.pos] += 1
+                self.heat_map[v.cell.pos] += 1
 
         # Then, check if we have to make a snapshot of the heat map
         if tstep in self.heat_map_tsteps:
@@ -132,7 +132,7 @@ class SimulationMetric(object):
         """Given the list of stations, count the number of 
         vehicles that they hold and save it to a list. """
         for st in stations:
-            self.occupation_history[st.pos].append(st.occupation)
+            self.occupation_history[st.cell.pos].append(st.occupation())
 
     def compute_seeking_queueing(self, seeking_history, queueing_history):
         """Aggregates the data from the vehicles. For each

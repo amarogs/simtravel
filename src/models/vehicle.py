@@ -5,11 +5,11 @@ from .states import States
 class Vehicle(object):
 
 
-    def __init__(self, initial_pos, initial_wait_time):
+    def __init__(self, initial_cell, initial_wait_time):
         """pos is the vehicle's original position and wait_time is the amount of
         time a vehicle must spent before taking the first destination """
-        self.pos = None  # Current position of the vehicle
-        self.id = hash(str(initial_pos))
+        self.cell = None  # Current cell of the vehicle
+        self.id = hash(str(initial_cell))
         self.destination = None  # Position where the vehicle is heading
         self.path = []  # List of positions to take
         # If True computes a path from the current position to a position in the previous path
@@ -21,22 +21,22 @@ class Vehicle(object):
         
         # Attributes to restart the vehicle
         self.initial_wait_time = initial_wait_time
-        self.initial_pos = initial_pos
+        self.initial_cell = initial_cell
         
         self.restart()
 
     def restart(self):
         """Sets the vehicle to it's original place with all the attributes as
         the start of the simulation."""
-        self.pos = self.initial_pos
-        self.destination = self.initial_pos
+        self.cell = self.initial_cell
+        self.destination = self.initial_cell
         self.wait_time = self.initial_wait_time
         self.state = States.AT_DEST
         
 
 
 class ElectricVehicle(Vehicle):
-    def __init__(self, initial_pos, initial_wait_time, initial_battery):
+    def __init__(self, initial_cell, initial_wait_time, initial_battery):
         
         # Total battery in time steps that the vehicle has
         self.battery = None
@@ -49,7 +49,7 @@ class ElectricVehicle(Vehicle):
         # Station that the vehicle is headed to.
         self.station = None
 
-        super(ElectricVehicle, self).__init__(initial_pos, initial_wait_time)
+        super(ElectricVehicle, self).__init__(initial_cell, initial_wait_time)
         self.restart()
 
     def restart(self):

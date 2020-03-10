@@ -53,9 +53,12 @@ class Simulation():
         # Attributes filled in the method create_city()
         self.city_builder = None
         self.SCALE = None
-        self.BLOCK_SCALE = None
+        self.AV_LENGTH = None
+        self.RB_LENGTH = None
+        self.INTERSEC_LENGTH = None
         self.city_map = None
         self.city_matrix = None
+
         self.avenues = None
         self.SIZE = None
         self.STR_RATE = None
@@ -79,20 +82,20 @@ class Simulation():
         self.CS_POWER = cs_power
         self.AUTONOMY = autonomy
 
-    def create_city(self, Builder, scale=1, block_scale=1):
-        """Builder is a CityBuilder class, scale and block_scale control
-        the final size of the city. """
+    def create_city(self, Builder, RB_LENGTH=6, AV_LENGTH=4*5, INTERSEC_LENGTH=3, SCALE=1):
+        """Builder is a CityBuilder class"""
 
         # Create the city builder
-        self.city_builder = Builder(scale, block_scale)
+        self.city_builder = Builder(RB_LENGTH, AV_LENGTH, INTERSEC_LENGTH,SCALE)
         self.city_map = self.city_builder.city_map
-        self.city_map_graph = self.city_builder.city_map_graph
-        #self.graph = Graph(self.city_map_graph)
-        
         self.city_matrix = self.city_builder.city_matrix
+
         self.avenues = self.city_builder.avenues
-        self.SCALE = scale
-        self.BLOCK_SCALE = block_scale
+        self.SCALE = SCALE
+        self.AV_LENGTH = AV_LENGTH
+        self.RB_LENGTH = RB_LENGTH
+        self.INTERSEC_LENGTH = INTERSEC_LENGTH
+
         self.SIZE = self.city_builder.SIZE
         self.STR_RATE = self.city_builder.STR_RATE
 
@@ -142,8 +145,9 @@ class Simulation():
         stations_map = {}
         for district, positions in stations_pos.items():
             # For each station position in the district, create a Station object
-            district_stations = [Station(pos, plugs_per_station)
+            district_stations = [Station(self.city_map[pos], plugs_per_station)
                                  for pos in positions]
+            
             # For each position inside the district, if it is a drivable cell
             # reference the list of stations.
             (C1, C2, R1, R2) = district
@@ -198,26 +202,26 @@ class Simulation():
         The realeasing follows the same distribution as the idle time spent at a destination."""
 
         # Add constants to the simulation object
-        self.TOTAL_VEHICLES = int(
-            self.STR_RATE * self.SIZE * self.SIZE * self.TF_DEN)
+        self.TOTAL_VEHICLES = int(self.STR_RATE * self.SIZE * self.SIZE * self.TF_DEN)
 
         self.TOTAL_EV = int(self.EV_DEN * self.TOTAL_VEHICLES)
 
         # Create the vehicles, place them on the city.
         # Initially all the vehicles are in a AT_DEST
         # state and so they don't occupy a place.
-        city_positions = list(self.city_map.keys())
-        random.shuffle(city_positions)
+        city_cells = list(self.city_map.values())
+        
+        random.shuffle(city_cells)
 
         ev_vehicles = set()
         vehicles = []
         for _ in range(self.TOTAL_EV):
-            v = ElectricVehicle(city_positions.pop(),
+            v = ElectricVehicle(city_cells.pop(),
                                 self.simulator.compute_idle(), self.simulator.compute_battery())
             vehicles.append(v)
             ev_vehicles.add(v)
         for _ in range(self.TOTAL_VEHICLES-self.TOTAL_EV):
-            v = Vehicle(city_positions.pop(), self.simulator.compute_idle())
+            v = Vehicle(city_cells.pop(), self.simulator.compute_idle())
             vehicles.append(v)
 
         self.vehicles = vehicles
@@ -316,11 +320,15 @@ class Simulation():
         for i in range(repetitions):
             self.repetition = i
 
-            # Restart the vehicles, the stations and the simulator
+            # Restart the cells, vehicles, stations and the simulator
+            for cell in self.city_map.values():
+                cell.occupied = False
             for v in self.vehicles:
                 v.restart()
+
             for st in self.stations:
                 st.restart()
+
             self.simulator.restart()
 
             # Create a metrics object and initilize it
@@ -376,6 +384,7 @@ class Simulation():
 
             # Compute next step of the simulation
             self.simulator.next_step()
+              
             visual.update()
             current_tstep = visual.current_tstep
             # Check if we have to update the data collection

@@ -22,9 +22,9 @@ cyan = (0.000, 1.000, 1.000)
 darkblue = (0.000, 0.000, 0.545)
 darkcyan = (0.000, 0.545, 0.545)
 darkgoldenrod = (0.722, 0.525, 0.043)
-darkgray = (0.663, 0.663, 0.663)
+
 darkgreen = (0.000, 0.392, 0.000)
-darkgrey = (0.663, 0.663, 0.663)
+
 darkkhaki = (0.741, 0.718, 0.420)
 darkmagenta = (0.545, 0.000, 0.545)
 darkolivegreen = (0.333, 0.420, 0.184)
@@ -34,14 +34,14 @@ darkred = (0.545, 0.000, 0.000)
 darksalmon = (0.914, 0.588, 0.478)
 darkseagreen = (0.561, 0.737, 0.561)
 darkslateblue = (0.282, 0.239, 0.545)
-darkslategray = (0.184, 0.310, 0.310)
-darkslategrey = (0.184, 0.310, 0.310)
+
+
 darkturquoise = (0.000, 0.808, 0.820)
 darkviolet = (0.580, 0.000, 0.827)
 deeppink = (1.000, 0.078, 0.576)
 deepskyblue = (0.000, 0.749, 1.000)
-dimgray = (0.412, 0.412, 0.412)
-dimgrey = (0.412, 0.412, 0.412)
+
+
 dodgerblue = (0.118, 0.565, 1.000)
 firebrick = (0.698, 0.133, 0.133)
 floralwhite = (1.000, 0.980, 0.941)
@@ -51,10 +51,10 @@ gainsboro = (0.863, 0.863, 0.863)
 ghostwhite = (0.973, 0.973, 1.000)
 gold = (1.000, 0.843, 0.000)
 goldenrod = (0.855, 0.647, 0.125)
-gray = (0.502, 0.502, 0.502)
+
 green = (0.000, 0.502, 0.000)
 greenyellow = (0.678, 1.000, 0.184)
-grey = (0.502, 0.502, 0.502)
+
 honeydew = (0.941, 1.000, 0.941)
 hotpink = (1.000, 0.412, 0.706)
 indianred = (0.804, 0.361, 0.361)
@@ -69,15 +69,15 @@ lightblue = (0.678, 0.847, 0.902)
 lightcoral = (0.941, 0.502, 0.502)
 lightcyan = (0.878, 1.000, 1.000)
 lightgoldenrodyellow = (0.980, 0.980, 0.824)
-lightgray = (0.827, 0.827, 0.827)
+
 lightgreen = (0.565, 0.933, 0.565)
-lightgrey = (0.827, 0.827, 0.827)
+
 lightpink = (1.000, 0.714, 0.757)
 lightsalmon = (1.000, 0.627, 0.478)
 lightseagreen = (0.125, 0.698, 0.667)
 lightskyblue = (0.529, 0.808, 0.980)
-lightslategray = (0.467, 0.533, 0.600)
-lightslategrey = (0.467, 0.533, 0.600)
+
+
 lightsteelblue = (0.690, 0.769, 0.871)
 lightyellow = (1.000, 1.000, 0.878)
 lime = (0.000, 1.000, 0.000)
@@ -126,11 +126,11 @@ sandybrown = (0.957, 0.643, 0.376)
 seagreen = (0.180, 0.545, 0.341)
 seashell = (1.000, 0.961, 0.933)
 sienna = (0.627, 0.322, 0.176)
-silver = (0.753, 0.753, 0.753)
+
 skyblue = (0.529, 0.808, 0.922)
 slateblue = (0.416, 0.353, 0.804)
-slategray = (0.439, 0.502, 0.565)
-slategrey = (0.439, 0.502, 0.565)
+
+
 snow = (1.000, 0.980, 0.980)
 springgreen = (0.000, 1.000, 0.498)
 steelblue = (0.275, 0.510, 0.706)

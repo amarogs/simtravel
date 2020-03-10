@@ -121,7 +121,7 @@ class VisualRepresentation(object):
                 p1 = (j*self.cell_size, i*self.cell_size)
                 p2 = ((j+1)*self.cell_size, (i+1)*self.cell_size)
                 # Paint the rectangle according to the type of cell.
-                if city[(i, j)][4] == 0:
+                if city[(i, j)] == 0:
                     # this is a house
                     self.canvas.create_rectangle(
                         p1[0], p1[1], p2[0], p2[1], fill='black')

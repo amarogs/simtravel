@@ -1,8 +1,9 @@
 """CITY PARAMETERS"""
 CITY_TYPE = "square"
-SCALE = 2 #The original tile has 2 roundabouts per axis, 2*scale is the number of roundabours per axis.
-BLOCK_SCALE = 2 #This number controls the width of the block of houses
-
+RB_LENGTH=6 # Is the length of the side of the roundabout. Each side has at least 4(avenues)+2 cells.
+AV_LENGTH=4*9 # Is the legnth of the avenue from one roundabout to the next roundabout.
+INTERSEC_LENGTH=3 # Is the length of the side of the intersection
+SCALE=2 # Is the 2D scale of the city.
 
 """STATIONS PARAMETERS """
 MIN_PLUGS_PER_STATION = 2 #Minimum number of outlets that each station must have
@@ -12,7 +13,7 @@ MIN_D_STATIONS = 36 #Minimum number of stations that must be placed when choosin
 SPEED = 10 # km/h
 CELL_LENGTH = 5 # meters
 SIMULATION_SPEED = 1 #cell/tstep
-BATTERY = 0.1 #kWh
+BATTERY = 24 #kWh
 CS_POWER = 7 #kW
 
 """BATTERY DISTRIBUTION """
@@ -28,7 +29,7 @@ IDLE_STD = 0.25 #percentage of deviation from the mean
 """VALUES TO TRY """
 #For each combination of ev_density, tf_density and st_layout we run a different simulation
 EV_DENSITY_VALUES = [0.1]#, 0.4, 1]
-TF_DENSITY_VALUES = [0.1, 0.3]#, 0.5]
+TF_DENSITY_VALUES = [0.1, 0.3, 0.5]
 ST_LAYOUT_VALUES = ["central"]#, "distributed", "four"]
 
 """GRAPHICS PARAMETERS """
@@ -38,7 +39,7 @@ DELAY = 0 #Number of ms between different frames
 
 """GENERAL PARAMETERS """
 REPETITIONS = 2 #Number of times each simulation is run
-TOTAL_TIME = 2  # Number of hours to simulate
+TOTAL_TIME = 5  # Number of hours to simulate
 MEASURE_PERIOD = 0 # Number of minutes between two consecutive snapshots of the system.
 
 

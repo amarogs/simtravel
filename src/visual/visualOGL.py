@@ -7,7 +7,7 @@ from src.models.states import States
 
 #https: // noobtuts.com/python/opengl-introduction
 import sys
-
+import time
 
 def enable_vsync():
     if sys.platform != 'darwin':
@@ -44,21 +44,18 @@ class VisualRepresentation():
 
         self.create_GLU()
         self.city = city
-        self.black_cells = []
-        self.white_cells = []
-
-        for i in range(self.SIZE):
-            for j in range(self.SIZE):
-                if self.city[(i, j)][4] == 0:
-                    self.black_cells.append((i,j))
-                        
-                else:
-                    self.white_cells.append((i,j))
 
         self.cityVertexList = self.compile_city_drawing()
 
-        self.colors = [c.red, c.green, c.blue, c.magenta, c.gold]
+        #self.colors = [c.red, c.green, c.blue, c.magenta, c.gold]
+        self.colors = [val for n, val in c.__dict__.items() if not n.startswith("__") and sum(val) <= 2.0]
+        self.colors.remove((0.0, 0.0, 0.0))
+
+
         self.vehicles = None
+        self.stationsVertexList = None
+
+        self.next_stop = None
         self.next_vehicles = []
         
         
@@ -67,29 +64,44 @@ class VisualRepresentation():
     def add_vehicles(self, vehicles):
         """Set the list of vehicles  """
         self.vehicles = vehicles
+        self.next_stop = self.vehicles
         for v in self.vehicles:
             # v.state = States.TOWARDS_DEST
             v.color = random.choice(self.colors)
 
+    def add_stations(self, stations):
+        self.stationsVertexList = self.compile_stations_drawing(stations)
+    def compile_stations_drawing(self, stations):
+        index = glGenLists(1)
+        glNewList(index, GL_COMPILE)
+        glLineWidth(3)
+        for st in stations:
+            i, j = st.cell.pos
+            glColor3f(0.000, 0.502, 0.000)
+            
+            self.draw_outline(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+        glLineWidth(1)
+        glEndList()
+        
+        return index   
     def compile_city_drawing(self):
         """For each cell in the city, if it is a house paint it black, else paint it white. """
         index = glGenLists(1)
         glNewList(index, GL_COMPILE)
 
-        # Draw the black cells
-        glColor3f(0.0, 0.0, 0.0)
-        for (i,j) in self.black_cells:
-            self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
-
-        # Draw white cells
-        glColor3f(1.0, 1.0, 1.0)
-        for (i,j) in self.white_cells:
-            
-            self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
-        # Draw the outline of the rectangle in black
-        for (i,j) in self.white_cells:
-            glColor3f(0.0, 0.0, 0.0)
-            self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
+        
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                if self.city[(i,j)] == 1:
+                    # Draw a white cell withe the outline in black
+                    glColor3f(1.0, 1.0, 1.0)
+                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+                    glColor3f(0.0, 0.0, 0.0)
+                    self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
+                else:
+                    # Draw a black cell without outline
+                    glColor3f(0.0, 0.0, 0.0)
+                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
 
         glEndList()
         return index    
@@ -100,12 +112,18 @@ class VisualRepresentation():
         for v in self.next_vehicles:
             
             glColor3f(*v.color) # Set the color to the vehicle's
-            x, y = v.pos # Retrieve the vehicle's position
+            x, y = v.cell.pos # Retrieve the vehicle's position
             self.draw_rect(x*self.cell_size, y*self.cell_size,self.cell_size, self.cell_size) # Paint a rectangle in the vehicle's position.
             # Draw the outline of the rectangle in black
             glColor3f(0.0, 0.0, 0.0)
             self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
-
+        for v in self.next_stop:
+            glColor3f(*v.color) # Set the color to the vehicle's
+            x, y = v.cell.pos # Retrieve the vehicle's position
+            # self.draw_rect(x*self.cell_size, y*self.cell_size,self.cell_size, self.cell_size) # Paint a rectangle in the vehicle's position.
+            # Draw the outline of the rectangle in black
+            # glColor3f(0.0, 0.0, 0.0)
+            self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
             
     def draw_rect(self,x, y, width, height):
         """Draws a new rectangle """
@@ -122,6 +140,7 @@ class VisualRepresentation():
         """Draws the outline of a rectangle  """
         # start drawing a rectangle
         glBegin(GL_LINE_STRIP)
+        
         glVertex2f(x, y)                                   # bottom left point
         glVertex2f(x + width, y)                           # bottom right point
         glVertex2f(x + width, y + height)                  # top right point
@@ -132,13 +151,16 @@ class VisualRepresentation():
 
     def draw(self):     
         """Function called when we want to draw a new frame. """
-                                              
+          
+                              
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # clear the screen
         glLoadIdentity()                                   # reset position
         self.refresh2d()                           # set mode to 2d
 
         glCallList(self.cityVertexList)   # Always draw the city        
         self.draw_vehicles()
+        if self.stationsVertexList != None:
+            glCallList(self.stationsVertexList) 
 
         glutSwapBuffers()  # important for double buffering
 
@@ -168,7 +190,11 @@ class VisualRepresentation():
         """"When this function is called, we update the list of vehicles we want to 
         draw and force the drawing of a new frame. """
         # Select the vehicles we want to draw
+        time.sleep(0.01)
         self.next_vehicles = [v for v in self.vehicles if v.state in States.moving_states()]
+        # self.next_stop = [v for v in self.vehicles if v.state not in States.moving_states()]
+        self.next_stop = []
+
         # Force the update of the display.
         glutPostRedisplay()
 

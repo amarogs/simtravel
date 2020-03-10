@@ -40,7 +40,7 @@ cdef class PriorityMinHeap(object):
         self.REMOVED = (99999,99999) #placeholder for a removed task
         self.counter = 0 #Number of elements that are not removed in the heap
 
-    cdef insert(self, tuple item, int priority):
+    cdef insert(self,  item, int priority):
         if item in self.entry_finder:
             self.remove_item(item)
         
@@ -50,7 +50,7 @@ cdef class PriorityMinHeap(object):
         heapq.heappush(self.pq, entry)
         self.counter += 1
 
-    cdef remove_item(self, tuple item):
+    cdef remove_item(self,  item):
         "Mark an existing task as REMOVED"
         cdef list entry = self.entry_finder.pop(item)
         entry[-1] = self.REMOVED
@@ -58,7 +58,7 @@ cdef class PriorityMinHeap(object):
 
     cdef pop(self):
         "Remove and return the lowest priority item that is not REMOVED"
-        cdef tuple item
+        
 
         while self.pq:
             _ , item = heapq.heappop(self.pq)
@@ -72,7 +72,7 @@ cdef class PriorityMinHeap(object):
 
 
 
-cdef list reconstruct_path(dict came_from, tuple start, tuple current):
+cdef list reconstruct_path(dict came_from, start, current):
     cdef list total = [current]
 
     while True:
@@ -88,7 +88,8 @@ cdef class AStar():
     cdef int max_length
     def __init__(self, max_length):
         self.max_length = max_length
-    cpdef list new_path(self, tuple start, tuple goal):
+
+    cpdef list new_path(self,  start,  goal):
         global CITY
         cdef set closed_set = set() #Set of positions already visited
         cdef PriorityMinHeap open_set = PriorityMinHeap() #Min heap of posible positions available for expansion
@@ -99,51 +100,54 @@ cdef class AStar():
 
         #Dictionary containing the relationship between posititions
         cdef dict came_from = {start:start}
-
-        cdef int depth = 0 #Controls the number of entries in the path we want to compute
-        cdef tuple neighbour, current
         
-        open_set.insert(start, lattice_distance(start[0], start[1], goal[0], goal[1]))
+        cdef int road_type
+
+        open_set.insert(start, lattice_distance(start.pos[0], start.pos[1], goal.pos[0], goal.pos[1]))
 
 
         while not open_set.is_empty():
             #If there are available nodos, take the most promising one (lowest f_score)
             current = open_set.pop()
-            depth += 1
             
             
-            if current == goal: #or depth==MAX_DEPTH:
-                #If the nodo is the goal, we have finished
+            
+            if current == goal:
+                #If the node is the goal, we have finished
                 return reconstruct_path(came_from,start, current)
             else:
                 #Otherwise we need to explore the current node
                 closed_set.add(current)
-            
-            for (neighbour,road_type) in CITY[current]:
 
-                if neighbour not in closed_set:
+            road_type = current.cell_type
+            for successor in current.successors:
+                
+                if successor not in closed_set:
                     #If the neighbour hasn't been visited
                     #Compute the possible g_score
-                    new_g_score = g_score[current] + road_type
+                    if successor in current.prio_successors:
+                        new_g_score = g_score[current] + road_type - 2
+                    else:
+                        new_g_score = g_score[current] + road_type
 
-                    if neighbour not in g_score or new_g_score < g_score[neighbour]:
+                    if successor not in g_score or new_g_score < g_score[successor]:
                         #Add the neighbour with the g_score to the heap
-                        open_set.insert(neighbour, new_g_score + lattice_distance(neighbour[0],neighbour[1], goal[0], goal[1]))
-                        g_score[neighbour] = new_g_score
-                        came_from[neighbour] = current
+                        open_set.insert(successor, new_g_score + lattice_distance(successor.pos[0],successor.pos[1], goal.pos[0], goal.pos[1]))
+                        g_score[successor] = new_g_score
+                        came_from[successor] = current
                 
 
-    cpdef list recompute_path(self, list current_path, tuple pos, tuple target):
+    cpdef list recompute_path(self, list current_path,  current_cell,  target):
         cdef list extension_path
-        cdef tuple n_step
+        
 
         if len(current_path) > 1:
-            extension_path = self.new_path(pos, current_path[-2])
+            extension_path = self.new_path(current_cell, current_path[-2])
             del current_path[-1]
-            for n_step in extension_path[1:]:
-                current_path.append(n_step) 
+            for next_step in extension_path[1:]:
+                current_path.append(next_step) 
         else:
-            current_path = self.new_path(pos, target)
+            current_path = self.new_path(current_cell, target)
         return current_path
 
 
