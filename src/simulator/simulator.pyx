@@ -227,10 +227,10 @@ class Simulator:
                     is_possible = False
                     break
                 # For each previous cell leading to cell, check if that's also clear.
-                for p_cell in cell.prio_predecessors:
-                    if p_cell.occupied:
-                        is_possible = False
-                        break
+                #for p_cell in cell.prio_predecessors:
+                #    if p_cell.occupied:
+                #        is_possible = False
+                #        break
                     
             return is_possible
 
@@ -260,12 +260,21 @@ class Simulator:
                 follow_path(vehicle, next_cell)
                 vehicle_moved = True
             else:
-                # The vehicle tries to change lane with a small probability, this only works for avenues.
+                # The vehicle tries to change lane.
                 for n_cell in vehicle.cell.successors:
-                    #pass
-                    if n_cell not in vehicle.cell.prio_successors and lane_change_is_possible(n_cell):
-                        divert_from_path(vehicle, n_cell)
-                        vehicle_moved = True
+                    
+                    if n_cell in vehicle.cell.prio_successors:
+                        # The vehicle tries to change the direction an enter another priority street.
+                        if keep_in_lane_is_possible(n_cell):
+                            divert_from_path(vehicle, n_cell)
+                            vehicle_moved = True
+                            break
+                    else:
+                        # The vehicle tries to change lane
+                        if lane_change_is_possible(n_cell):
+                            divert_from_path(vehicle, n_cell)
+                            vehicle_moved = True
+                            break
                 
         else:
             # Case when the next position is not a priority, the vehicle must give way.

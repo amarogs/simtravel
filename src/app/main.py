@@ -4,7 +4,7 @@ from src.simulator.simulation import Simulation
 from src.models.cities import SquareCity
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QMainWindow
-from src.app.animationOGL import VisualRepresentation
+from src.app.animation import VisualRepresentation
 import sys
 
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  # enable highdpi scaling
@@ -19,7 +19,7 @@ simulation.set_simulation_units(speed=10, cell_length=5, simulation_speed=1, bat
 simulation.set_battery_distribution(lower=0.2, std=0.25)
 simulation.set_idle_distribution(upper=2, lower=1, std=0.25)
 # Create the city
-simulation.create_city(SquareCity, scale=2, block_scale=2)
+simulation.create_city(SquareCity, RB_LENGTH=6, AV_LENGTH=4*15, INTERSEC_LENGTH=3, SCALE=2) 
 # Place the stations around the city
 simulation.stations_placement(min_plugs_per_station=2, min_num_stations=10)
 # And finally create a simulator

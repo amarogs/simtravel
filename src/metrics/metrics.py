@@ -140,27 +140,31 @@ class SimulationMetric(object):
         and the mean number of steps used in queueing, then compute
         a global average mean of the simulation. """
         
-        sum_seeking = []
-        total_times = 0
-        for _, seeking in seeking_history.items():
-            sum_seeking.append(np.sum(seeking))
-            total_times = np.sum(len(seeking))
+        # First, for each vehicle compute its seeking mean and store it
+        # on the variable sum_of_vehicles.
+        sum_of_vehicles = []
+        for _ , v_seeking in seeking_history.items():
+            if v_seeking:
+                sum_of_vehicles.append(np.mean(v_seeking))
 
-        if total_times == 0:
+        # Then compute the total mean of the simulation.
+        if sum_of_vehicles:
+            self.mean_seeking = np.mean(sum_of_vehicles)
+        else:
             self.mean_seeking = 0
-        else:
-            self.mean_seeking = np.mean(sum_seeking)
-        
-        sum_queueing = []
-        total_times = 0
-        for _, queueing in queueing_history.items():
-            sum_queueing.append(np.sum(queueing))
-            total_times = np.sum(len(queueing))
 
-        if total_times == 0:
-            self.mean_queueing = 0
+        # Now let's do the same for the queueing time.
+        sum_of_vehicles = []
+        for _ , v_queueing in queueing_history.items():
+            if v_queueing:
+                sum_of_vehicles.append(np.mean(v_queueing))
+
+        if sum_of_vehicles:
+            self.mean_queueing = np.mean(sum_of_vehicles)
         else:
-            self.mean_queueing = np.mean(sum_queueing)
+            self.mean_queueing = 0
+
+
 
     def write_results(self, file, base_directory, seeking_history, queueing_history):
         """Given a openned and writable HDF5 file, and the 

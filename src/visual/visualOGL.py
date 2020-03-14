@@ -190,7 +190,7 @@ class VisualRepresentation():
         """"When this function is called, we update the list of vehicles we want to 
         draw and force the drawing of a new frame. """
         # Select the vehicles we want to draw
-        time.sleep(0.01)
+        time.sleep(0.001)
         self.next_vehicles = [v for v in self.vehicles if v.state in States.moving_states()]
         # self.next_stop = [v for v in self.vehicles if v.state not in States.moving_states()]
         self.next_stop = []

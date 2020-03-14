@@ -102,6 +102,13 @@ class CityBuilder():
         position of the cell that enters to (x,y). It is going Back, and Right """
         return self.next_cell_of(x,y, (direction-2)%4, (direction-1)%4 )
 
+    def leads_to(self, x,y, direction, lx, ly):
+        """Given a position (x,y) and a direction. Tests, wheter
+        following the direction, the next cell is (lx, ly). """
+        next_pos = self.next_cell_of(x, y, direction)
+        
+        return next_pos[0] == lx and next_pos[1] == ly
+
     def direction_of(self, x_curr,y_curr,x_next, y_next):
         dx = x_next-x_curr
         dy = y_next-y_curr
@@ -271,6 +278,49 @@ class Roundabout(CityBuilder):
         for i in range(4):
             x, y = self.rotary_segment_of(x, y, (2-i)%4, length)
 
+class RoadIntersection(CityBuilder):
+    def __init__(self, c_x, c_y, directions):
+        super().__init__()
+        cell_order = [self.W, self.S, self.E, self.N]
+        cell_order = [self.direction_vectors[k] for k in cell_order]
+        self.exit = []
+
+        # First create the 4 cells N, W, E, S
+        for i, v in enumerate(cell_order):
+            x, y = c_x + v[0], c_y + v[1]
+            
+            cell_direction = directions[i]
+            sucessors = [self.next_cell_of(x,y, cell_direction)]
+            
+            if self.is_entrance(x,y,cell_direction, c_x, c_y):
+                # This cell is an intersection entrance, now we have to check wheter
+                # it has priority or not.   
+                index_right = (i+1)%4
+                right_vector = cell_order[index_right]
+                x_right, y_right = c_x + right_vector[0], c_y + right_vector[1]
+
+                if self.is_entrance(x_right, y_right,directions[index_right], c_x, c_y):
+                    # This cell must give way since the cell in its right is an entrance
+                    c = Cell((x,y), CellType.ROUNDABOUT,sucessors, [],cell_direction)
+                    self.cells.append(c)
+                else:
+                    # This cell has priority over the right cell.
+                    c = Cell((x,y), CellType.ROUNDABOUT,sucessors, sucessors,cell_direction)
+                    self.cells.append(c)
+
+            else:
+                # This cell is an intersection exit.
+                c = Cell((x,y), CellType.ROUNDABOUT,sucessors, sucessors,cell_direction)
+                self.cells.append(c)
+                self.exit.append(c)
+        # Now create the center cell, connecting it with the exits.
+        c = Cell((c_x, c_y), CellType.ROUNDABOUT, [c.pos for c in self.exit], [c.pos for c in self.exit], -1)
+        self.cells.append(c)
+
+    def is_entrance(self, x,y, direction, center_x, center_y):
+        """Returns True if the cell (x,y) following that direction
+        leads to (center_x, center_y). """ 
+        return self.leads_to(x,y,direction, center_x, center_y)
 class Intersection(Roundabout):
     """Creates an intersection wich is made out of a rotary plus 4 special cells. """
     def __init__(self, x, y, length, special_directions ):
@@ -337,7 +387,10 @@ class SquareCity(CityBuilder):
         # Define the attributes for the intersections
         base = np.array([AV_LENGTH/8, AV_LENGTH/8])        
         inter_coord = np.array([ [1, 1], [1, 3], [3, 1], [3, 3] ], dtype="float32") * base
+        # Intersections are given by row: first the intersection of the first row, then the second row.
+        # Each lists starts with the leftmost cell.
         inter_dirs = [ [3,2,3,2], [3,0,3,0], [1,2,1,2], [1,0,1,0]]
+
         next_cuadrant = (AV_LENGTH//2) + RB_LENGTH + 2
         inter_offset = np.array([[0,0], [0,next_cuadrant], [next_cuadrant, 0], [next_cuadrant,next_cuadrant]])
 
@@ -384,7 +437,7 @@ class SquareCity(CityBuilder):
         for offset in inter_offset:
             for coord, dirs in zip(inter_coord, inter_dirs):
                 coord = np.array(coord, dtype="int32")
-                it = Intersection(*tuple(coord + offset), INTERSEC_LENGTH, dirs)
+                it = RoadIntersection(*tuple(coord + offset), dirs)
                 exit_cells.extend(it.exit)
                 for c in it.cells:
                     self.base_city[c.pos] = c
@@ -394,7 +447,7 @@ class SquareCity(CityBuilder):
         for c in exit_cells:
             next_cell = self.next_cell_of(*c.pos, c.direction)
             length = self.compute_street_length(*next_cell, c.direction)
-
+            
             st = Street(*next_cell, c.direction, length)
             for c in st.cells:
                 self.base_city[c.pos] = c

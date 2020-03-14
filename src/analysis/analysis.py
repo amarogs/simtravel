@@ -431,6 +431,8 @@ class GlobalAnalysis():
                 index = self.compute_index(simulation)
                 matrix_mean[index] = float(simulation.global_mean[key])
                 matrix_std[index] = float(simulation.global_std[key])
+            print("Para key: {} la matriz es: ".format(key))
+            print(matrix_mean)
 
     def load_single_attribute(self, simulations, attribute):
         """Given a list of simulations and an attribute, extracts
