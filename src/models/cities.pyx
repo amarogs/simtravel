@@ -20,12 +20,13 @@ class CellType(Enum):
 
 class Cell():
     
-    def __init__(self, pos,cell_type,successors, prio_successors, direction ):
+    def __init__(self, pos,cell_type,successors, prio_successors, direction, predecessors=None, prio_predecessors=None ):
         self.pos = pos
         self.successors = successors
         self.prio_successors = prio_successors
-        self.predecessors = []
-        self.prio_predecessors = []
+        self.predecessors = predecessors or []
+        self.prio_predecessors = prio_predecessors or []
+        self.r = []
         self.cell_type = cell_type.value
         self.direction = direction
         self.occupied = False
@@ -38,8 +39,10 @@ class Cell():
         new_pos = (self.pos[0] + dx)%total_size, (self.pos[1] + dy)%total_size
         new_sucessors = self.move_cell(dx, dy, self.successors, total_size)
         new_prio_sucessors = self.move_cell(dx, dy, self.prio_successors, total_size)
+        new_predecessors = self.move_cell(dx, dy, self.predecessors, total_size)
+        new_prio_predecessors = self.move_cell(dx, dy, self.prio_predecessors, total_size)
         
-        return new_pos, Cell(new_pos, CellType(self.cell_type), new_sucessors, new_prio_sucessors, self.direction)
+        return new_pos, Cell(new_pos, CellType(self.cell_type), new_sucessors, new_prio_sucessors, self.direction, new_predecessors, new_prio_predecessors)
 
     def move_cell(self, dx, dy, positions, total_size):
         return [ ( (pos[0]+dx)%total_size, (pos[1]+dy)%total_size) for pos in positions]
@@ -54,7 +57,7 @@ class Cell():
 
 
     def __str__(self):
-        return str(self.pos)
+        return "C:"+str(self.pos)
     def __repr__(self):
         return self.__str__()
 
@@ -171,8 +174,21 @@ class SemiAvenueExt(SemiAvenueInt):
         
         midpoint = length//2
         # Set the exit
-        # Retrieve from memory the Cell that is going to lead to the exit.
-        avenue_cell = self.cells[(midpoint//2)-1]
+        avenue_cell = self.cells[midpoint + (midpoint//2) - 1] 
+        self.create_exit_of(avenue_cell, direction)
+
+        # Set the entrance
+        avenue_cell = self.cells[(midpoint//2)-1]        
+        self.create_entrance_of(avenue_cell, direction)
+
+    def create_entrance_of(self, avenue_cell, direction):
+        entrance_pos = self.exit_of(*avenue_cell.pos, direction)
+        entrance_sucessor = self.exit_of(*entrance_pos, (direction-1)%4)
+        c = Cell(entrance_pos, CellType.STREET, [entrance_sucessor], [], (direction-1)%4 )
+        self.cells.append(c)
+        self.entrance = [c]
+
+    def create_exit_of(self, avenue_cell, direction):
         exit_pos = self.exit_of(*avenue_cell.pos, direction)
         # update its information
         avenue_cell.successors.append(exit_pos)
@@ -184,26 +200,33 @@ class SemiAvenueExt(SemiAvenueInt):
         self.cells.append(c)
         self.exit = [c]
 
-        # Set the entrance
-        avenue_cell = self.cells[midpoint + (midpoint//2) - 1]
-        entrance_pos = self.exit_of(*avenue_cell.pos,direction )
-        # Create the entrance celldirection
-        entrance_sucessor = self.exit_of(*entrance_pos, (direction-1)%4)
-        c = Cell(entrance_pos, CellType.STREET, [entrance_sucessor], [], (direction-1)%4 )
-        self.cells.append(c)
-        self.entrance = [c]
-
 class Roundabout(CityBuilder):
     """Creates a rotary that has in each side 2 avenue exit lanes and 2 avenue entrance lanes.
     The minimum length for it to work is 6. """
-    def __init__(self, x, y, length, special_cell_type=CellType.AVENUE):
+    def __init__(self, x, y, length, special_cell_type=CellType.ROUNDABOUT):
         super().__init__()
         self.special_cell_type = special_cell_type 
         self.exit, self.entrance = [], []
         self.internal_av_entr, self.external_av_entr = [], []
         self.internal_av_exit, self.external_av_exit = [],[]
         self.create_rotary_of(x,y,length)
-    
+        
+        self.give_way_internal_avenue()
+
+
+    def give_way_internal_avenue(self):
+        """For each pair of avenues entrances, make the cell in the internal avenue give way
+        to the external cell. Like any priority list made in the constructor, this is 
+        made through a reference to the cell position and not the actual cell. """
+ 
+        for int_av, ext_av in zip(self.internal_av_entr, self.external_av_entr):
+ 
+            successor_pos = int_av.successors[0]
+            successor_cell = [c for c in self.cells if c.pos == successor_pos][0]
+            successor_cell.prio_predecessors.append(self.exit_of(*int_av.pos, int_av.direction))
+            
+            
+
     def rotary_segment_of(self,x,y,direction,length):
         """Creates a side of the rotary. Each side has a number of cells leading one to 
         the next and 4 special cells. 2 avenue exits made at positions 0 and 1,
@@ -242,7 +265,10 @@ class Roundabout(CityBuilder):
     def create_entrance_of(self, x, y, direction, external=True):
         entrance_pos = self.next_cell_of(x,y,(direction+1)%4)
         entrance_dir = (direction - 1)% 4 
-        c = Cell(entrance_pos, self.special_cell_type, [self.exit_of(*entrance_pos, entrance_dir)], [], entrance_dir)
+        if external:
+            c = Cell(entrance_pos, self.special_cell_type, [self.exit_of(*entrance_pos, entrance_dir)], [], entrance_dir)
+        else:
+            c = Cell(entrance_pos, self.special_cell_type, [self.next_cell_of(*entrance_pos, entrance_dir)], [], entrance_dir)
         # Append the cells to the list of entrance cells and total cells of the roundabout
         self.entrance.append(c)
         self.cells.append(c)
@@ -301,20 +327,20 @@ class RoadIntersection(CityBuilder):
 
                 if self.is_entrance(x_right, y_right,directions[index_right], c_x, c_y):
                     # This cell must give way since the cell in its right is an entrance
-                    c = Cell((x,y), CellType.ROUNDABOUT,sucessors, [],cell_direction)
+                    c = Cell((x,y), CellType.STREET,sucessors, [],cell_direction)
                     self.cells.append(c)
                 else:
                     # This cell has priority over the right cell.
-                    c = Cell((x,y), CellType.ROUNDABOUT,sucessors, sucessors,cell_direction)
+                    c = Cell((x,y), CellType.STREET,sucessors, sucessors,cell_direction)
                     self.cells.append(c)
 
             else:
                 # This cell is an intersection exit.
-                c = Cell((x,y), CellType.ROUNDABOUT,sucessors, sucessors,cell_direction)
+                c = Cell((x,y), CellType.STREET,sucessors, sucessors,cell_direction)
                 self.cells.append(c)
                 self.exit.append(c)
         # Now create the center cell, connecting it with the exits.
-        c = Cell((c_x, c_y), CellType.ROUNDABOUT, [c.pos for c in self.exit], [c.pos for c in self.exit], -1)
+        c = Cell((c_x, c_y), CellType.STREET, [c.pos for c in self.exit], [c.pos for c in self.exit], -1)
         self.cells.append(c)
 
     def is_entrance(self, x,y, direction, center_x, center_y):
@@ -366,7 +392,7 @@ class Intersection(Roundabout):
 
 
 class SquareCity(CityBuilder):
-    def __init__(self, RB_LENGTH, AV_LENGTH, INTERSEC_LENGTH, SCALE):
+    def __init__(self, RB_LENGTH, AV_LENGTH, SCALE, INTERSEC_LENGTH=3 ):
         super().__init__()
         """RB_LENGTH: Is the length of the side of the roundabout rotary. The minimum for 
         it to work must be 6, any even number greater that 6 is valid.
@@ -389,7 +415,8 @@ class SquareCity(CityBuilder):
         inter_coord = np.array([ [1, 1], [1, 3], [3, 1], [3, 3] ], dtype="float32") * base
         # Intersections are given by row: first the intersection of the first row, then the second row.
         # Each lists starts with the leftmost cell.
-        inter_dirs = [ [3,2,3,2], [3,0,3,0], [1,2,1,2], [1,0,1,0]]
+        inter_dirs = np.array([ [3,2,3,2], [3,0,3,0], [1,2,1,2], [1,0,1,0]])
+        inter_dirs = (inter_dirs+2)%4
 
         next_cuadrant = (AV_LENGTH//2) + RB_LENGTH + 2
         inter_offset = np.array([[0,0], [0,next_cuadrant], [next_cuadrant, 0], [next_cuadrant,next_cuadrant]])
@@ -437,7 +464,7 @@ class SquareCity(CityBuilder):
         for offset in inter_offset:
             for coord, dirs in zip(inter_coord, inter_dirs):
                 coord = np.array(coord, dtype="int32")
-                it = RoadIntersection(*tuple(coord + offset), dirs)
+                it = RoadIntersection(*tuple(coord + offset), list(dirs))
                 exit_cells.extend(it.exit)
                 for c in it.cells:
                     self.base_city[c.pos] = c
@@ -452,10 +479,11 @@ class SquareCity(CityBuilder):
             for c in st.cells:
                 self.base_city[c.pos] = c
 
-
+ 
         # Scale the city to the desired size
         self.city_map, self.city_matrix = self.scale_city(SCALE)
 
+ 
         # Configure the global parameters of the simulator module
         configure_lattice_size(self.SIZE, self.city_map)
 
@@ -466,8 +494,27 @@ class SquareCity(CityBuilder):
         self.STR_RATE = np.sum(self.city_matrix)/(self.SIZE*self.SIZE)
 
     def scale_city(self, scale):
+
+        def change_pos_to_references(cell, attribute, dictionary):
+            """Given a cell, and a list of keys (attribute), replace the 
+            keys for a reference to the object in the dictionary """
+            # if attribute == "predecessors":
+                
+            #     if len(cell.__dict__[attribute]) > 0:
+            #         print("Tiene elementos camiando predecessors: ", cell, cell.predecessors, cell.cell_type)
+
+            cell.__dict__[attribute] = [city_map[k] for k in cell.__dict__[attribute]]
+        
+        def add_predecessors(cell, attribute, successors_of_cell):
+            """Given a cell, an attibute we want to fullfill ("prio_predecessors" or "predecessors"), 
+            and the list of sucessors of the cell, fulffill the atttribute accordingly."""
+            for successor in successors_of_cell:
+                successor.__dict__[attribute].append(cell)
+        
+        # Augment the city by the scale
         city_map = {}
         city_matrix = np.zeros((self.SIZE, self.SIZE))
+
 
         for i in range(scale):
             for j in range(scale):
@@ -476,25 +523,22 @@ class SquareCity(CityBuilder):
                     new_pos, new_cell = cell.duplicate_cell(dx, dy, self.SIZE)
                     city_map[new_pos] = new_cell
                     city_matrix[new_pos] = 1
-        
+
+
+        # Replace the positions by the corresponding pointer to cells.
         for pos, cell in city_map.items():
+            change_pos_to_references(cell, "prio_predecessors", city_map)
+            change_pos_to_references(cell, "predecessors", city_map)
+            change_pos_to_references(cell, "successors", city_map)
+            change_pos_to_references(cell, "prio_successors", city_map)
+        
+        # Complete the 'graph' of the city adding the predecessors and successors.
+        for pos, cell in city_map.items():   
             
-            # Create a list to store references to the successors.
-            sucessors_ref = []
-            for suc in cell.successors:
-                # Add a reference to the sucesor
-                sucessors_ref.append(city_map[suc]) 
-                # Add this cell as a predecessor of the sucessor cell
-                city_map[suc].predecessors.append(cell)
-            # Store the content of successors
-            cell.successors = sucessors_ref
+            add_predecessors(cell, "predecessors", cell.successors)
+            add_predecessors(cell, "prio_predecessors", cell.prio_successors)
 
-            prio_sucessors_ref = []
-            for p_suc in cell.prio_successors:
-                prio_sucessors_ref.append(city_map[p_suc])
-                city_map[p_suc].prio_predecessors.append(cell)
-            cell.prio_successors = prio_sucessors_ref
-
+ 
         return city_map, city_matrix
         
     def compute_street_length(self, x, y, direction):

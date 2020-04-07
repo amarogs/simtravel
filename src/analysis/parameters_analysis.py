@@ -1,13 +1,15 @@
 from src.models.states import States
 
 """Plot configuration """
-FIGSIZE = (8, 6)  # Size of the figure to be produced
+FIGSIZE = (6.4,4.8 )  # Size of the figure to be produced
 
 STATE_NAMES = {States.TOWARDS_DEST: 'towards destination', States.AT_DEST: 'at destination',
                States.TOWARDS_ST: 'towards station', States.QUEUEING: 'queuing', States.CHARGING: 'recharging', States.NO_BATTERY: 'no battery'}
 
 COLORS = {States.TOWARDS_DEST: 'blue', States.AT_DEST: 'purple', States.TOWARDS_ST: 'red',
           States.QUEUEING: 'orange', States.CHARGING: 'green', States.NO_BATTERY: 'black'}
+COLORS_PG = {States.TOWARDS_DEST: '#321BD6', States.AT_DEST: '#AE1BD6', States.TOWARDS_ST: '#D61B1B',
+          States.QUEUEING: '#D66D1B', States.CHARGING: '#33FF5E', States.NO_BATTERY: '#000000'}
 
 
 # To make the graphs look better we can perform a moving average.

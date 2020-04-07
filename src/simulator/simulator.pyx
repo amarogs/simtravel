@@ -18,7 +18,8 @@ class Simulator:
         self.simulation = simulation
         self.city_map = simulation.city_map
         self.avenues = self.simulation.avenues
-        
+        self.roundabouts = self.simulation.roundabouts
+        self.SEARCH_ALTERNATIVE_PRIO = 0.1
         # Control the updating of the cell's occupation state.
         self.new_occupations = []
         self.new_releases = []
@@ -219,7 +220,7 @@ class Simulator:
         def lane_change_is_possible(choice):
             """ Given a cell, checks if it is possible to move to that cell provided
             that we dont have priority.  """
-            is_possible = True
+            is_possible = not choice.occupied
 
             for cell in choice.prio_predecessors:
                 # For each cell leading to the choice, check if it's clear.
@@ -251,7 +252,6 @@ class Simulator:
 
         # Get the next step in the path to our goal
         
-        
         next_cell = vehicle.path.pop(-1)
         
         if next_cell in vehicle.cell.prio_successors:
@@ -259,8 +259,8 @@ class Simulator:
             if keep_in_lane_is_possible(next_cell):
                 follow_path(vehicle, next_cell)
                 vehicle_moved = True
-            else:
-                # The vehicle tries to change lane.
+            elif random.random() < self.SEARCH_ALTERNATIVE_PRIO:
+                # The vehicle tries to change lane with a certain probability
                 for n_cell in vehicle.cell.successors:
                     
                     if n_cell in vehicle.cell.prio_successors:
@@ -336,7 +336,7 @@ class Simulator:
         
         # Advance only the vehicles in the avenues
         for vehicle in self.general_update:
-            if vehicle.cell in self.avenues:
+            if vehicle.cell in self.avenues or vehicle.cell in self.roundabouts:
                 self.next_function[vehicle.state](vehicle)
             else:
                 self.new_general_update.append(vehicle)

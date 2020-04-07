@@ -1,70 +1,113 @@
-from OpenGL.GL import *
-from src.models.states import States
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget
-import src.visual.colors as c
 import random
 
-class VisualRepresentation(QOpenGLWidget):
-    def __init__(self, SIZE, DELAY, city, parent, hdpi):
-        super().__init__(parent)
-        # Constant attributes
-        self.SIZE = SIZE
-        self.hdpi = hdpi
-        self.DELAY = DELAY
-        self.current_tstep = 0
+from OpenGL.GL import *
+from PyQt5 import Qt, QtCore, QtGui
+from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import *
 
-        # Attributes set by the resizeGL() method
+import src.visual.colors as c
+from src.models.states import States
+
+
+
+class Animation(QOpenGLWidget):
+
+    def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
+        super(Animation, self).__init__(parent=parent, flags=flags)
+
+        # This attributes are set when resizeGL is called.
         self.WIN_WIDTH = None
         self.WIN_HEIGTH = None
+        self.SIZE = None
         self.cell_size = None
 
-             
-        # Attributes to create the city and vehicles.
-        self.city = city
+        # Flags that control what is being displayed
+        self.displaying_city = False
+        self.displaying_stations = False
+        self.displaying_vehicles = False
+
+        # Colors that can be used with the vehicles.
         self.colors = [val for n, val in c.__dict__.items() if not n.startswith("__") and sum(val) <= 2.0]
         self.colors.remove((0.0, 0.0, 0.0))
 
-
-        self.vehicles = None
-        self.stationsVertexList = None
-
-        self.next_stop = None
-        self.next_vehicles = []
+        self.moving_states = set(States.moving_states())
 
     def paintGL(self):
         """Renders the OpenGL scene. Gets called whenever the widget needs to be updated."""
-        # Select the vehicles we want to draw
-        self.next_vehicles = [ v for v in self.vehicles if v.state in States.moving_states()]
-        self.draw()
+        
+        # clear the screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  
+        # reset position
+        glLoadIdentity()  
+        # set mode to 2d                                 
+        self.refresh2d()   
+
+        # Paint new opengl drawings
+        if self.displaying_city:
+            glCallList(self.city_drawing)   
+            if self.displaying_stations:
+                glCallList(self.stations_drawing)
+
+        if self.displaying_vehicles:
+            self.draw_vehicles()
+
 
     def resizeGL(self, width, heigth):
         """Sets up the OpenGL viewport, projection, etc. Gets called whenever the 
         widget has been resized (and also when it is shown for the first time 
         because all newly created widgets get a resize event automatically) """
-        magnification = 1
-        if self.hdpi:
-            magnification = 2
+        
+        
+        if width > heigth:
+            side = heigth
+        else:
+            side = width
 
-        self.WIN_WIDTH = int((10/10)*magnification*width)
-        self.WIN_HEIGTH = int((10/10)*magnification*heigth)
-        self.cell_size = self.WIN_WIDTH/(self.SIZE*1.0)
-        self.refresh2d()
-        self.cityVertexList = self.compile_city_drawing()
-       
-    def add_vehicles(self, vehicles):
-        """Set the list of vehicles  """
+        
+        side = int(self.devicePixelRatio()*side)
+        
+        self.WIN_HEIGTH, self.WIN_WIDTH = side, side
+        if self.displaying_city:
+            self.display_new_city(self.SIZE, self.city)
+            if self.displaying_stations:
+                self.display_stations(self.stations)
+        
+        self.update()
+        
+    def display_new_city(self, size, city):
+        """Compiles a new city with a certain total size. """
+        
+        self.SIZE = size
+        self.city = city
+        self.set_cell_size(self.WIN_WIDTH, size)
+        self.compile_city_drawing(city)
+        self.displaying_city = True
+
+    def set_cell_size(self, width, size):
+        self.cell_size = width/(size*1.0)
+
+
+    def display_vehicles(self, vehicles):
+        """Sets the current list of vehicles.
+        Gives a color to each vehicle. """
+        
         self.vehicles = vehicles
-        self.next_stop = self.vehicles
         for v in self.vehicles:
-            # v.state = States.TOWARDS_DEST
             v.color = random.choice(self.colors)
+        self.displaying_vehicles = True
 
-    def add_stations(self, stations):
-        self.stationsVertexList = self.compile_stations_drawing(stations)
+    def display_stations(self, stations):
+        """Compiles the graphic elements that represent th stations. """
+        self.stations = stations
+        self.displaying_stations = True
+        self.compile_stations_drawing(stations)
+
+ 
     def compile_stations_drawing(self, stations):
+        
         index = glGenLists(1)
         glNewList(index, GL_COMPILE)
-        glLineWidth(3)
+        glLineWidth(6)
         for st in stations:
             i, j = st.cell.pos
             glColor3f(0.000, 0.502, 0.000)
@@ -73,8 +116,9 @@ class VisualRepresentation(QOpenGLWidget):
         glLineWidth(1)
         glEndList()
         
-        return index   
-    def compile_city_drawing(self):
+        self.stations_drawing = index
+
+    def compile_city_drawing(self, city):
         """For each cell in the city, if it is a house paint it black, else paint it white. """
         index = glGenLists(1)
         glNewList(index, GL_COMPILE)
@@ -82,7 +126,7 @@ class VisualRepresentation(QOpenGLWidget):
         
         for i in range(self.SIZE):
             for j in range(self.SIZE):
-                if self.city[(i,j)] == 1:
+                if city[(i,j)] == 1:
                     # Draw a white cell withe the outline in black
                     glColor3f(1.0, 1.0, 1.0)
                     self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
@@ -94,27 +138,27 @@ class VisualRepresentation(QOpenGLWidget):
                     self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
 
         glEndList()
-        return index    
+        self.city_drawing = index  
 
     def draw_vehicles(self):
         """Draws the vehicles present in next_vehicles. The color of each is set when add_vehicles is
         called.  """
-        for v in self.next_vehicles:
+        for v in self.vehicles:
             
             glColor3f(*v.color) # Set the color to the vehicle's
             x, y = v.cell.pos # Retrieve the vehicle's position
-            self.draw_rect(x*self.cell_size, y*self.cell_size,self.cell_size, self.cell_size) # Paint a rectangle in the vehicle's position.
-            # Draw the outline of the rectangle in black
-            glColor3f(0.0, 0.0, 0.0)
-            self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
-        for v in self.next_stop:
-            glColor3f(*v.color) # Set the color to the vehicle's
-            x, y = v.cell.pos # Retrieve the vehicle's position
-            # self.draw_rect(x*self.cell_size, y*self.cell_size,self.cell_size, self.cell_size) # Paint a rectangle in the vehicle's position.
-            # Draw the outline of the rectangle in black
-            # glColor3f(0.0, 0.0, 0.0)
-            self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
-            
+            if v.state in self.moving_states:
+                # If the vehicle is moving, paint a rectangle at the position of the vehicle with the vehicle's 
+                # given color. It also adds a black outline around the rectangle to better identification.
+
+                self.draw_rect(x*self.cell_size, y*self.cell_size,self.cell_size, self.cell_size) 
+                glColor3f(0.0, 0.0, 0.0) # Draw the outline of the rectangle in black
+                self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
+            else:
+                # If the vehicle is not moving just draw an outline with the vehicle's color and position.
+                pass
+                #self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
+
     def draw_rect(self,x, y, width, height):
         """Draws a new rectangle """
         # start drawing a rectangle
@@ -139,23 +183,6 @@ class VisualRepresentation(QOpenGLWidget):
         
         glEnd()
 
-    def draw(self):     
-        """Function called when we want to draw a new frame. """
-          
-                              
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)  # clear the screen
-        glLoadIdentity()                                   # reset position
-        self.refresh2d()                           # set mode to 2d
-
-        glCallList(self.cityVertexList)   # Always draw the city        
-        self.draw_vehicles()
-        if self.stationsVertexList != None:
-            glCallList(self.stationsVertexList) 
-
-        #glutSwapBuffers()  # important for double buffering
-
-        return 
-
     def refresh2d(self):
         """Sets the view to a 2D mode. """
         glViewport(0, 0, self.WIN_WIDTH, self.WIN_HEIGTH)
@@ -164,6 +191,61 @@ class VisualRepresentation(QOpenGLWidget):
         glOrtho(0.0, self.WIN_WIDTH, 0.0, self.WIN_HEIGTH, 0.0, 1.0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
-    def beginRepresentation(self, nextframe):
+
+
+class VisualizationWindow(QMainWindow):
+    def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
+        super(VisualizationWindow, self).__init__(parent=parent, flags=flags)
+
+        # Create a PyQT-GL object.
+        self.opengl_animation = Animation()
+        self.setCentralWidget(self.opengl_animation)
+
+
+        self.setWindowTitle("Representación de la ciudad")
+
+
+        self.is_over_function = None
+
+        # Restore the size
+        self.settings = QSettings("MyCompany", "MyApp")
+        if not self.settings.value("geometry") == None:
+            self.restoreGeometry(self.settings.value("geometry"))
+        if not self.settings.value("windowState") == None:
+            self.restoreState(self.settings.value("windowState"))
+
+    def show_new_city(self, size, city):
+        self.opengl_animation.display_new_city(size, city)
+        self.opengl_animation.update()
+
+    def start_animation(self, simulation, is_over_function):
+        """Creates a QTimer that triggers the update of the animation. """
+        self.simulation = simulation
+        # Starting state of the simulation:
+        # current_repetition, current_tstep, metrics, snapshot
+        self.sim_data = (0, 0, None, None)
+        self.is_over_function = is_over_function
+
+        self.opengl_animation.display_new_city(self.simulation.SIZE, self.simulation.city_matrix)
+        self.opengl_animation.display_stations(self.simulation.stations)
+        self.opengl_animation.display_vehicles(self.simulation.vehicles)
         
-        nextframe()
+
+        self.opengl_animation.update()
+
+    def update_animation(self):
+
+        self.sim_data = self.simulation.run_simulator_application(*self.sim_data)
+
+        if self.sim_data == None:
+            # The simulation is over
+            self.is_over_function()
+            
+        self.opengl_animation.update()
+
+    def closeEvent(self,cls):
+        if self.is_over_function:
+            self.is_over_function()
+        self.settings.setValue("geometry", self.saveGeometry())
+        self.settings.setValue("windowState", self.saveState())
+        return super().closeEvent(cls)

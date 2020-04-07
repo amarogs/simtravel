@@ -2,14 +2,20 @@ import math
 import os
 
 import h5py
+
+import matplotlib
+matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+
+import numpy as np
 
 import src.analysis.parameters_analysis as params
 from src.simulator.simulation import Simulation
 from src.metrics.units import Units
 from src.models.states import States
+
 
 # Configure the matplotlib backend
 plt.rc('font', family='serif')
@@ -18,25 +24,281 @@ plt.rc('ytick', labelsize='x-small')
 plt.rc('text', usetex=False)
 
 
-class SimulationAnalysis(Simulation):
-    def __init__(self, EV_DEN, TF_DEN, ST_LAYOUT, filepath):
-        super().__init__(EV_DEN, TF_DEN, ST_LAYOUT)
+class GraphFunctions():
+    def __init__(self,sim_name, units, n_elements_per_bin, DELTA_TSTEPS, total_measures):
+        self.n_elements_per_bin = n_elements_per_bin
+        self.units = units
+        self.DELTA_TSTEPS = DELTA_TSTEPS
+        self.sim_name = sim_name
+        self.total_measures = total_measures
 
-        self.sim_name = "EV_DEN: {} TF_DEN: {} LAYOUT: {}".format(
-            EV_DEN, TF_DEN, ST_LAYOUT)
+        self.x_measures_minutes = self.steps_to_minutes(total_measures)
+
+    def binning_data(self, x, y):
+        """Given an x,y series, returns a new x,y series having the elements
+        grouped into bins. Each bin is the mean of the elements belonging to it.
+        It is a way to reduce the number of points if a plot while mantaining the
+        information. """
+
+        indices = np.linspace(0, len(x), self.n_elements_per_bin, dtype='uint32')
+    
+        new_x, new_y = [], []
+        for i in range(0,len(indices)-1,2):
+            new_y.append(np.mean(y[indices[i]: indices[i+1]]))
+            new_x.append(np.mean(x[indices[i]: indices[i+1]]))
+        
+        return new_x, new_y
+    def steps_to_minutes(self, length):
+        return self.units.steps_to_minutes(np.arange(length)*self.DELTA_TSTEPS)
+    def graph_states_evolution_live(self, states_mean, x=None, live=False):
+        """Given a dictionary of states{k=states, val=[number of vehicles in that state at that step]}, and
+        the dictioanary with the deviation of the steps, returns a canvas with the lines plotted. """
+
+        canvas = MplCanvas()
+        canvas.axes = canvas.fig.add_subplot(111)
+        canvas.lines = {}
+
+        for s in States:
+            line = canvas.axes.plot(x, states_mean[s], color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
+            canvas.lines[s] = line[0]
+
+        canvas.axes.set_xlabel("Time (minutes)")
+        canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
+        canvas.axes.set_title("Evolution of states.")
+        canvas.axes.legend()
+
+        return canvas
+
+    def update_states_canvas(self, canvas, x, states_mean):
+        """Given a canvas of the states evolution, update the axes with new data from states_mean """
+        # Clear the axes
+        canvas.axes.cla()
+        # Compute the new x in minutes
+        x = self.steps_to_minutes(x)
+
+        # Plot each state
+        for s in States:
+            # line = canvas.axes.plot(x, states_mean[s], color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
+            # canvas.lines[s] = line[0]
+            canvas.lines[s].set_ydata(states_mean[s])
+            canvas.lines[s].set_xdata(x)
+        canvas.fig.canvas.draw()
+        canvas.fig.canvas.flush_events()
+        
+        # canvas.axes.set_xlabel("Time (minutes)")
+        # canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
+        # canvas.axes.set_title("Evolution of states.")
+        # canvas.axes.legend()        
+
+
+    def graph_states_evolution(self, states_mean, states_std, x=None, live=False):
+        """Given a dictionary of states{k=states, val=[number of vehicles in that state at that step]}, and
+        the dictioanary with the deviation of the steps, returns a canvas with the lines plotted. """
+        if x is None:
+            x = self.x_measures_minutes
+        keys = list(states_mean.keys())
+        keys_as_strings = False
+        if type(keys[0]) == type(""):
+            keys_as_strings = True
+        canvas = MplCanvas()
+        canvas.axes = canvas.fig.add_subplot(111)
+
+
+        for s in States:
+            if keys_as_strings:
+                state_mean, state_std = states_mean[str(s)], states_std[str(s)]
+            else:
+                state_mean, state_std = states_mean[s], states_std[s]
+
+            new_x, new_y = self.binning_data(x, state_mean)
+
+            _, new_err = self.binning_data(x, state_std)
+
+            err_plot = canvas.axes.errorbar(new_x, new_y, yerr=new_err, color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
+        
+
+        canvas.axes.set_xlabel("Time (minutes)")
+        canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
+        canvas.axes.set_title("Evolution of states.")
+        canvas.axes.legend()
+
+        return canvas
+
+    def graph_occupation_evolution(self, occupation_mean, x=None, live=False):
+        """Receives a dictionary of stations where k=station position and val=[list of occupation]
+        Creates canvas of 4 subplots with the occupation of the stations """
+        
+        super_title = self.sim_name + " {}/{}"
+
+        def plot_four_stations(plot_i, total_plots, stations, occupation):
+            nonlocal x
+            """Creates a figure to plot 4 stations occupation """
+
+            canvas = MplCanvas()
+            canvas.fig.suptitle(super_title.format(plot_i+1, total_plots))
+            canvas.fig.subplots_adjust(hspace=0.4)  # Adjust the space
+
+            for i in range(4):  # Creates the subplots
+                index = plot_i + i
+                if index >= len(stations):
+                    continue  # The last figure may contain less than 4 stations
+                else:
+                    pos = stations[plot_i + i]
+                    canvas.__dict__['axes_'+str(i)] = canvas.fig.add_subplot(2, 2, i+1)
+                    y = occupation[pos]
+
+                    if x is None:
+                        x = self.x_measures_minutes
+
+                    canvas.__dict__['axes_'+str(i)].plot(x, y, color='k')
+                    canvas.__dict__['axes_'+str(i)].set_xlabel("Simulation evolution (minutes)")
+                    canvas.__dict__['axes_'+str(i)].set_ylabel("Station occupation (EVs)")
+                    canvas.__dict__['axes_'+str(i)].set_title("Station at {} ".format(pos))
+
+            return canvas
+
+        stations = sorted(list(occupation_mean.keys()))
+        if len(stations) == 1:
+            total_plots, plot_i = 1, 0  # We have only one plot
+
+            canvas = MplCanvas()
+            canvas.axes = canvas.fig.add_subplot(111)
+            canvas.fig.suptitle(super_title.format(plot_i+1, total_plots))  # Add the suptitle
+            # Plot the data
+            y = occupation_mean[stations[0]]
+            if x is None:
+                x =self.x_measures_minutes
+            canvas.axes.plot(x, y, color='k')
+            canvas.axes.set_xlabel("Simulation evolution (minutes)")
+            canvas.axes.set_ylabel("Station occupation (EVs)")
+            canvas.axes.set_title("Station at {} ".format(stations[0]))
+
+            occupation_plots = [canvas]  # Create the list of plots
+
+        elif len(stations) == 4:
+            occupation_plots = [plot_four_stations(
+                0, 1, stations, occupation_mean)]
+        else:
+            total_plots = math.ceil(len(stations)/4)
+            occupation_plots = [plot_four_stations(plot_i, total_plots, stations, occupation_mean)
+                                for plot_i in range(total_plots)]
+
+        return occupation_plots
+
+    def graph_heat_map_evolution(self, heat_map_mean,x=None, live=False):
+        """Given a dictionary called heat_map_mean = {k=snapshot number, val=matrix of occupation of cells.}
+        Returns a list of canvases where each canvas is a matrix image representing the probability of finding
+        a vehicle. """
+
+        super_title = self.sim_name + " - Snapshot {}/{}"
+        canvases = []
+        for (i, hmap) in heat_map_mean.items():
+
+            # Create a subplot for this snapshot
+            canvas = MplCanvas()
+            canvas.axes = canvas.fig.add_subplot(111)
+            canvas.figure.suptitle(super_title.format(eval(i)+1, len(heat_map_mean)))
+
+            norm = 1.0/((eval(i)+1)*self.total_measures/len(heat_map_mean))
+            # Plot the heat map
+            img = canvas.axes.imshow(norm*hmap, cmap='hot',interpolation='nearest', origin='upper', vmin=0, vmax=1)
+            # Show the leyend
+            canvas.fig.colorbar(img, label="Probability of finding a vehicle")
+            canvases.append(canvas)
+
+        return canvases
+
+    def graph_velocities_evolution(self, velocities_mean, velocities_std, x=None, live=False):
+        """Given two dictionaries: velocities_mean, velocities_std each having two keys:
+        'speed' and 'mobility' and values are time series of those measures, plot in a canvas
+        the two graphs side by side."""
+        
+        # Set the x value
+        if x is None:
+            x =self.x_measures_minutes
+        
+        
+        # Create a figure
+        canvas = MplCanvas()
+        canvas.fig.suptitle(self.sim_name)
+
+        
+        # Create a subplot
+        canvas.axes_1 = canvas.fig.add_subplot(1,2,1)
+
+        canvas.axes_1.set_xlabel("Simulation evolution (minutes)")
+        canvas.axes_1.set_ylabel("Mean speed (km/h)")
+
+        # Plot the data
+        y = self.units.simulation_speed_to_kmh(velocities_mean['speed'])
+        
+        yerr = self.units.simulation_speed_to_kmh(velocities_std['speed'])
+        
+        new_x, new_y = self.binning_data(x,y)
+        _, new_yerr = self.binning_data(x, yerr)
+
+        canvas.axes_1.errorbar(new_x, new_y, yerr=new_yerr, color="k",label="Mean speed evolution")
+        canvas.axes_1.legend()
+
+        # Create a subplot
+        canvas.axes_2 = canvas.fig.add_subplot(1,2,2)
+
+        canvas.axes_2.set_xlabel("Simulation evolution (minutes)")
+        canvas.axes_2.set_ylabel("Mean mobility (km/h)")
+
+        y = self.units.simulation_speed_to_kmh(velocities_mean['mobility'])
+        
+        yerr = self.units.simulation_speed_to_kmh(velocities_std['mobility'])
+        
+        new_x, new_y = self.binning_data(x, y)
+        _, new_yerr = self.binning_data(x, yerr)
+
+
+        canvas.axes_2.errorbar(new_x, new_y, yerr=new_yerr, color="k",label="Mean mobility evolution")
+
+        canvas.axes_2.legend()
+
+        return canvas
+
+
+class MplCanvas(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, width=params.FIGSIZE[0], height=params.FIGSIZE[1], dpi=100):
+        self.fig = plt.Figure(figsize=(width, height), dpi=dpi)
+        
+        super(MplCanvas, self).__init__(self.fig)
+
+class SimulationAnalysis(Simulation):
+    def __init__(self, EV_DEN, TF_DEN, ST_LAYOUT, PATH, filepath):
+        super().__init__(EV_DEN, TF_DEN, ST_LAYOUT, PATH)
 
         self.filepath = filepath
-
 
         # load the data into the object
         self.load_data()
         # Prepare the data for the global report
         self.prepare_global_data()
-        # Create the pulse for the moving average convolution
-        self.pulse_ma = np.repeat(1.0, params.WINDOW_SIZE)/params.WINDOW_SIZE
-        self.half_window = int(params.WINDOW_SIZE/2)
+        # Total plots
+        total_occupation_plots = 1
+        if len(self.occupation_mean) > 1:
+            total_occupation_plots = len(self.occupation_mean)//4
+        
+        self.total_plots = 1 + total_occupation_plots +len(self.heat_map_mean) + 1
+       
+        # Create the grapher object:
+        self.grapher = GraphFunctions(self.sim_name, self.units,params.N_BINS, self.DELTA_TSTEPS, len(self.states_mean['States.AT_DEST']))
+
+        # Prepare for the generation of canvases
+        self.computed_canvases = []
+        self.canvas_creator = [
+            lambda : self.grapher.graph_states_evolution(self.states_mean, self.states_std), \
+            lambda : self.grapher.graph_occupation_evolution(self.occupation_mean), \
+            lambda : self.grapher.graph_heat_map_evolution(self.heat_map_mean), \
+            lambda : self.grapher.graph_velocities_evolution(self.velocities_mean, self.velocities_std)
+            ]
+
         # generate the report of the simulation
-        self.generate_report()
+        # self.generate_report()
 
     def prepare_global_data(self):
         """This function takes the attributes that are going
@@ -166,209 +428,78 @@ class SimulationAnalysis(Simulation):
 
         return data_mean, data_std
 
-    def steps_to_minutes(self, length):
-        return self.units.steps_to_minutes(np.arange(length)*self.DELTA_TSTEPS)
-    def binning_data(self, x, y):
-        indices = np.linspace(0, len(x), params.N_BINS, dtype='uint32')
-    
-        new_x, new_y = [], []
-        for i in range(0,len(indices)-1,2):
-            new_y.append(np.mean(y[indices[i]: indices[i+1]]))
-            
-            new_x.append(np.mean(x[indices[i]: indices[i+1]]))
-        return new_x, new_y
-
-    def graph_states_evolution(self):
-
-        fig = plt.figure(figsize=params.FIGSIZE)
-        x = self.steps_to_minutes(len(self.states_mean['States.AT_DEST']))
-
-        for s in States:
-            new_x, new_y = self.binning_data(x, self.states_mean[str(s)])
-            _, new_err = self.binning_data(x, self.states_std[str(s)])
-
-            plt.errorbar(new_x, new_y, yerr=new_err, color=params.COLORS[s],
-                        label=params.STATE_NAMES[s], linewidth=2)
-
-        plt.xlabel("Time (minutes)")
-        plt.ylabel("Number of EVs at each state (EVs)")
-        plt.title("Evolution of states.")
-        plt.legend()
-
-        return fig
-
-    def graph_occupation_evolution(self):
-        """Creates figures of 4 subplots with the occupation of the stations """
-        super_title = self.sim_name + " {}/{}"
-
-        def plot_four_stations(plot_i, total_plots, stations, occupation):
-            """Creates a figure to plot 4 stations occupation """
-
-            fig = plt.figure(figsize=params.FIGSIZE)  # Create the figure
-
-            plt.suptitle(super_title.format(plot_i+1, total_plots))
-            plt.subplots_adjust(hspace=0.4)  # Adjust the space
-
-            for i in range(4):  # Creates the subplots
-                index = plot_i + i
-                if index >= len(stations):
-                    continue  # The last figure may contain less than 4 stations
-                else:
-                    pos = stations[plot_i + i]
-                    plt.subplot(2, 2, i+1)
-                    y = occupation[pos]
-                    x = self.steps_to_minutes(len(y))
-                    plt.plot(x, y, color='k')
-                    plt.xlabel("Simulation evolution (minutes)")
-                    plt.ylabel("Station occupation (EVs)")
-                    plt.title("Station at {} ".format(pos))
-
-            return fig
-
-        stations = sorted(list(self.occupation_mean.keys()))
-        if len(stations) == 1:
-            total_plots, plot_i = 1, 0  # We have only one plot
-
-            fig = plt.figure(figsize=params.FIGSIZE)  # Create the figure
-            plt.suptitle(super_title.format(
-                plot_i+1, total_plots))  # Add the suptitle
-            # Plot the data
-            y = self.occupation_mean[stations[0]]
-            x = self.steps_to_minutes(len(y))
-            plt.plot(x, y, color='k')
-            plt.xlabel("Simulation evolution (minutes)")
-            plt.ylabel("Station occupation (EVs)")
-            plt.title("Station at {} ".format(stations[0]))
-
-            occupation_plots = [fig]  # Create the list of plots
-
-        elif len(stations) == 4:
-            occupation_plots = [plot_four_stations(
-                0, 1, stations, self.occupation_mean)]
-        else:
-            total_plots = math.ceil(len(stations)/4)
-            occupation_plots = [plot_four_stations(plot_i, total_plots, stations, self.occupation_mean)
-                                for plot_i in range(total_plots)]
-
-        return occupation_plots
-
-    def graph_heat_map_evolution(self):
-        super_title = self.sim_name + " - Snapshot {}/{}"
-        figures = []
-        for (i, hmap) in self.heat_map_mean.items():
-
-            # Create a subplot for this snapshot
-            fig = plt.figure(figsize=params.FIGSIZE)
-            plt.suptitle(super_title.format(
-                eval(i)+1, len(self.heat_map_mean)))
-            norm = 1.0/(np.max(hmap))
-            # Plot the heat map
-            ax = plt.imshow(norm*hmap, cmap='hot',
-                            interpolation='nearest', origin='upper')
-            # Show the leyend
-            cbar = plt.colorbar(ax, label="Probability of finding a vehicle")
-            figures.append(fig)
-
-        return figures
-
-    def graph_velocities_evolution(self):
-        """Code to plot the mean speed of the vehicles and mean mobility"""
-        # Create a figure
-        fig = plt.figure(figsize=params.FIGSIZE)
-        plt.suptitle(self.sim_name)
-
-        # Create a subplot
-        plt.subplot(1, 2, 1)
-
-        plt.xlabel("Simulation evolution (minutes)")
-        plt.ylabel("Mean speed (km/h)")
-
-        # Plot the data
-        y = self.units.simulation_speed_to_kmh(self.velocities_mean['speed'])
-        x = self.steps_to_minutes(len(y))
-        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['speed'])
-        
-        new_x, new_y = self.binning_data(x,y)
-        _, new_yerr = self.binning_data(x, yerr)
-
-        plt.errorbar(new_x, new_y, yerr=new_yerr, color="k",
-                     label="Mean speed evolution")
-
-        plt.legend()
-
-        # Create a subplot
-        plt.subplot(1, 2, 2)
-
-        plt.xlabel("Simulation evolution (minutes)")
-        plt.ylabel("Mean mobility (km/h)")
-
-        y = self.units.simulation_speed_to_kmh(self.velocities_mean['mobility'])
-        x = self.steps_to_minutes(len(y))
-        yerr = self.units.simulation_speed_to_kmh(self.velocities_std['mobility'])
-        
-        new_x, new_y = self.binning_data(x, y)
-        _, new_yerr = self.binning_data(x, yerr)
-
-
-        plt.errorbar(new_x, new_y, yerr=new_yerr, color="k",label="Mean mobility evolution")
-
-        plt.legend()
-
-        return fig
+ 
 
     def generate_report(self):
 
         # Create the folder where the images are going to be stored.
         base_name = "{}_{}_{}".format(self.EV_DEN, self.TF_DEN, self.ST_LAYOUT)
-        path = "results/analyzed/" + base_name
+
+        path = os.path.join(os.path.dirname(self.filepath), "analyzed", base_name )
+        
         if not os.path.exists(path):
             os.makedirs(path)
 
         # Create the figures
-        figures, names = self.create_figures(base_name)
+        figures, names = self.create_canvases(base_name)
 
         # Save the figures into a file and a PDF
         pp = PdfPages(path+"/ev{}tf{}ly{}.pdf".format(self.EV_DEN,
                                                       self.TF_DEN, self.ST_LAYOUT))
 
         for (fig, name) in zip(figures, names):
+            if type(fig) == MplCanvas:
+                fig = fig.fig
             pp.savefig(fig)
             fig.savefig(path+"/" + name+".svg", format="svg", dpi=100)
             fig.clear()
             plt.close(fig)
         pp.close()
 
-    def create_figures(self, base_name):
-        """Based on the configuration file,create the figures of the simulation. """
-        figures, names = [], []
+    def create_canvases(self, base_name):
+        """Based on the configuration file,create the canvases of the simulation. """
+        canvases, names = [], []
 
         if params.STATES:
-            figures.append(self.graph_states_evolution())
+            canvases.append(self.canvas_creator[0]())
             names.append("states_"+base_name)
 
         if params.OCCUPATION:
-            aux = self.graph_occupation_evolution()
+            aux = self.canvas_creator[1]()
             for (i, fig) in enumerate(aux):
-                figures.append(fig)
+                canvases.append(fig)
                 names.append("occupation"+str(i)+"_"+base_name)
 
         if params.HEAT_MAP:
-            aux = self.graph_heat_map_evolution()
+            aux = self.canvas_creator[2]()
             for (i, fig) in enumerate(aux):
-                figures.append(fig)
+                canvases.append(fig)
                 names.append("heat"+str(i)+"_"+base_name)
 
         if params.VELOCITIES:
-            figures.append(self.graph_velocities_evolution())
+            canvases.append(self.canvas_creator[3]())
             names.append("velocity_"+base_name)
 
-        # if params.DISTRIBUTION:
-        #     figures.append(self.distribution("charge_d"))
-        #     names.append("charge_distr_"+base_name)
-        #     figures.append(self.distribution("wait_d"))
-        #     names.append("wait_distr_"+base_name)
-        return figures, names
+        return canvases, names
 
+    def get_canvas(self, canvas_index):
+        """Given an index, returns the canvas with that index. If the graph has
+        been computed, it is retrieved from memory, else it is computed and stored. """
+
+        
+        if canvas_index >= len(self.computed_canvases):
+            # Check if the canvas exists in the list of computed canvases
+            new_canvas = self.canvas_creator.pop(0)()
+
+            # Create the new canvas and append it to the list of canvases.
+            if type(new_canvas) is list:
+                self.computed_canvases.extend(new_canvas)
+            else:
+                self.computed_canvases.append(new_canvas)
+
+
+        return self.computed_canvases[canvas_index]
+        
 
 class GlobalAnalysis():
     def __init__(self, attrs, *global_keys):
@@ -377,6 +508,9 @@ class GlobalAnalysis():
         # hold all data from the simulations.
         self.shape = self.global_matrix_shape(attrs)
 
+        # Set the path to store the figures and pdf
+        self.path = os.path.join(attrs[0][-2],"results", "analyzed", "global" )
+        
         # For each key passed as attribute, we must
         # create a matrix to store the data.
         self.global_keys = global_keys
@@ -393,13 +527,13 @@ class GlobalAnalysis():
                           'elapsed': "Time elapsed", 'speed': "Mean speed EV rate = {}",
                           'mobility': "Mean mobility EV rate = {} "}
 
-        # Set the path to store the figures and pdf
-        self.path = "results/analyzed/global"
+
+
 
     def global_matrix_shape(self, attrs):
         total_evd, total_tfd, total_layout = set(), set(), set()
 
-        for (evd, tfd, layout, _) in attrs:
+        for (evd, tfd, layout, _, _) in attrs:
             total_evd.add(evd)
             total_tfd.add(tfd)
             total_layout.add(layout)

@@ -15,7 +15,7 @@ from src.simulator.simulator import Simulator
 
 
 class Simulation():
-    def __init__(self, EV_DEN, TF_DEN, ST_LAYOUT):
+    def __init__(self, EV_DEN, TF_DEN, ST_LAYOUT, PATHNAME):
         """Creates a Simulation object receiving:
 
         :param TF_DEN: traffic density of the simulation, it is expressed
@@ -45,7 +45,9 @@ class Simulation():
         self.EV_DEN = EV_DEN
         self.TF_DEN = TF_DEN
         self.ST_LAYOUT = ST_LAYOUT
-        self.filename = "results/{}#{}#{}".format(
+        self.PATHNAME = PATHNAME
+        self.sim_name = "EV_DEN: {} TF_DEN: {} LAYOUT: {}".format(EV_DEN, TF_DEN, ST_LAYOUT)
+        self.filename = PATHNAME + "/results/{}#{}#{}".format(
             self.EV_DEN, self.TF_DEN, self.ST_LAYOUT)
         # Attributes filled in the method set_simulation_units()
         self.units = None
@@ -82,15 +84,16 @@ class Simulation():
         self.CS_POWER = cs_power
         self.AUTONOMY = autonomy
 
-    def create_city(self, Builder, RB_LENGTH=6, AV_LENGTH=4*5, INTERSEC_LENGTH=3, SCALE=1):
+    def create_city(self, Builder, RB_LENGTH=6, AV_LENGTH=4*5, SCALE=1, INTERSEC_LENGTH=3):
         """Builder is a CityBuilder class"""
 
         # Create the city builder
-        self.city_builder = Builder(RB_LENGTH, AV_LENGTH, INTERSEC_LENGTH,SCALE)
+        self.city_builder = Builder(RB_LENGTH, AV_LENGTH, SCALE, INTERSEC_LENGTH)
         self.city_map = self.city_builder.city_map
         self.city_matrix = self.city_builder.city_matrix
 
         self.avenues = self.city_builder.avenues
+        self.roundabouts = self.city_builder.roundabouts
         self.SCALE = SCALE
         self.AV_LENGTH = AV_LENGTH
         self.RB_LENGTH = RB_LENGTH
@@ -263,8 +266,8 @@ class Simulation():
         file."""
 
         # Check if the results folder exists.
-        if not os.path.exists("results"):
-            os.makedirs("results")
+        if not os.path.exists(self.PATHNAME + "/results"):
+            os.makedirs(self.PATHNAME + "/results")
         else:
             with open(self.filename + ".hdf5", "w"):
                 pass
@@ -282,7 +285,7 @@ class Simulation():
     def write_results(self, repetition, metrics):
         """Once the simulation is over, the results are written to a HDF5 file.
         The name of the file is made with the attributes EV_DEN#TF_DEN#ST_LAYOUT that
-        identify a simulation. For each repetion a group is made with the index of
+        identify a simulation. For each repetition a group is made with the index of
         the repetition and the data is saved into datasets."""
 
         with h5py.File(self.filename+".hdf5", "a") as f:
@@ -410,3 +413,94 @@ class Simulation():
         visual.beginRepresentation(next_frame)
             
 
+    def prepare_simulation(self, total_time, measure_period, repetitions):
+        """First function to call when we want to run a new simulation from the application. """
+        # Convert the time to simulation steps
+        total_tsteps = int(self.units.minutes_to_steps(total_time*60))
+        delta_tsteps = int(self.units.minutes_to_steps(measure_period))
+
+        if delta_tsteps == 0:
+            delta_tsteps = 1
+
+        self.TOTAL_TSTEPS = total_tsteps
+        self.DELTA_TSTEPS = delta_tsteps
+        self.REPETITIONS = repetitions
+        
+        # Set the list of tsetps for displaying a message
+        self.set_progress_message(10)
+
+        # Prepare the HDF5 file
+        self.prepare_results_file()
+
+        self.print_summary()
+
+
+
+    def end_simulation(self):
+        """Last function to call when we want to run a simulation from the application. """
+        self.ELAPSED = 0
+        self.write_header_attr()
+
+    def run_simulator_application(self, current_repetition, current_tstep, current_metrics, previous_snapshot):
+        """Function that updates the simulation from the application. """
+
+        if current_tstep == 0:
+            print("Starting")
+            # Restart the cells, vehicles, stations and the simulator
+            for cell in self.city_map.values():
+                cell.occupied = False
+            for v in self.vehicles:
+                v.restart()
+
+            for st in self.stations:
+                st.restart()
+
+            self.simulator.restart()
+            self.repetition = current_repetition
+
+            # Create a metrics object and initilize it
+            current_metrics = SimulationMetric(self.city_map, self.stations, 3, self.TOTAL_TSTEPS, self.DELTA_TSTEPS, self.SIZE)
+            current_metrics.initialize(self.vehicles, self.ev_vehicles, self.stations)
+            self.metrics = current_metrics
+
+            # Create the first snapshot
+            previous_snapshot = SimulationSnapshot(self.vehicles)
+            
+            current_tstep += 1
+
+        elif current_tstep > self.TOTAL_TSTEPS:
+            print("End of repetition")
+            # Store the data into an HDF5 file.
+            self.write_results(current_repetition, current_metrics)
+
+            # test whether there are more simulations left
+            current_repetition += 1
+            
+            if current_repetition < self.REPETITIONS:
+                # There are more simulations left to do, set the time step to zero.
+                print("There are more repetitions left")
+                current_tstep = 0
+            else:
+                # There are no more simulations left to, terminate.
+                print("No more repetitions left")
+                self.end_simulation()
+                return None
+
+        else:
+            
+            self.simulator.next_step()
+            
+            # Check if we have to update the data collection
+            if current_tstep % self.DELTA_TSTEPS == 0:
+                current_snapshot = SimulationSnapshot(self.vehicles)
+                current_metrics.update_data(self.vehicles, self.ev_vehicles, self.stations, current_snapshot, previous_snapshot, current_tstep)
+                previous_snapshot = current_snapshot
+
+            # Check if we have to display a progress message
+            if current_tstep in self.progress_tsteps:
+                self.print_progress(current_tstep)
+            
+            current_tstep += 1
+
+
+        return current_repetition, current_tstep, current_metrics, previous_snapshot
