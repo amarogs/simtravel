@@ -8,6 +8,8 @@ setup(
         Extension("src.simulator.simulator", ["src/simulator/simulator.pyx"]), Extension(
             "src.simulator.cythonGraphFunctions", ["src/simulator/cythonGraphFunctions.pyx"]),
         Extension("src.simulator.simulation", ["src/simulator/simulation.pyx"]), 
-        Extension("src.models.cities", ["src/models/cities.pyx"])
+        Extension("src.models.cities", ["src/models/cities.pyx"]),
+        Extension("src.metrics.metrics", ["src/metrics/metrics.pyx"]),
+        Extension("src.metrics.units", ["src/metrics/units.pyx"])
     ])
 )
