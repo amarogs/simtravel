@@ -23,12 +23,12 @@ else:
 times = []
 for _ in range(1):
     start = time.time()
-    simulation = Simulation(0.5, 0.2, "central")
+    simulation = Simulation(1, 0.2, "central",".")
 
-    simulation.set_simulation_units(speed=10, cell_length=5, simulation_speed=1, battery=0.1,cs_power=7)
+    simulation.set_simulation_units(speed=10, cell_length=5, simulation_speed=1, battery=0.01,cs_power=7)
     simulation.set_battery_distribution(lower=0.2, std=0.25)
-    simulation.set_idle_distribution(upper=15, lower=5, std=0.25)
-    simulation.create_city(SquareCity, RB_LENGTH=12, AV_LENGTH=4*13, INTERSEC_LENGTH=3, SCALE=2) 
+    simulation.set_idle_distribution(upper=1, lower=0.1, std=0.25)
+    simulation.create_city(SquareCity, RB_LENGTH=6, AV_LENGTH=4*7, INTERSEC_LENGTH=3, SCALE=1) 
     simulation.stations_placement(min_plugs_per_station=2, min_num_stations=10) 
     simulation.create_simulator()
     if VISUAL:

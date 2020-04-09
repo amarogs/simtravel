@@ -126,7 +126,7 @@ cdef class AStar():
                     #If the neighbour hasn't been visited
                     #Compute the possible g_score
                     if successor in current.prio_successors:
-                        new_g_score = g_score[current] + road_type - 2
+                        new_g_score = g_score[current] + road_type - 3
                     else:
                         new_g_score = g_score[current] + road_type
 

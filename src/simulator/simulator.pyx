@@ -19,7 +19,7 @@ class Simulator:
         self.city_map = simulation.city_map
         self.avenues = self.simulation.avenues
         self.roundabouts = self.simulation.roundabouts
-        self.SEARCH_ALTERNATIVE_PRIO = 0.1
+        self.SEARCH_ALTERNATIVE_PRIO = 0.3
         # Control the updating of the cell's occupation state.
         self.new_occupations = []
         self.new_releases = []
@@ -214,35 +214,35 @@ class Simulator:
         def keep_in_lane_is_possible(next_prio_cell):
             """Given a priority cell next to the current cell, returns True
             if we can keep in lane and occupy the next cell. """
-
             return not next_prio_cell.occupied
         
         def lane_change_is_possible(choice):
             """ Given a cell, checks if it is possible to move to that cell provided
             that we dont have priority.  """
-            is_possible = not choice.occupied
+            return (not choice.occupied) and (not any([cell.occupied for cell in choice.prio_predecessors ]))
 
-            for cell in choice.prio_predecessors:
-                # For each cell leading to the choice, check if it's clear.
-                if not is_possible or cell.occupied:
-                    is_possible = False
-                    break
-                # For each previous cell leading to cell, check if that's also clear.
-                #for p_cell in cell.prio_predecessors:
-                #    if p_cell.occupied:
-                #        is_possible = False
-                #        break
-                    
-            return is_possible
 
         def follow_path(vehicle, next_cell):
+            """Function called when the vehicle moves exactly to the next cell in its path."""
+            nonlocal vehicle_moved
+
             self.assign_new_cell(vehicle, next_cell)
-            
+            vehicle_moved = True
 
         def divert_from_path(vehicle, next_cell):
-            
+            """Function called when a vehicle moves to a cell different to the next in its path. """
+            nonlocal vehicle_moved
+
             self.assign_new_cell(vehicle, next_cell)
             vehicle.recompute_path = True
+            vehicle_moved = True
+
+        def search_an_alternative(vehicle, alternative):
+            """ Given a vehicle and an alternative position, checks if the movement is possible """
+            if alternative in vehicle.cell.prio_successors:
+                return keep_in_lane_is_possible(alternative)
+            else:
+                return lane_change_is_possible(alternative)
 
         # Recompute the path if we have diverted from the path in the previous step.
         if vehicle.recompute_path:
@@ -258,34 +258,29 @@ class Simulator:
             # The vehicle tries to keep in lane and move to the forward position.
             if keep_in_lane_is_possible(next_cell):
                 follow_path(vehicle, next_cell)
-                vehicle_moved = True
+                
             elif random.random() < self.SEARCH_ALTERNATIVE_PRIO:
                 # The vehicle tries to change lane with a certain probability
                 for n_cell in vehicle.cell.successors:
+                    alternative_found = search_an_alternative(vehicle, n_cell)
+                    if alternative_found:
+                        divert_from_path(vehicle, n_cell)
+                        break
                     
-                    if n_cell in vehicle.cell.prio_successors:
-                        # The vehicle tries to change the direction an enter another priority street.
-                        if keep_in_lane_is_possible(n_cell):
-                            divert_from_path(vehicle, n_cell)
-                            vehicle_moved = True
-                            break
-                    else:
-                        # The vehicle tries to change lane
-                        if lane_change_is_possible(n_cell):
-                            divert_from_path(vehicle, n_cell)
-                            vehicle_moved = True
-                            break
                 
         else:
             # Case when the next position is not a priority, the vehicle must give way.
             if lane_change_is_possible(next_cell):
                 follow_path(vehicle, next_cell)
-                vehicle_moved = True
                 
-            elif vehicle.cell.prio_successors and keep_in_lane_is_possible(vehicle.cell.prio_successors[0]):
+            
+            elif vehicle.cell.prio_successors and (random.random() < self.SEARCH_ALTERNATIVE_PRIO):
                 # There is no safe way to change lane, so the vehicle must stay in his lane.
-                divert_from_path(vehicle, vehicle.cell.prio_successors[0])
-                vehicle_moved = True
+                prio_alternative_choice = random.choice(vehicle.cell.prio_successors)
+
+                if keep_in_lane_is_possible(prio_alternative_choice):
+                    divert_from_path(vehicle, vehicle.cell.prio_successors[0])
+                
    
 
         if not vehicle_moved:

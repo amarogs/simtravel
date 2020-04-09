@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from src.models.cities import SquareCity
 from src.simulator.simulation import Simulation
-import tests.parameters as params
 import sys
 from multiprocessing import Pool
+import yaml
 
+parameters =None
+with open("tests/parameters.yaml", "r") as f:
+    parameters = yaml.load(f, Loader=yaml.FullLoader)
+    for k, v in parameters.items():
+        globals()[k] = v
 
 # Read the number of cores to use from the command line.
 if len(sys.argv) == 2:
@@ -14,10 +19,20 @@ else:
 
 
 # Create the combination of values we want to try.
+ST_LAYOUT_VALUES = []
+if ST_CENTRAL:
+    ST_LAYOUT_VALUES.append("central")
+
+if ST_DISTRIBUTED:
+    ST_LAYOUT_VALUES.append("distributed")
+if ST_FOUR:
+    ST_LAYOUT_VALUES.append("four")
+
+
 sim_args = []
-for ev in params.EV_DENSITY_VALUES:
-    for tf in params.TF_DENSITY_VALUES:
-        for ly in params.ST_LAYOUT_VALUES:
+for ev in EV_DENSITY_VALUES:
+    for tf in TF_DENSITY_VALUES:
+        for ly in ST_LAYOUT_VALUES:
             sim_args.append((ev, tf, ly))
 
 
@@ -26,25 +41,25 @@ def run_simulation_with(args):
     # Create the simulation object
     simulation = Simulation(*args)
     # Set the simulation units.
-    simulation.set_simulation_units(speed=params.SPEED, cell_length=params.CELL_LENGTH,
-                                    simulation_speed=params.SIMULATION_SPEED,
-                                    battery=params.BATTERY, cs_power=params.CS_POWER)
+    simulation.set_simulation_units(speed=SPEED, cell_length=CELL_LENGTH,
+                                    simulation_speed=SIMULATION_SPEED,
+                                    battery=BATTERY, cs_power=CS_POWER)
     # Set the battery and idle distribution
-    simulation.set_battery_distribution(lower=params.BATTERY_THRESHOLD,
-                                        std=params.BATTERY_STD)
-    simulation.set_idle_distribution(upper=params.IDLE_UPPER,
-                                     lower=params.IDLE_LOWER, std=params.IDLE_STD)
+    simulation.set_battery_distribution(lower=BATTERY_THRESHOLD,
+                                        std=BATTERY_STD)
+    simulation.set_idle_distribution(upper=IDLE_UPPER,
+                                     lower=IDLE_LOWER, std=IDLE_STD)
     # Create the city
-    simulation.create_city(SquareCity, params.RB_LENGTH, params.AV_LENGTH, params.INTERSEC_LENGTH, params.SCALE) 
+    simulation.create_city(SquareCity, RB_LENGTH, AV_LENGTH, INTERSEC_LENGTH, SCALE) 
 
-    simulation.stations_placement(min_plugs_per_station=params.MIN_PLUGS_PER_STATION,
-                                  min_num_stations=params.MIN_D_STATIONS)
+    simulation.stations_placement(min_plugs_per_station=MIN_PLUGS_PER_STATION,
+                                  min_num_stations=MIN_D_STATIONS)
     # Create the simulator
     simulation.create_simulator()
 
     # Run the simulation
-    simulation.run(total_time=params.TOTAL_TIME,
-                   measure_period=params.MEASURE_PERIOD, repetitions=params.REPETITIONS)
+    simulation.run(total_time=TOTAL_TIME,
+                   measure_period=MEASURE_PERIOD, repetitions=REPETITIONS)
 
 
 if NUM_PROCESS == 1:

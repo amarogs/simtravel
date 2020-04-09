@@ -11,16 +11,23 @@ from src.analysis.analysis import GlobalAnalysis, SimulationAnalysis
 
 
 # Read the number of cores to use from the command line.
-if len(sys.argv) == 2:
-    NUM_PROCESS = int(sys.argv[1])
+if len(sys.argv) == 3:
+    PATH = sys.argv[1]
+    NUM_PROCESS = int(sys.argv[2])
+    
+elif len(sys.argv) == 2:
+    PATH = sys.argv[1]
+    NUM_PROCESS = 1
 else:
+    PATH = "."
     NUM_PROCESS = 1
 
 # Create the paths to store the results
-paths = ["results/analyzed", "results/analyzed/global"]
-for path in paths:
-    if not os.path.exists(path):
-        os.makedirs(path)
+relative_paths = ["results/analyzed", "results/analyzed/global"]
+for abs_path in [os.path.join(PATH, r) for r in relative_paths]:
+    if not os.path.exists(abs_path):
+        os.makedirs(abs_path)
+        print("Haciendo: ", abs_path)
 
 
 def get_attributes_results(path):
@@ -31,6 +38,7 @@ def get_attributes_results(path):
     attributes = []
     for f in filepath:
         config = f[0:-5].split("#")
+        config.append(PATH)
         config.append(path + "/" + str(f))
         attributes.append(tuple(config))
 
@@ -43,7 +51,7 @@ def analize_simulation(attr):
 
 
 # Compute the attributes of th different simulations in the results folder.
-attrs = get_attributes_results("results")
+attrs = get_attributes_results(os.path.join(PATH, "results"))
 
 # Analize each simulation creating a list os SimulationAnalysis objects
 if NUM_PROCESS == 1:

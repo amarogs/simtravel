@@ -8,15 +8,15 @@ import sys
 
 
 # Create a Simulation
-simulation = Simulation(1, 0.7, "four")
+simulation = Simulation(1, 0.1, "four")
 # Set the physical units
 simulation.set_simulation_units(
     speed=10, cell_length=5, simulation_speed=1, battery=24, cs_power=1)
 # Set the battery distribution
 simulation.set_battery_distribution(lower=0.25, std=0.25)
-simulation.set_idle_distribution(upper=5, lower=0, std=0.25)
+simulation.set_idle_distribution(upper=1, lower=0.1, std=0.25)
 # Create the city
-simulation.create_city(SquareCity, RB_LENGTH=6, AV_LENGTH=4*9, INTERSEC_LENGTH=3, SCALE=2) 
+simulation.create_city(SquareCity, RB_LENGTH=8, AV_LENGTH=4*15, INTERSEC_LENGTH=3, SCALE=2) 
 # Place the stations around the city
 simulation.stations_placement(min_plugs_per_station=2, min_num_stations=10)
 # And finally create a simulator

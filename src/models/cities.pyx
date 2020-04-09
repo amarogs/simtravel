@@ -8,8 +8,8 @@ from src.simulator.cythonGraphFunctions import (configure_lattice_size,lattice_d
 
 class CellType(Enum):
     HOUSE = 0
-    AVENUE = 4
-    STREET = 5
+    AVENUE = 6
+    STREET = 7
     ROUNDABOUT = 6
 
     def __eq__(self, other):
