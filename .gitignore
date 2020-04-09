@@ -8,6 +8,7 @@ __pycache__/
 
 # Results
 results*/*
+*.zip
 *.pdf
 *.svg
 *.json
