@@ -2,9 +2,11 @@ import random
 import colorsys
 
 from OpenGL.GL import *
+from OpenGL.GLUT import *
 from PyQt5 import Qt, QtCore, QtGui
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import *
+from PIL import Image
 
 import src.visual.colors as c
 from src.models.states import States
@@ -58,7 +60,7 @@ class Animation(QOpenGLWidget):
         if self.displaying_vehicles:
             self.draw_vehicles()
 
-
+        self.save_buffer_to_image()
     def resizeGL(self, width, heigth):
         """Sets up the OpenGL viewport, projection, etc. Gets called whenever the 
         widget has been resized (and also when it is shown for the first time 
@@ -80,6 +82,17 @@ class Animation(QOpenGLWidget):
                 self.display_stations(self.stations)
         
         self.update()
+
+    def save_buffer_to_image(self):
+        """Reads the content of the current buffer and stores it in a PIL image.
+        Returns the image. """
+
+        data = glReadPixels(0,0,self.WIN_WIDTH,self.WIN_HEIGTH, GL_RGBA, GL_UNSIGNED_BYTE)
+        if data != None:
+            image = Image.frombytes("RGBA", (self.WIN_WIDTH, self.WIN_HEIGTH), data)
+            return image
+        else:
+            return
 
     def generate_two_colors(self):
         # Generate the primary hue
@@ -333,7 +346,8 @@ class VisualizationWindow(QMainWindow):
             self.is_over_function()
             
         self.opengl_animation.update()
-
+    def save_image(self):
+        return self.opengl_animation.save_buffer_to_image()
     def closeEvent(self,cls):
         if self.is_over_function:
             self.is_over_function()

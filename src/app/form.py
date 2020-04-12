@@ -146,7 +146,15 @@ class ParamsCreationForm(QWidget):
         # Update the scrolling area to the new current_form
         self.scroll_area.setWidget(self.current_form)
         
-
+    def save_new_image(self):
+        """Read the current buffer and stores it in a PNG image. """
+        self.city_visualization.update()
+        image = self.city_visualization.save_image()
+        if image != None:
+            path = QFileDialog.getSaveFileName(self, "Guardar imagen como")[0]
+            if path and image:
+                image.save(path+".png", "png", quality=95)
+        
     def show_city(self):
         # Update the parameters
         self.update_params_txt(reset_widgets=False)
@@ -240,7 +248,9 @@ class ParamsCreationForm(QWidget):
         stations_form.setLayout(layout)
         # Add the form to the general layout
         form_layout.addWidget(stations_form)
-
+        save_button = QPushButton("Guardar imagen")
+        save_button.clicked.connect(self.save_new_image)
+        form_layout.addWidget(save_button)
         # Set the layout
         self.current_form.setLayout(form_layout)
         
