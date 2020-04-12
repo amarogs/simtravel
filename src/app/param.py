@@ -15,8 +15,8 @@ scale = Param(QSpinBox, 1, 1, "SCALE", "Factor de escala del patrón base:")
 plugs_per_station = Param(QSpinBox, 1, 1, "MIN_PLUGS_PER_STATION", "Número mínimo de enchufes por estacion:")
 d_stations = Param(QSpinBox, 1,1,"MIN_D_STATIONS", "Número mínimo de estaciones distribuidas: ")
 
-city_creation = [roundabout, av_segment, scale, plugs_per_station, d_stations]
-
+city_creation = [roundabout, av_segment, scale]
+stations_creation = [plugs_per_station, d_stations]
 
 """Speed parameters """
 speed = Param(QSpinBox, 1, 1, "SPEED", "Velocidad media en las calles (km/h):")

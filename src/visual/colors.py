@@ -1,3 +1,10 @@
+
+
+
+
+
+# General colors used for the painting of vehicles.
+
 aliceblue = (0.941, 0.973, 1.000)
 antiquewhite = (0.980, 0.922, 0.843)
 aqua = (0.000, 1.000, 1.000)

@@ -1,4 +1,5 @@
 import random
+import colorsys
 
 from OpenGL.GL import *
 from PyQt5 import Qt, QtCore, QtGui
@@ -7,8 +8,7 @@ from PyQt5.QtWidgets import *
 
 import src.visual.colors as c
 from src.models.states import States
-
-
+from src.models.cities import CellType
 
 class Animation(QOpenGLWidget):
 
@@ -29,6 +29,13 @@ class Animation(QOpenGLWidget):
         # Colors that can be used with the vehicles.
         self.colors = [val for n, val in c.__dict__.items() if not n.startswith("__") and sum(val) <= 2.0]
         self.colors.remove((0.0, 0.0, 0.0))
+
+        # Special colors used in the painting of the city or stations
+        self.avenue_color = (201/255, 88/255, 19/255)
+        self.street_color = (47/255, 72/255, 53/255)
+        self.street_color = (244/255, 202/255, 159/255)
+        self.roundabout_color = (62/255, 141/255, 126/255)
+        self.cluster_colors = None
 
         self.moving_states = set(States.moving_states())
 
@@ -68,19 +75,44 @@ class Animation(QOpenGLWidget):
         
         self.WIN_HEIGTH, self.WIN_WIDTH = side, side
         if self.displaying_city:
-            self.display_new_city(self.SIZE, self.city)
+            self.display_new_city(self.SIZE, self.city, self.city_map, self.stations_pos, self.stations_influence)
             if self.displaying_stations:
                 self.display_stations(self.stations)
         
         self.update()
-        
-    def display_new_city(self, size, city):
-        """Compiles a new city with a certain total size. """
+
+    def generate_two_colors(self):
+        # Generate the primary hue
+        hue = random.randint(0, 360)
+        # Generate secondary hue
+        hue_secondary = (hue+90)%360
+        saturation = 0.85
+        lightness = 0.6
+        return colorsys.hls_to_rgb(hue/360, lightness, saturation), colorsys.hls_to_rgb(hue_secondary/360, lightness, saturation)
+
+    def display_new_city(self, size, city, city_map=None, stations_pos=None, stations_influence=None):
+        """Compiles a new city with a certain total size.
+        If the function receives a city_map it colors the city based on properties of the cell, 
+        If the funtion receives stations_pos the function displays the stations and 
+        If the function receives stations_influence, paints the influence. """
         
         self.SIZE = size
         self.city = city
+        self.city_map = city_map
+        self.stations_pos = stations_pos
+        self.stations_influence = stations_influence
+
         self.set_cell_size(self.WIN_WIDTH, size)
-        self.compile_city_drawing(city)
+
+        if city_map != None:
+            self.compile_color_city(city, city_map)
+        elif stations_pos != None and stations_influence != None:
+            if self.cluster_colors == None:
+                self.cluster_colors = [self.generate_two_colors() for _ in range(len(stations_pos))]
+            self.compile_stations_influence(city, stations_pos, stations_influence)
+        else:
+            self.compile_city_drawing(city)
+
         self.displaying_city = True
 
     def set_cell_size(self, width, size):
@@ -102,7 +134,7 @@ class Animation(QOpenGLWidget):
         self.displaying_stations = True
         self.compile_stations_drawing(stations)
 
- 
+
     def compile_stations_drawing(self, stations):
         
         index = glGenLists(1)
@@ -117,12 +149,70 @@ class Animation(QOpenGLWidget):
         glEndList()
         
         self.stations_drawing = index
+    def compile_stations_influence(self, city, stations_pos, stations_influence):
+        
+        index = glGenLists(1)
+        glNewList(index, GL_COMPILE)
+        
+        for colors, stations, influence in zip(self.cluster_colors, stations_pos, stations_influence):
+            
+
+            for pos in influence:
+                (i,j) = pos
+                glColor3f(*colors[1])
+                # Draw a rectangle where the influenced position is
+                self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+                # Draw a black outline of the station.
+                glColor3f(0.0, 0.0, 0.0)
+                self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
+
+            for pos in stations:
+                (i,j) = pos
+                glColor3f(*colors[0])
+                # Draw a rectangle where the station is
+                self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+                # Draw a black outline of the station.
+                glColor3f(0.0, 0.0, 0.0)
+                self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
+
+        glEndList()
+        self.city_drawing = index                               
+    def compile_color_city(self, city, city_map):
+        """Show the city with each cell type colored """
+        index = glGenLists(1)
+        glNewList(index, GL_COMPILE)
+        
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                if city[(i,j)] == 1:
+                    # The cell belongs to the drivable set
+                    cell = city_map[(i,j)]
+                    if cell.cell_type == CellType.STREET:
+                        glColor3f(*self.street_color)
+                    elif cell.cell_type == CellType.AVENUE:
+                        glColor3f(*self.avenue_color)
+                    elif cell.cell_type == CellType.ROUNDABOUT:
+                        glColor3f(*self.roundabout_color)
+
+                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+                    glColor3f(0.0, 0.0, 0.0)
+                    self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
+                 
+
+
+                else:
+                    # Draw a white cell without outline
+                    glColor3f(1.0, 1.0, 1.0)
+                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+
+        glEndList()
+        self.city_drawing = index  
 
     def compile_city_drawing(self, city):
         """For each cell in the city, if it is a house paint it black, else paint it white. """
+        
         index = glGenLists(1)
         glNewList(index, GL_COMPILE)
-
         
         for i in range(self.SIZE):
             for j in range(self.SIZE):
@@ -214,8 +304,9 @@ class VisualizationWindow(QMainWindow):
         if not self.settings.value("windowState") == None:
             self.restoreState(self.settings.value("windowState"))
 
-    def show_new_city(self, size, city):
-        self.opengl_animation.display_new_city(size, city)
+    def show_new_city(self, size, city, city_map=None, stations_pos=None, stations_influence=None):
+        self.opengl_animation.cluster_colors = None
+        self.opengl_animation.display_new_city(size, city,city_map,stations_pos,stations_influence)
         self.opengl_animation.update()
 
     def start_animation(self, simulation, is_over_function):

@@ -124,10 +124,11 @@ class Simulation():
             min_plugs_per_station, min_num_stations)
 
         # Place the stations around the city based on the layout
-        self.stations_pos = self.city_builder.place_stations(
-            self.ST_LAYOUT, self.districts, self.TOTAL_D_ST)
-        # Based on the layout, compute the number of plugs that each station
-        # will have.
+        # self.stations_pos = self.city_builder.place_stations(self.ST_LAYOUT, self.districts, self.TOTAL_D_ST)
+        
+        self.stations_clusters, self.pos_clusters = self.city_builder.place_stations_new(self.ST_LAYOUT, self.TOTAL_D_ST)
+        # Based on the layout, compute the number of plugs that each station will have.
+        
         plugs_per_station = min_plugs_per_station
         if self.ST_LAYOUT == "central":
             plugs_per_station = self.TOTAL_PLUGS
@@ -135,31 +136,30 @@ class Simulation():
             plugs_per_station = self.TOTAL_PLUGS/4
 
         # Create the stations and the stations map
-        self.stations, self.stations_map = self.create_stations(
-            self.stations_pos, plugs_per_station)
+        self.stations, self.stations_map = self.create_stations(self.stations_clusters, self.pos_clusters, plugs_per_station)
 
-    def create_stations(self, stations_pos, plugs_per_station):
-        """:param stations_pos: a dictionary where the
-        keys are tuple of 4 elements defining a district and the value is
-        a list of positions where a station must be placed.
+    def create_stations(self, stations_clusters, pos_clusters, plugs_per_station):
+        """
+        :param stations_clusters: A list of lists. Each list is a "district" and has the positions
+        of the stations belonging to that district.
+
+        :param pos_clusters: A list of lists. Each list is the positions of the city that
+        belongs to the stations cluster with the same index.
+
         :param plugs_per_station: is the number of plugs that a station can have.
          """
         stations = []
         stations_map = {}
-        for district, positions in stations_pos.items():
-            # For each station position in the district, create a Station object
-            district_stations = [Station(self.city_map[pos], plugs_per_station)
-                                 for pos in positions]
-            
-            # For each position inside the district, if it is a drivable cell
-            # reference the list of stations.
-            (C1, C2, R1, R2) = district
-            for i in range(C1, C2):
-                for j in range(R1, R2):
-                    if (i, j) in self.city_map:
-                        stations_map[(i, j)] = district_stations
-            # Add the stations to the list of stations
+
+        for stations_pos, influence_area in zip(stations_clusters,pos_clusters):
+            # For each position in the station cluster, create a proper Station object
+            district_stations = [Station(self.city_map[pos], plugs_per_station) for pos in stations_pos]
+            # For each position in the influence area of this cluster, link them in the stations map
+            for influence_pos in influence_area:
+                stations_map[influence_pos] = district_stations
+            # Add the stations to the list of stations.
             stations.extend(district_stations)
+
 
         return stations, stations_map
 

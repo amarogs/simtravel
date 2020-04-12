@@ -1,5 +1,5 @@
 from enum import Enum
-
+import random
 import numpy as np
 
 from src.simulator.cythonGraphFunctions import (configure_lattice_size,lattice_distance)
@@ -8,9 +8,9 @@ from src.simulator.cythonGraphFunctions import (configure_lattice_size,lattice_d
 
 class CellType(Enum):
     HOUSE = 0
-    AVENUE = 6
-    STREET = 7
-    ROUNDABOUT = 6
+    AVENUE = 2
+    STREET = 3
+    ROUNDABOUT = 5
 
     def __eq__(self, other):
         return self.value == other
@@ -203,7 +203,7 @@ class SemiAvenueExt(SemiAvenueInt):
 class Roundabout(CityBuilder):
     """Creates a rotary that has in each side 2 avenue exit lanes and 2 avenue entrance lanes.
     The minimum length for it to work is 6. """
-    def __init__(self, x, y, length, special_cell_type=CellType.ROUNDABOUT):
+    def __init__(self, x, y, length, special_cell_type=CellType.AVENUE):
         super().__init__()
         self.special_cell_type = special_cell_type 
         self.exit, self.entrance = [], []
@@ -662,3 +662,92 @@ class SquareCity(CityBuilder):
                         break
 
         return stations_per_district
+
+    def place_stations_new(self, layout, total_d_st):
+
+        def nearest_cell_type(reference, type_set):
+            """Returns the nearest cell to reference that belongs to the type_set. """
+            nearest = reference
+            type_set_pos = [c.pos for c in type_set]
+            if reference not in type_set_pos:
+                candidates = [(i, j) for (i, j) in type_set_pos if i == reference[0] or j == reference[1]]
+                if len(candidates)==0:
+                    return nearest_cell_type((reference[0]+1, reference[1]+1), type_set)
+                nearest = min(candidates, key=lambda p: lattice_distance(*p, *reference))
+
+            return nearest
+
+        def group_in_clusters(centres, positions):
+            """Given a list of centres and a list of positions to sort, returns the clustering of the positions 
+            and the new centres. """
+            
+            centres = list(enumerate(centres))
+            clusters = [[] for _ in range(len(centres))]
+            
+            
+            for pos in positions:
+                (i, _) = min(centres, key=lambda c: lattice_distance(*(c[1]), *pos))
+                clusters[i].append(pos)
+            new_centres = [ tuple(np.mean( np.array(c), axis=0, dtype="int32").tolist()) for c in clusters ]
+            return new_centres, clusters
+        
+        # The central and four layout places stations inside avenue while distributed does it inside 
+        # streets. The idea is to place the stations like a lattice but them move the stations so 
+        # that are placed in the correct cell type.
+
+        # Create the positions where the stations are going to be placed
+        if layout == "central":
+            type_set = sorted(self.avenues)
+            n_stations = 1
+            n_clusters = 1  
+        elif layout == "four":
+            type_set = sorted(self.avenues)
+            n_stations = 4
+            n_clusters = 4
+        else:
+            type_set = sorted(self.streets)
+            n_stations = total_d_st
+            n_clusters = total_d_st//4#int(self.scale * self.scale)
+        stations_pos = []
+        offset = int(self.SIZE/(n_stations**0.5))
+        
+        for i in range( offset //2 - 1, self.SIZE-(offset//2), offset):
+            for j in range( offset //2 -1, self.SIZE-(offset//2), offset):
+                stations_pos.append( nearest_cell_type((i,j), type_set) )
+        
+
+        # We already have the positions where the stations are going to be placed, now we have to
+        # create the clusters of stations.
+        # print("El total de estaciones distribudias : {}, generadas: {}".format(total_d_st, len(stations_pos)))
+        # centres = random.sample(stations_pos, n_clusters)   # Random centres taken from the stations
+        # centres = [stations_pos[i] for i in range(0, len(stations_pos), len(stations_pos)//n_clusters)] # Fixed centres taken from the stations.
+        offset = int(self.SIZE/(n_clusters**0.5))
+        # Lay down the lattice of centres.
+        centres = [(i,j) for i in range(offset //2 - 1, self.SIZE-(offset//2), offset) for j in range(offset //2 - 1, self.SIZE-(offset//2), offset)]
+        
+        
+        new_centres = []
+        maximum = 10
+
+        for i in range(maximum):
+            # Create a new clustering based on centres
+            new_centres, clusters = group_in_clusters(centres, stations_pos)
+            if new_centres == centres:
+                break
+            # Repeat again the clustering
+            centres = new_centres
+
+        stations_centres = new_centres
+        stations_clusters = clusters
+        # We have computed the clusters of stations, now is the turn for the positions of the lattice
+        # We only need to do the clustering once since the centers are not going to change.
+        # pos_clusters = [[] for _ in range (len(stations_centres))]
+        # stations = [(i, pos) for (i,cluster) in enumerate(stations_clusters) for pos in cluster]
+        # for pos in self.city_map.keys():
+        #    i, _ = min(stations, key=lambda s: lattice_distance(*pos, *s[1]))
+        #    pos_clusters[i].append(pos)
+        
+        _, pos_clusters = group_in_clusters(stations_centres, self.city_map.keys())
+        
+        return stations_clusters, pos_clusters    
+        

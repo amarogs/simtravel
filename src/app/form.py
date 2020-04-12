@@ -6,7 +6,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import *
 from src.app.animation import Animation, VisualizationWindow
 from src.models.cities import SquareCity
-from src.app.param import city_creation, speed_creation, battery_creation, \
+from src.app.param import city_creation,stations_creation, speed_creation, battery_creation, \
     distribution_creation, sim_configuration_creation, instances_configuration_creation, stations_configuration_creation
 
 
@@ -19,7 +19,9 @@ class ParamsCreationForm(QWidget):
         self.views = [self.create_city_form, self.create_physical_units_form, \
             self.create_distribution_form, self.create_sim_configuration_form, self.create_results_form]
 
-        self.args = [{"title1":"Creación de la ciudad", "button1":"Mostrar ciudad"},\
+        self.args = [{"title1":"Creación de la ciudad", "button1":"Mostrar ciudad",\
+                    "title2":"Configuración de estaciones", "button2":"Mostras estaciones"},\
+
                      {"title1": "Unidades físicas - velocidad", "title2": "Unidades físicas - energía"},
                      {"title1": "Distribución de la batería y el tiempo de espera"},
                      {"title1": "Configuración general de las simulaciones", "title2": "Configuración de las instancias",
@@ -155,8 +157,23 @@ class ParamsCreationForm(QWidget):
         self.city_visualization.show()
     
         # Display the newly created city
-        self.city_visualization.show_new_city(city.SIZE, city.city_matrix)
-    
+        self.city_visualization.show_new_city(city.SIZE, city.city_matrix, city.city_map)
+
+    def show_stations(self):
+        # Update the parameters
+        self.update_params_txt(reset_widgets=False)
+        
+        # Create the city
+        city = SquareCity(RB_LENGTH=self.params_text["RB_LENGTH"],\
+             AV_LENGTH=self.params_text["AV_LENGTH"], SCALE=self.params_text["SCALE"])
+        self.city_visualization.show()
+        # Place the stations in the city based on the parameters chosen.
+        min_plugs_per_station, min_num_stations = self.params_text["MIN_PLUGS_PER_STATION"], self.params_text["MIN_D_STATIONS"]
+        _, TOTAL_D_ST = city.set_max_chargers_stations(min_plugs_per_station, min_num_stations)
+        stations_pos, stations_influence = city.place_stations_new(self.station_layout.currentText(), TOTAL_D_ST)
+        
+        # Display the newly created city with the stations.
+        self.city_visualization.show_new_city(city.SIZE, city.city_matrix, stations_pos=stations_pos, stations_influence=stations_influence)        
 
     def add_params_to_layout(self, params, layout):
         """For each param in the list params creates a widget and add it to layout. """
@@ -184,7 +201,11 @@ class ParamsCreationForm(QWidget):
         """Creates a form to fullfill the parameters related to the city creation. """
 
         # Create the form that will be displayed in the scrollable area
-        self.current_form = QGroupBox(kwargs["title1"])
+        self.current_form = QWidget()
+        form_layout = QVBoxLayout() 
+
+        # Form to show the configure the city and show it wih colors
+        cities_form = QGroupBox(kwargs["title1"])
         layout = QFormLayout()
         layout.setSizeConstraint(QLayout.SetMinimumSize)
         # For each parameter, add it to the layout
@@ -194,9 +215,34 @@ class ParamsCreationForm(QWidget):
         show_city_button = QPushButton(kwargs["button1"])
         show_city_button.clicked.connect(self.show_city)
         layout.addRow(show_city_button)
-    
-        # Add the layout to the current_form
-        self.current_form.setLayout(layout)
+        cities_form.setLayout(layout)
+
+        # Add the form to the general layout
+        form_layout.addWidget(cities_form)
+
+        # Form to show the configuration of the stations and show the influence areas
+        stations_form = QGroupBox(kwargs["title2"])
+        layout = QFormLayout()
+        layout.setSizeConstraint(QLayout.SetMinimumSize)
+        # For each parameter, add it to the layout
+        self.add_params_to_layout(stations_creation, layout)
+        
+        # Button for displaying the city stations.
+        show_city_button = QPushButton(kwargs["button2"])
+        show_city_button.clicked.connect(self.show_stations)
+        self.station_layout = QComboBox()
+        self.station_layout.addItems(["central", "distributed", "four"])
+        line_layout = QHBoxLayout()
+        line_layout.addWidget(show_city_button)
+        line_layout.addWidget(self.station_layout)
+
+        layout.addRow(line_layout)
+        stations_form.setLayout(layout)
+        # Add the form to the general layout
+        form_layout.addWidget(stations_form)
+
+        # Set the layout
+        self.current_form.setLayout(form_layout)
         
     def create_physical_units_form(self, *args, **kwargs):
         """Form  """
@@ -307,4 +353,7 @@ class ParamsCreationForm(QWidget):
 
         self.current_form.setLayout(layout)
 
-    
+    def closeEvent(self, cls):
+        self.city_visualization.close()
+        
+        return super().closeEvent(cls)
