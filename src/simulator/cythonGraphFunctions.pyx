@@ -125,8 +125,8 @@ cdef class AStar():
                 if successor not in closed_set:
                     #If the neighbour hasn't been visited
                     #Compute the possible g_score
-                    if successor in current.prio_successors:
-                        new_g_score = g_score[current] + road_type - 3
+                    if successor not in current.prio_successors:
+                        new_g_score = g_score[current] + road_type + 1
                     else:
                         new_g_score = g_score[current] + road_type
 

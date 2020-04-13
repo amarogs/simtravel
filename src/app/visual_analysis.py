@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 import pyqtgraph as pg
 
-from src.analysis.analysis import SimulationAnalysis, GraphFunctions
+from src.analysis.analysis import SimulationAnalysis, GraphFunctions, GlobalAnalysis
 from src.models.states import States
 import src.analysis.parameters_analysis as params
 
@@ -85,13 +85,27 @@ class LiveAnalysisWindow(QMainWindow):
         
 
 class AnalysisWindow(QMainWindow):
-    def __init__(self,ev, tf, ly, attributes, parent=None, flags=QtCore.Qt.WindowFlags()):
+    def __init__(self,ev, tf, ly, attributes, non_individual=False, parent=None, flags=QtCore.Qt.WindowFlags()):
         super(AnalysisWindow, self).__init__(parent=parent, flags=flags)
-        title = "Análisis para Densidad EV={}, Densidad TF={}, Layout={}".format(ev, tf, ly)
+        if non_individual:
+            title = "Análisis global de distintas simulaciones"
+        else:
+            title = "Análisis para Densidad EV={}, Densidad TF={}, Layout={}".format(ev, tf, ly)
 
         self.setWindowTitle(title)
         # Create the analysis and set up the gallery
-        self.sim_analysis = SimulationAnalysis(*attributes)
+        if non_individual:
+            
+            all_sim_analysis = [SimulationAnalysis(*attr) for attr in attributes]
+            # Create a global analysis object and feed it with the simulations.
+            g_analysis = GlobalAnalysis(attributes, 'seeking', 'queueing','total', 'speed','mobility', 'elapsed')
+            g_analysis.load_matrices(all_sim_analysis)
+            g_analysis.load_single_attribute(all_sim_analysis, 'TOTAL_VEHICLES')
+            g_analysis.compute_all()
+            self.sim_analysis = g_analysis
+        else:
+            self.sim_analysis = SimulationAnalysis(*attributes)
+
         self.canvas_index = 0
         
         # Create the gallery with a vertical layout and a stack as the main widget.
@@ -239,8 +253,6 @@ class SingleAnalysis(QWidget):
             config.append(os.path.join(path,  str(f)))
             self.attributes_by_filename[f[0:-5]] = tuple(config)
             
-        
-    
 
     def on_change_tf_combo(self):
         """Clears the combo boxes for selecting EV and ST. Sets the new values on EV. """
@@ -384,3 +396,69 @@ class SingleAnalysis(QWidget):
             if key.startswith("WINDOW"):
                 window.close()
         return super().closeEvent(cls)
+
+
+class GlobalAnalysisForm(SingleAnalysis):
+    def __init__(self, BASEDIR_PATH, parent=None, flags=QtCore.Qt.WindowFlags()):
+        super().__init__(BASEDIR_PATH, parent=parent, flags=flags)
+    
+    def on_click_analyze(self, report=False):
+        """Create a global analysis of the results folder. """
+        # Read the names of the files and extract their basic info.
+        attrs = list(self.attributes_by_filename.values())
+        # Create and individual simulation that reads the HDF5 files
+
+        if report:
+            all_sim_analysis = [SimulationAnalysis(*attr) for attr in attrs]
+            # Create a global analysis object and feed it with the simulations.
+            g_analysis = GlobalAnalysis(attrs, 'seeking', 'queueing','total', 'speed','mobility', 'elapsed')
+            g_analysis.load_matrices(all_sim_analysis)
+            g_analysis.load_single_attribute(all_sim_analysis, 'TOTAL_VEHICLES')
+            # Create the report.
+            g_analysis.create_report()
+        else:
+            # Add the window as an attribute so that the window stays on the screen.
+            window_name = "WINDOW_{}".format(self.BASEDIR_PATH)
+            self.__dict__[window_name] = AnalysisWindow(None, None, None, attrs, non_individual=True)
+            self.__dict__[window_name].show()
+
+    def on_click_report(self):
+        self.on_click_analyze(report=True)
+    def create_selection_form(self):
+        selection_form = QGroupBox("Selección directorio resultados")
+
+        layout = QFormLayout()
+        layout.setSizeConstraint(QLayout.SetMinimumSize)
+
+        # Select the BASEDIR_PATH where the simulations results are
+
+        layout.addRow(QLabel("Seleccione el directorio donde se encuentran la carpeta de resultados"))
+        if self.BASEDIR_PATH== ".":
+            self.BASEDIR_PATH = QtCore.QDir.currentPath()
+            
+        self.current_directory_label = QLabel("Directorio actual: " + self.BASEDIR_PATH)
+        layout.addRow(self.current_directory_label)
+        button_change_path = QPushButton("Seleccionar nuevo directorio")
+        button_change_path.clicked.connect(self.on_click_button_change_path)
+        layout.addRow(button_change_path)
+
+        # Create three combo boxes that select the simulation based on the files stored in BASEDIR_PATH.
+        layout.addRow(QLabel("Selecciona la simulación: "))
+        selectors = QWidget()
+        selectors_layout = QGridLayout()
+
+        # Read the different documents inside the path, this changes the class attribute: 
+        self.read_path()
+
+        # Add a button to analize the simulation selected.
+        self.analyze = QPushButton("Mostrar análisis visual")
+        self.analyze.clicked.connect(self.on_click_analyze)
+        layout.addRow(self.analyze)
+        
+        self.report = QPushButton("Guardar informe PDF")
+        self.report.clicked.connect(self.on_click_report)
+        layout.addRow(self.report)
+        # Finally set the layout of the top-form for selecting the simulation
+        selection_form.setLayout(layout)
+
+        return selection_form

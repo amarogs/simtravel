@@ -1261,10 +1261,10 @@ static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* s
 
 /* PyIntBinop.proto */
 #if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, long intval, int inplace, int zerodivision_check);
+static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, int inplace, int zerodivision_check);
 #else
-#define __Pyx_PyInt_SubtractObjC(op1, op2, intval, inplace, zerodivision_check)\
-    (inplace ? PyNumber_InPlaceSubtract(op1, op2) : PyNumber_Subtract(op1, op2))
+#define __Pyx_PyInt_AddObjC(op1, op2, intval, inplace, zerodivision_check)\
+    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
 #endif
 
 /* DelItemInt.proto */
@@ -1519,7 +1519,7 @@ static PyObject *__pyx_tp_new_3src_9simulator_20cythonGraphFunctions_PriorityMin
 static PyObject *__pyx_tp_new_3src_9simulator_20cythonGraphFunctions_AStar(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_pop = {0, &__pyx_n_s_pop, 0, 0, 0};
 static PyObject *__pyx_int_0;
-static PyObject *__pyx_int_3;
+static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_99999;
 static PyObject *__pyx_int_219260920;
 static PyObject *__pyx_int_227216548;
@@ -3420,21 +3420,21 @@ static PyObject *__pyx_f_3src_9simulator_20cythonGraphFunctions_5AStar_new_path(
         /* "src/simulator/cythonGraphFunctions.pyx":128
  *                     #If the neighbour hasn't been visited
  *                     #Compute the possible g_score
- *                     if successor in current.prio_successors:             # <<<<<<<<<<<<<<
- *                         new_g_score = g_score[current] + road_type - 3
+ *                     if successor not in current.prio_successors:             # <<<<<<<<<<<<<<
+ *                         new_g_score = g_score[current] + road_type + 1
  *                     else:
  */
         __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_current, __pyx_n_s_prio_successors); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_10 = (__Pyx_PySequence_ContainsTF(__pyx_v_successor, __pyx_t_1, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 128, __pyx_L1_error)
+        __pyx_t_10 = (__Pyx_PySequence_ContainsTF(__pyx_v_successor, __pyx_t_1, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 128, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_t_11 = (__pyx_t_10 != 0);
         if (__pyx_t_11) {
 
           /* "src/simulator/cythonGraphFunctions.pyx":129
  *                     #Compute the possible g_score
- *                     if successor in current.prio_successors:
- *                         new_g_score = g_score[current] + road_type - 3             # <<<<<<<<<<<<<<
+ *                     if successor not in current.prio_successors:
+ *                         new_g_score = g_score[current] + road_type + 1             # <<<<<<<<<<<<<<
  *                     else:
  *                         new_g_score = g_score[current] + road_type
  */
@@ -3446,7 +3446,7 @@ static PyObject *__pyx_f_3src_9simulator_20cythonGraphFunctions_5AStar_new_path(
           __Pyx_GOTREF(__pyx_t_6);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-          __pyx_t_3 = __Pyx_PyInt_SubtractObjC(__pyx_t_6, __pyx_int_3, 3, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyInt_AddObjC(__pyx_t_6, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
           __Pyx_XDECREF_SET(__pyx_v_new_g_score, __pyx_t_3);
@@ -3455,15 +3455,15 @@ static PyObject *__pyx_f_3src_9simulator_20cythonGraphFunctions_5AStar_new_path(
           /* "src/simulator/cythonGraphFunctions.pyx":128
  *                     #If the neighbour hasn't been visited
  *                     #Compute the possible g_score
- *                     if successor in current.prio_successors:             # <<<<<<<<<<<<<<
- *                         new_g_score = g_score[current] + road_type - 3
+ *                     if successor not in current.prio_successors:             # <<<<<<<<<<<<<<
+ *                         new_g_score = g_score[current] + road_type + 1
  *                     else:
  */
           goto __pyx_L9;
         }
 
         /* "src/simulator/cythonGraphFunctions.pyx":131
- *                         new_g_score = g_score[current] + road_type - 3
+ *                         new_g_score = g_score[current] + road_type + 1
  *                     else:
  *                         new_g_score = g_score[current] + road_type             # <<<<<<<<<<<<<<
  * 
@@ -5562,7 +5562,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   __pyx_umethod_PyDict_Type_pop.type = (PyObject*)&PyDict_Type;
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_3 = PyInt_FromLong(3); if (unlikely(!__pyx_int_3)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_99999 = PyInt_FromLong(99999L); if (unlikely(!__pyx_int_99999)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_219260920 = PyInt_FromLong(219260920L); if (unlikely(!__pyx_int_219260920)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_227216548 = PyInt_FromLong(227216548L); if (unlikely(!__pyx_int_227216548)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -7062,7 +7062,7 @@ static CYTHON_INLINE int __Pyx_PySet_ContainsTF(PyObject* key, PyObject* set, in
 
 /* PyIntBinop */
 #if !CYTHON_COMPILING_IN_PYPY
-static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, int inplace, int zerodivision_check) {
+static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, int inplace, int zerodivision_check) {
     (void)inplace;
     (void)zerodivision_check;
     #if PY_MAJOR_VERSION < 3
@@ -7070,10 +7070,10 @@ static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, CYTHON_U
         const long b = intval;
         long x;
         long a = PyInt_AS_LONG(op1);
-            x = (long)((unsigned long)a - b);
-            if (likely((x^a) >= 0 || (x^~b) >= 0))
+            x = (long)((unsigned long)a + b);
+            if (likely((x^a) >= 0 || (x^b) >= 0))
                 return PyInt_FromLong(x);
-            return PyLong_Type.tp_as_number->nb_subtract(op1, op2);
+            return PyLong_Type.tp_as_number->nb_add(op1, op2);
     }
     #endif
     #if CYTHON_USE_PYLONG_INTERNALS
@@ -7157,14 +7157,14 @@ static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, CYTHON_U
 #endif
                     }
                     CYTHON_FALLTHROUGH;
-                default: return PyLong_Type.tp_as_number->nb_subtract(op1, op2);
+                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
             }
         }
-                x = a - b;
+                x = a + b;
             return PyLong_FromLong(x);
 #ifdef HAVE_LONG_LONG
         long_long:
-                llx = lla - llb;
+                llx = lla + llb;
             return PyLong_FromLongLong(llx);
 #endif
         
@@ -7175,12 +7175,12 @@ static PyObject* __Pyx_PyInt_SubtractObjC(PyObject *op1, PyObject *op2, CYTHON_U
         const long b = intval;
         double a = PyFloat_AS_DOUBLE(op1);
             double result;
-            PyFPE_START_PROTECT("subtract", return NULL)
-            result = ((double)a) - (double)b;
+            PyFPE_START_PROTECT("add", return NULL)
+            result = ((double)a) + (double)b;
             PyFPE_END_PROTECT(result)
             return PyFloat_FromDouble(result);
     }
-    return (inplace ? PyNumber_InPlaceSubtract : PyNumber_Subtract)(op1, op2);
+    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
 }
 #endif
 

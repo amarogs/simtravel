@@ -98,10 +98,10 @@ class Animation(QOpenGLWidget):
         # Generate the primary hue
         hue = random.randint(0, 360)
         # Generate secondary hue
-        hue_secondary = (hue+90)%360
-        saturation = 0.85
-        lightness = 0.6
-        return colorsys.hls_to_rgb(hue/360, lightness, saturation), colorsys.hls_to_rgb(hue_secondary/360, lightness, saturation)
+        hue_secondary = (hue-35)%360
+        saturation = 0.55
+        lightness = 0.45
+        return colorsys.hls_to_rgb(hue/360, 1, saturation), colorsys.hls_to_rgb(hue_secondary/360, lightness, saturation)
 
     def display_new_city(self, size, city, city_map=None, stations_pos=None, stations_influence=None):
         """Compiles a new city with a certain total size.
@@ -188,6 +188,11 @@ class Animation(QOpenGLWidget):
                 glColor3f(0.0, 0.0, 0.0)
                 self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
 
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                if city[(i,j)] == 0:
+                    glColor3f(0.0, 0.0, 0.0)
+                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
         glEndList()
         self.city_drawing = index                               
     def compile_color_city(self, city, city_map):
@@ -214,8 +219,8 @@ class Animation(QOpenGLWidget):
 
 
                 else:
-                    # Draw a white cell without outline
-                    glColor3f(1.0, 1.0, 1.0)
+                    # Draw a black cell without outline
+                    glColor3f(0.0, 0.0, 0.0)
                     self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
 
         glEndList()

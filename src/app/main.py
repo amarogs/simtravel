@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 from src.app.form import ParamsCreationForm
 from src.app.execution import ExecutionVisualizationForm
 from src.app.animation import VisualizationWindow
-from src.app.visual_analysis import SingleAnalysis
+from src.app.visual_analysis import SingleAnalysis, GlobalAnalysisForm
 
 class SimtravelMainWindow(QMainWindow):
     def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
@@ -32,14 +32,34 @@ class SimtravelMainWindow(QMainWindow):
         # Create the widgets that the stack will hold.
         self.stack = QStackedWidget()
         self.welcome = QWidget(flags=flags)
+        layout = QHBoxLayout()
+        msg = """
+                <br><br>
+                <h1>Bienvenido</h1>
+                
+                <p>
+                <br>(1) Crea nuevos parámetros de simulación o cárguelos desde un archivo.
+                <br>(2) Ejecuta la simulación con los parámetros cargados.
+                <br>(3) Analize los resultados.
+                </p>
+                <br>
+                <a href=https://github.com/amarogs/simtravel>Código fuente <a/>
+                 """
+        msg_label =QLabel(msg)
+        # msg_label.setAlignment(QtCore.Qt.AlignCenter)
+
+        layout.addWidget(msg_label)
+        self.welcome.setLayout(layout)
         self.parameters_creation_form = ParamsCreationForm(self.parameters, flags=flags)
         self.execution_visualization_form = ExecutionVisualizationForm(self.parameters, VisualizationWindow(), flags=flags)
         self.individual_analysis_form = SingleAnalysis(self.parameters['PATH'], flags=flags)
+        self.global_analysis_form = GlobalAnalysisForm(self.parameters['PATH'], flags=flags)
 
         self.stack.addWidget(self.welcome)
         self.stack.addWidget(self.parameters_creation_form)
         self.stack.addWidget(self.execution_visualization_form)
         self.stack.addWidget(self.individual_analysis_form)
+        self.stack.addWidget(self.global_analysis_form)
 
         # Main content of the widget is the stack of forms and the welcome page wich is the first 
         # widget to be displayed.
@@ -77,7 +97,9 @@ class SimtravelMainWindow(QMainWindow):
         self.individual_analysis = QAction("Nuevo análisis individual")
         self.individual_analysis.triggered.connect(self.create_new_individual_analysis)
         self.analysis_menu.addAction(self.individual_analysis)
-
+        self.global_analysis = QAction("Nuevo análisis grupal")
+        self.global_analysis.triggered.connect(self.create_new_global_analysis)
+        self.analysis_menu.addAction(self.global_analysis)
 
 
     def open_file(self):
@@ -120,6 +142,12 @@ class SimtravelMainWindow(QMainWindow):
         Updates the stack to point to this new widget. """
         self.individual_analysis_form.update_values(self.parameters['PATH'])
         self.stack.setCurrentWidget(self.individual_analysis_form)
+
+    def create_new_global_analysis(self):
+        """Creates a new form to select the global analysis of the simulations. 
+        Updates the stack to point to this new widget. """
+        self.global_analysis_form.update_values(self.parameters['PATH'])
+        self.stack.setCurrentWidget(self.global_analysis_form)
 
     def closeEvent(self,cls):
         

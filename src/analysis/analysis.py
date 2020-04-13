@@ -429,7 +429,6 @@ class SimulationAnalysis(Simulation):
         return data_mean, data_std
 
  
-
     def generate_report(self):
 
         # Create the folder where the images are going to be stored.
@@ -510,7 +509,8 @@ class GlobalAnalysis():
 
         # Set the path to store the figures and pdf
         self.path = os.path.join(attrs[0][-2],"results", "analyzed", "global" )
-        
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         # For each key passed as attribute, we must
         # create a matrix to store the data.
         self.global_keys = global_keys
@@ -526,9 +526,18 @@ class GlobalAnalysis():
                           'total': "Total time spent recharging EV rate = {} ",
                           'elapsed': "Time elapsed", 'speed': "Mean speed EV rate = {}",
                           'mobility': "Mean mobility EV rate = {} "}
+        
+        self.total_plots = 0
+        self.computed_canvases = []
+    
+    def compute_all(self):
+        """Creates all the canvases and sets the number of total plots. """
+        self.computed_canvases = self.graph_attributes()[0]
+        self.total_plots = len(self.computed_canvases)
 
-
-
+    def get_canvas(self,canvas_index):
+        """Given an index, returns the canvas at that index. """
+        return self.computed_canvases[canvas_index]
 
     def global_matrix_shape(self, attrs):
         total_evd, total_tfd, total_layout = set(), set(), set()
@@ -565,8 +574,8 @@ class GlobalAnalysis():
                 index = self.compute_index(simulation)
                 matrix_mean[index] = float(simulation.global_mean[key])
                 matrix_std[index] = float(simulation.global_std[key])
-            print("Para key: {} la matriz es: ".format(key))
-            print(matrix_mean)
+            
+            
 
     def load_single_attribute(self, simulations, attribute):
         """Given a list of simulations and an attribute, extracts
@@ -580,18 +589,16 @@ class GlobalAnalysis():
         self.__setattr__("matrix_"+attribute.lower(), matrix)
 
     def create_report(self):
-        """Generates a pdf with all the figures produced. """
-        # Create the figures and names for the files
-        figures, names = self.graph_attributes()
+        """Generates a pdf with all the canvases produced. """
+        # Create the canvases and names for the files
+        canvases, names = self.graph_attributes()
 
         # Create a pdf pages object named: global.pdf
         pp = PdfPages(self.path+"/global.pdf")
 
-        for (fig, name) in zip(figures, names):
-            pp.savefig(fig)
-            fig.savefig(self.path+"/" + name+".svg", format="svg", dpi=150)
-            fig.clear()
-            plt.close(fig)
+        for (canvas, name) in zip(canvases, names):
+            pp.savefig(canvas.figure)
+            canvas.figure.savefig(self.path+"/" + name+".svg", format="svg", dpi=150)
         pp.close()
 
     def graph_attributes(self):
@@ -608,16 +615,17 @@ class GlobalAnalysis():
 
             # For each ev density
             for i in range(self.shape[0]):
-                fig, name = self.create_figure_per_evd(i, key, mean, std)
+                fig, name = self.create_canvas_per_evd(i, key, mean, std)
                 figures.append(fig)
                 names.append(name)
 
         return figures, names
 
-    def create_figure_per_evd(self, i, key, mean, std):
+    def create_canvas_per_evd(self, i, key, mean, std):
 
         evd = self.evd_index[i]
-        fig = plt.figure(figsize=params.FIGSIZE)
+        canvas = MplCanvas()
+        canvas.axes = canvas.fig.add_subplot(111)
 
         # For each traffic density, plot each row
         for j in range(self.shape[1]):
@@ -625,21 +633,20 @@ class GlobalAnalysis():
             y, yerr = mean[i, j, :], std[i, j, :]
             x = self.matrix_total_vehicles[i, j, :]
 
-            plt.errorbar(x, y, yerr=yerr, linewidth=2,
-                         label="{} = {}".format("Layout", layout))
+            canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,label="{} = {}".format("Layout", layout))
 
         # Set the axis
-        plt.xlabel("Total number of vehicles")
+        canvas.axes.set_xlabel("Total number of vehicles")
         if key in self.traffic:
-            plt.ylabel("Time (minutes)")
+            canvas.axes.set_ylabel("Time (minutes)")
         elif key in self.velocities:
-            plt.ylabel("Mean speed (km/h)")
+            canvas.axes.set_ylabel("Mean speed (km/h)")
         elif key == 'elapsed':
-            plt.ylabel("Time elapsed per repetition (minutes/vehicle)")
+            canvas.axes.set_ylabel("Time elapsed per repetition (minutes/vehicle)")
 
         # Set the suptitle
-        plt.suptitle(self.suptitles[key].format(evd))
+        canvas.figure.suptitle(self.suptitles[key].format(evd))
         # Set the legend
-        plt.legend()
+        canvas.axes.legend()
 
-        return fig, key+"_"+str(evd)
+        return canvas, key+"_"+str(evd)
