@@ -1,5 +1,5 @@
 import copy
-
+import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QKeySequence
 
@@ -19,6 +19,7 @@ class ExecutionVisualizationForm(QWidget):
         self.combo_widgets = {}
 
         # Visualizatoin related widgets
+        self.simulation_directory = None
         self.visualization_window = visualization_window
         self.fps = QSpinBox()
         self.fps.valueChanged.connect(self.fps_change)
@@ -69,8 +70,8 @@ class ExecutionVisualizationForm(QWidget):
         self.setLayout(self.layout)
     def next_frame(self):
         self.visualization_window.update_animation()
-        if self.live_analysis_window != None:
-            self.live_analysis_window.update_values()
+        # if self.live_analysis_window != None:
+        #     self.live_analysis_window.update_values()
     def update_values(self, parameters):
         self.params_text = parameters
         new_main_content = self.create_main_content()
@@ -85,6 +86,7 @@ class ExecutionVisualizationForm(QWidget):
         tf = str(self.combo_widgets['TF_DENSITY_VALUES'].currentText())
         ly = str(self.combo_widgets['ST_LAYOUT_VALUES'].currentText())
         path = self.params_text["PATH"]
+        self.simulation_directory =  os.path.join(path, "results","{}#{}#{}.hdf5".format(ev, tf, ly))
         # Create the simulation object
         simulation = Simulation(float(ev), float(tf), ly,path)
         # Set the simulation units.
@@ -106,7 +108,7 @@ class ExecutionVisualizationForm(QWidget):
 
         return simulation
 
-    def on_click_terminate_button(self):
+    def on_click_terminate_button(self, all_done=False):
         # Hide the buttons that control the execution
         self.execute.show()
         self.pause.hide()
@@ -116,6 +118,11 @@ class ExecutionVisualizationForm(QWidget):
 
         # Stop the execution and close the visualization window
         self.timer.stop()
+        if not all_done and self.simulation_directory != None:
+            # Destroy the file that was created.
+            if os.path.exists(self.simulation_directory):
+                os.remove(self.simulation_directory)
+
         self.visualization_window.close()
         if self.live_analysis_window != None:
             self.live_analysis_window.destroy()
@@ -132,7 +139,7 @@ class ExecutionVisualizationForm(QWidget):
 
     def simulation_is_over(self):
         """Function called when the simulation has finished executing """
-        self.on_click_terminate_button()
+        self.on_click_terminate_button(all_done=True)
 
     def on_click_execute_button(self):
 

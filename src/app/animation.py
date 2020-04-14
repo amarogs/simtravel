@@ -1,8 +1,11 @@
 import random
 import colorsys
+import numpy as np
 
 from OpenGL.GL import *
+from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
 from PyQt5 import Qt, QtCore, QtGui
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import *
@@ -166,7 +169,17 @@ class Animation(QOpenGLWidget):
         
         index = glGenLists(1)
         glNewList(index, GL_COMPILE)
-        
+
+        # Draw the background.
+
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                if city[(i,j)] == 0:
+                    glColor3f(0.0, 0.0, 0.0)
+                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
+
+                    
+        # Draw the influence and the staions
         for colors, stations, influence in zip(self.cluster_colors, stations_pos, stations_influence):
             
 
@@ -182,17 +195,16 @@ class Animation(QOpenGLWidget):
             for pos in stations:
                 (i,j) = pos
                 glColor3f(*colors[0])
-                # Draw a rectangle where the station is
+                # Draw four white rectangles where the station is.
+                glColor3f(*colors[0])
+                self.draw_four_rect(i, j,self.cell_size, self.cell_size)
+                
+                # Draw a rectangle at the center of the station and create an outline.
                 self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
-                # Draw a black outline of the station.
+
                 glColor3f(0.0, 0.0, 0.0)
                 self.draw_outline( i*self.cell_size, j*self.cell_size, self.cell_size, self.cell_size)
 
-        for i in range(self.SIZE):
-            for j in range(self.SIZE):
-                if city[(i,j)] == 0:
-                    glColor3f(0.0, 0.0, 0.0)
-                    self.draw_rect(i*self.cell_size, j*self.cell_size,self.cell_size, self.cell_size)
         glEndList()
         self.city_drawing = index                               
     def compile_color_city(self, city, city_map):
@@ -267,6 +279,21 @@ class Animation(QOpenGLWidget):
                 pass
                 #self.draw_outline(x*self.cell_size, y*self.cell_size, self.cell_size, self.cell_size)
 
+    def draw_four_rect(self, x, y, width, height):
+        self.draw_rect((x+1)*self.cell_size, y*self.cell_size, width, height)
+        self.draw_rect((x-1)*self.cell_size, y*self.cell_size, width, height)
+        self.draw_rect(x*self.cell_size, (y+1)*self.cell_size, width, height)
+        self.draw_rect(x*self.cell_size, (y-1)*self.cell_size, width, height)
+    def draw_circle(self, x,y, r, sides):
+        glBegin(GL_POLYGON)
+        for s in range(0, sides):
+            angle = float(s)*2*np.pi/sides
+            p1 = r * np.cos(angle) + x
+            p2 = r * np.sin(angle) + y
+            glColor3f(1.0, 1.0, 1.0)
+            glVertex2f(p1, p2)    
+        
+        glEnd()
     def draw_rect(self,x, y, width, height):
         """Draws a new rectangle """
         # start drawing a rectangle
@@ -275,7 +302,7 @@ class Animation(QOpenGLWidget):
         glVertex2f(x + width, y)                           # bottom right point
         glVertex2f(x + width, y + height)                  # top right point
         glVertex2f(x, y + height)                          # top left point
-        
+    
         glEnd()
 
     def draw_outline(self, x, y, width, height):

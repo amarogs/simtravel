@@ -164,6 +164,7 @@ QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 # Create the application 
 app = QApplication([])
+QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
 app.setApplicationName("SIMTRAVEL")
 main_window = SimtravelMainWindow()
 main_window.show()
