@@ -25,10 +25,7 @@ class ExecutionVisualizationForm(QWidget):
         self.fps.valueChanged.connect(self.fps_change)
         self.analyse_button = QPushButton("Analizar")
         self.analyse_button.clicked.connect(self.on_click_analyse_button)
-        self.live_analysis_window = None
-
-        self.timer = QtCore.QTimer(self)
-        self.timer.timeout.connect(self.next_frame)
+        
 
         # Button tool on the bottom part of the main window
         self.button_tool = QWidget()
@@ -68,10 +65,7 @@ class ExecutionVisualizationForm(QWidget):
         self.layout.addWidget(self.button_tool)
 
         self.setLayout(self.layout)
-    def next_frame(self):
-        self.visualization_window.update_animation()
-        # if self.live_analysis_window != None:
-        #     self.live_analysis_window.update_values()
+
     def update_values(self, parameters):
         self.params_text = parameters
         new_main_content = self.create_main_content()
@@ -117,25 +111,23 @@ class ExecutionVisualizationForm(QWidget):
         self.analyse_button.hide()
 
         # Stop the execution and close the visualization window
-        self.timer.stop()
+        self.visualization_window.timer.stop()
         if not all_done and self.simulation_directory != None:
             # Destroy the file that was created.
             if os.path.exists(self.simulation_directory):
                 os.remove(self.simulation_directory)
 
         self.visualization_window.close()
-        if self.live_analysis_window != None:
-            self.live_analysis_window.destroy()
 
     def on_click_pause_button(self):
         self.resume.show()
         self.pause.hide()
-        self.timer.stop()
+        self.visualization_window.timer.stop()
 
     def on_click_resume_button(self):
         self.pause.show()
         self.resume.hide()
-        self.timer.start()
+        self.visualization_window.timer.start()
 
     def simulation_is_over(self):
         """Function called when the simulation has finished executing """
@@ -157,21 +149,20 @@ class ExecutionVisualizationForm(QWidget):
 
         # Open the visualization window
         self.visualization_window.show()
-        self.update()
         self.visualization_window.start_animation(self.simulation, self.simulation_is_over)
 
         # Start the timer
         self.fps_change()
-        self.timer.start()
+        self.visualization_window.timer.start()
 
     def on_click_analyse_button(self):
-        self.live_analysis_window = LiveAnalysisWindow(self.simulation)
-        self.live_analysis_window.show()
+        self.visualization_window.live_analysis_window = LiveAnalysisWindow(self.simulation, self.visualization_window)
+        self.visualization_window.live_analysis_window.show()
     def fps_change(self):
         """Setes the timer of the visualization to the new interval based on the 
         fps count. """
 
-        self.timer.setInterval(int(1000/self.fps.value()))
+        self.visualization_window.timer.setInterval(int(1000/self.fps.value()))
 
     def list_of_stations_layout(self):
         """For each layout selected in the parameters file, creates
@@ -241,9 +232,7 @@ class ExecutionVisualizationForm(QWidget):
 
         return main_content    
 
-    def closeEvent(self, cls):
-        
+    def closeEvent(self, cls):        
         self.on_click_terminate_button()
-        if self.live_analysis_window != None:
-            self.live_analysis_window.close()
+
         return super().closeEvent(cls)

@@ -13,10 +13,11 @@ from src.models.states import States
 import src.analysis.parameters_analysis as params
 
 class LiveAnalysisPyG(QMainWindow):
-    def __init__(self, simulation, parent=None, flags=QtCore.Qt.WindowFlags()):
+    def __init__(self, simulation, main_window, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(parent=parent, flags=flags)
 
         # Store a reference to the current simulation
+        self.main_window = main_window
         self.simulation = simulation
         
         # Create the grapher
@@ -57,6 +58,11 @@ class LiveAnalysisPyG(QMainWindow):
         for s in States:
             self.lines[s].setData(x,y_data[s])
 
+    def closeEvent(self,cls):
+        
+        self.main_window.live_analysis_window = None
+        
+        return super().closeEvent(cls)
 class LiveAnalysisWindow(QMainWindow):
     def __init__(self, simulation, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(parent=parent, flags=flags)

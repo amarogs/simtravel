@@ -338,9 +338,11 @@ class VisualizationWindow(QMainWindow):
 
 
         self.setWindowTitle("Representación de la ciudad")
-
+        self.live_analysis_window = None
 
         self.is_over_function = None
+        self.timer = QtCore.QTimer(self)
+        self.timer.timeout.connect(self.update_animation)
 
         # Restore the size
         self.settings = QSettings("MyCompany", "MyApp")
@@ -366,7 +368,6 @@ class VisualizationWindow(QMainWindow):
         self.opengl_animation.display_stations(self.simulation.stations)
         self.opengl_animation.display_vehicles(self.simulation.vehicles)
         
-
         self.opengl_animation.update()
 
     def update_animation(self):
@@ -378,11 +379,21 @@ class VisualizationWindow(QMainWindow):
             self.is_over_function()
             
         self.opengl_animation.update()
+        if self.live_analysis_window != None:
+            self.live_analysis_window.update_values()
+
+        
     def save_image(self):
         return self.opengl_animation.save_buffer_to_image()
+
     def closeEvent(self,cls):
+        
+        if self.live_analysis_window != None:
+            self.live_analysis_window.destroy()
+
         if self.is_over_function:
             self.is_over_function()
+
         self.settings.setValue("geometry", self.saveGeometry())
         self.settings.setValue("windowState", self.saveState())
         return super().closeEvent(cls)
