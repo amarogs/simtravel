@@ -331,7 +331,7 @@ class Simulator:
         
         # Advance only the vehicles in the avenues
         for vehicle in self.general_update:
-            if vehicle.cell in self.avenues or vehicle.cell in self.roundabouts:
+            if vehicle.state in States.moving_states() and (vehicle.cell in self.avenues or vehicle.cell in self.roundabouts):
                 self.next_function[vehicle.state](vehicle)
             else:
                 self.new_general_update.append(vehicle)

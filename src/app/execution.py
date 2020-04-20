@@ -86,7 +86,7 @@ class ExecutionVisualizationForm(QWidget):
         # Set the simulation units.
         simulation.set_simulation_units(speed=self.params_text['SPEED'], cell_length=self.params_text['CELL_LENGTH'],
                                         simulation_speed=self.params_text['SIMULATION_SPEED'],
-                                        battery=self.params_text['BATTERY'], cs_power=self.params_text['CS_POWER'])
+                                        battery=self.params_text['BATTERY'], cs_power=self.params_text['CS_POWER'], autonomy=self.params_text['AUTONOMY'])
         # Set the battery and idle distribution
         simulation.set_battery_distribution(lower=self.params_text['BATTERY_THRESHOLD'],
                                             std=self.params_text['BATTERY_STD'])

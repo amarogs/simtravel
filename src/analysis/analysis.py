@@ -2,19 +2,20 @@ import math
 import os
 
 import h5py
-
 import matplotlib
-matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
+import numpy as np
+import scipy.stats as stats
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 
-import numpy as np
-
 import src.analysis.parameters_analysis as params
-from src.simulator.simulation import Simulation
 from src.metrics.units import Units
 from src.models.states import States
+from src.simulator.simulation import Simulation
+
+matplotlib.use('Qt5Agg')
+
 
 
 # Configure the matplotlib backend
@@ -265,9 +266,39 @@ class MplCanvas(FigureCanvasQTAgg):
 
     def __init__(self, parent=None, width=params.FIGSIZE[0], height=params.FIGSIZE[1], dpi=100):
         self.fig = plt.Figure(figsize=(width, height), dpi=dpi)
-        
+        self.axes = None
         super(MplCanvas, self).__init__(self.fig)
 
+    def create_normal_distribution(self, mu, sigma, inf, sup, unit):
+        def get_sample(size):
+            nonlocal mu, sigma, inf, sup
+            sample = []
+            for _ in range(size):
+                r = np.random.normal(mu, sigma)
+                while r > sup or r < inf:
+                    r = np.random.normal(mu, sigma)
+                sample.append(r)
+            return sample
+        if self.axes != None:
+            self.axes.cla()
+        else:
+            self.axes = self.fig.add_subplot(111)
+        
+        n_bins = 1000
+
+        x = np.linspace(mu-5*sigma, mu+5*sigma, n_bins)
+        # Plot the theorical normal distribution.
+        self.axes.plot(x, stats.norm.pdf(x, mu, sigma), color="#3E8D7E", label="Función de densidad teórica")
+        
+        # Get a sample of the normal distribucion
+        self.axes.hist(get_sample(n_bins),n_bins//30, density=True, color="#F4CA9F" ,label="Muestra aleatoria con límites")
+
+        self.axes.set_xlabel(unit, fontsize=13)
+        self.axes.set_ylabel("Densidad", fontsize=13)
+        self.axes.legend(fontsize=8)
+        self.fig.tight_layout()
+        self.draw()
+        
 class SimulationAnalysis(Simulation):
     def __init__(self, EV_DEN, TF_DEN, ST_LAYOUT, PATH, filepath):
         super().__init__(EV_DEN, TF_DEN, ST_LAYOUT, PATH)

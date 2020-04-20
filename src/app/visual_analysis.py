@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 import pyqtgraph as pg
 
-from src.analysis.analysis import SimulationAnalysis, GraphFunctions, GlobalAnalysis
+from src.analysis.analysis import SimulationAnalysis, GraphFunctions, GlobalAnalysis, MplCanvas
 from src.models.states import States
 import src.analysis.parameters_analysis as params
 
@@ -89,8 +89,36 @@ class LiveAnalysisWindow(QMainWindow):
         self.grapher.update_states_canvas(self.states_graph, len_data, self.simulation.metrics.states_evolution)
         self.states_graph.draw()
         
+class AnalysisDistribucion(QMainWindow):
+    def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
+        super().__init__(parent=parent, flags=flags)
+        
+        # Main widget to be displayed
+        self.content = QWidget()
+        self.layout = QVBoxLayout()
+
+        # Canvas is the object that holds the graph
+        self.canvas = MplCanvas()
+        self.toolbox = NavigationToolbar2QT(self.canvas, self.content)
+
+        # Add the widgets to a vertical layout
+        self.layout.addWidget(self.toolbox)
+        self.layout.addWidget(self.canvas)
+
+
+        # Set the content as the central widget
+        self.content.setLayout(self.layout)
+        self.setCentralWidget(self.content)
+
+    def update_canvas(self,mu, sigma, inf, sup, unit):
+        """Update the canvas to show a new distribution. """
+        
+        self.canvas.create_normal_distribution(mu, sigma, inf, sup, unit)
+        self.canvas.update()
+        self.update()
 
 class AnalysisWindow(QMainWindow):
+    """Clase para abrir una ventana con un carrousel de gráficas. """
     def __init__(self,ev, tf, ly, attributes, non_individual=False, parent=None, flags=QtCore.Qt.WindowFlags()):
         super(AnalysisWindow, self).__init__(parent=parent, flags=flags)
         if non_individual:

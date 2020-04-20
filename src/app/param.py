@@ -27,16 +27,17 @@ speed_creation = [speed, cell_length,simulation_speed]
 
 """Battery parameters """
 battery_capacity = Param(QSpinBox, 1, 1, "BATTERY", "Capacidad de la batería (kWh):")
+battery_autonomy = Param(QSpinBox, 1, 1, "AUTONOMY", "Autonomía de una carga (km):")
 station_power = Param(QSpinBox, 1, 1, "CS_POWER", "Potencia de las estaciones (kW):")
 
-battery_creation = [battery_capacity, station_power]
+battery_creation = [battery_capacity, battery_autonomy, station_power]
 
 """Distribución de la batería y el tiempo en espera """
-battery_thresh = Param(QDoubleSpinBox, 0.01, 0.01, "BATTERY_THRESHOLD", "Umbral mínimo de batería (tanto por uno):")
-battery_std = Param(QDoubleSpinBox, 0.01, 0.01, "BATTERY_STD", "Desviación estándar de la batería (tanto por uno):")
+battery_thresh = Param(QDoubleSpinBox, 0.05, 0.01, "BATTERY_THRESHOLD", "Umbral mínimo de batería (tanto por uno):")
+battery_std = Param(QDoubleSpinBox, 0.05, 0.01, "BATTERY_STD", "Desviación estándar de la batería (tanto por uno):")
 idle_upper = Param(QSpinBox, 1, 1, "IDLE_UPPER", "Máximo tiempo en espera (min):")
 idle_lower = Param(QSpinBox, 1, 1, "IDLE_LOWER", "Mínimo tiempo en espera (min):")
-idle_std = Param(QDoubleSpinBox, 0.01, 0.01, "IDLE_STD", "Desviación estándar del tiempo en espera (tanto por uno):")
+idle_std = Param(QDoubleSpinBox, 0.05, 0.01, "IDLE_STD", "Desviación estándar del tiempo en espera (tanto por uno):")
 
 distribution_creation = [battery_thresh,battery_std, idle_upper, idle_lower,idle_std]
 

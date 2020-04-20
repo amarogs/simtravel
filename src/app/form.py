@@ -8,6 +8,7 @@ from src.app.animation import Animation, VisualizationWindow
 from src.models.cities import SquareCity
 from src.app.param import city_creation,stations_creation, speed_creation, battery_creation, \
     distribution_creation, sim_configuration_creation, instances_configuration_creation, stations_configuration_creation
+from src.app.visual_analysis import AnalysisDistribucion
 
 
 class ParamsCreationForm(QWidget):
@@ -23,7 +24,7 @@ class ParamsCreationForm(QWidget):
                     "title2":"Configuración de estaciones", "button2":"Mostras estaciones"},\
 
                      {"title1": "Unidades físicas - velocidad", "title2": "Unidades físicas - energía"},
-                     {"title1": "Distribución de la batería y el tiempo de espera"},
+                     {"title1": "Distribución de la batería", "title2": "Distribución del tiempo de espera"},
                      {"title1": "Configuración general de las simulaciones", "title2": "Configuración de las instancias",
                      "title3": "Configuración de las estaciones"},{"title1":"Configuración de los resultados"}]
         self.global_params = params
@@ -70,6 +71,8 @@ class ParamsCreationForm(QWidget):
         # Create a visualization widget
         self.city_visualization = VisualizationWindow()
 
+        # Create a distribution visualization widget
+        self.distribution_visualization = AnalysisDistribucion()
 
         # Set the widget as hidden by default
         self.hide()
@@ -185,26 +188,32 @@ class ParamsCreationForm(QWidget):
 
     def add_params_to_layout(self, params, layout):
         """For each param in the list params creates a widget and add it to layout. """
+        widgets = []
         for param in params:
             if param.widget == QSpinBox or param.widget == QDoubleSpinBox:
                 widget = param.widget()
                 widget.setMinimum(param.minimum)
+                widget.setMaximum(100000000)
                 widget.setSingleStep(param.single_step)
                 widget.setValue(self.params_text[param.key])
                 self.params_widget[param.key] = widget
                 layout.addRow(QLabel(param.label), widget)
+                widgets.append(widget)
 
             elif param.widget == QLineEdit:
                 widget = param.widget()
                 widget.setText(self.write_density_params(self.params_text[param.key]))
                 self.params_widget[param.key] = widget
                 layout.addRow(QLabel(param.label), widget)
-
+                widgets.append(widget)
             elif param.widget == QCheckBox: 
                 widget = param.widget()
                 widget.setChecked(self.params_text[param.key])
                 self.params_widget[param.key] = widget
                 layout.addRow(QLabel(param.label), widget)
+                widgets.append(widget)
+
+        return widgets
     def create_city_form(self, *args, **kwargs):
         """Creates a form to fullfill the parameters related to the city creation. """
 
@@ -286,17 +295,68 @@ class ParamsCreationForm(QWidget):
     def write_density_params(self, den_list):
         return "".join([str(f) + ";" for f in den_list])
 
+    def update_battery_distribution(self):
+        self.update_params_txt(reset_widgets=False)
+        mean = int(self.params_text["AUTONOMY"])/2
+        std = float(self.params_text["BATTERY_STD"])*mean
+        low = float(self.params_text["BATTERY_THRESHOLD"]) * int(self.params_text["AUTONOMY"])
+        upper= int(self.params_text["AUTONOMY"])
+        if upper > low:
+
+            self.distribution_visualization.update_canvas(mean, std, low, upper, "Autonomía (km)" )
+            self.distribution_visualization.show()
+
+    def update_wait_distribution(self):
+        self.update_params_txt(reset_widgets=False)
+        low = int(self.params_text['IDLE_LOWER'])
+        upper = int(self.params_text['IDLE_UPPER'])
+        std = float(self.params_text['IDLE_STD'])
+        mean = (low + upper) /2
+        if upper > low:
+            
+            self.distribution_visualization.update_canvas(mean, std, low, upper, "Tiempo en espera (min)")
+            self.distribution_visualization.show()
 
     def create_distribution_form(self, *args, **kwargs):
+
         # Create the form that will be displayed in the scrollable area
-        self.current_form = QGroupBox(kwargs["title1"])
+        self.current_form = QWidget()
+        total_layout = QVBoxLayout()
+
+        # First QGgroupBox for the battery distribution 
+        battery = QGroupBox(kwargs["title1"])
         layout = QFormLayout()
         layout.setSizeConstraint(QLayout.SetMinimumSize)
         # For each parameter, add it to the layout
-        self.add_params_to_layout(distribution_creation, layout)
+        
+
+        widgets = self.add_params_to_layout(distribution_creation[0:2], layout)
+        for w in widgets:
+            w.valueChanged.connect(self.update_battery_distribution)
+
+        self.update_battery_distribution()
+ 
+
+        battery.setLayout(layout)
+        total_layout.addWidget(battery)
+
+
+        # Second QGroupBox for the wait time.
+        wait = QGroupBox(kwargs["title2"])
+        layout = QFormLayout()
+        layout.setSizeConstraint(QLayout.SetMinimumSize)
+
+        widgets = self.add_params_to_layout(distribution_creation[2:], layout)
+        for w in widgets:
+            w.valueChanged.connect(self.update_wait_distribution)
+
+
+        wait.setLayout(layout)
+        total_layout.addWidget(wait)
+
 
         # Add the layout to the current_form
-        self.current_form.setLayout(layout)
+        self.current_form.setLayout(total_layout)
     def create_results_form(self, *args, **kwargs):
         def on_click_button_change_path():
             """Selects a new path to stre the results """
@@ -365,5 +425,6 @@ class ParamsCreationForm(QWidget):
 
     def closeEvent(self, cls):
         self.city_visualization.close()
+        self.distribution_visualization.close()
         
         return super().closeEvent(cls)

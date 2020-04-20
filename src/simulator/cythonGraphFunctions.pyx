@@ -14,14 +14,15 @@ cpdef void configure_lattice_size(int lattice_size,dict city_map):
     CITY = city_map
     LATTICE_SIZE = lattice_size
 
+
 cpdef int lattice_distance(int x1, int y1, int x2, int y2):
     global LATTICE_SIZE
     cdef int dx, dy
     dx = cabs(x1-x2)
-    if dx > int(LATTICE_SIZE/2):
+    if dx > LATTICE_SIZE/2:
         dx = LATTICE_SIZE - dx
     dy = cabs(y1-y2)
-    if dy > int(LATTICE_SIZE/2):
+    if dy > LATTICE_SIZE/2:
         dy = LATTICE_SIZE - dy
     return (dx + dy)
 
@@ -102,8 +103,9 @@ cdef class AStar():
         cdef dict came_from = {start:start}
         
         cdef int road_type
+        cdef list successors
 
-        open_set.insert(start, lattice_distance(start.pos[0], start.pos[1], goal.pos[0], goal.pos[1]))
+        open_set.insert(start, lattice_distance(*start.pos, *goal.pos))
 
 
         while not open_set.is_empty():
@@ -120,7 +122,8 @@ cdef class AStar():
                 closed_set.add(current)
 
             road_type = current.cell_type
-            for successor in current.successors:
+            successors = current.successors
+            for successor in successors:
                 
                 if successor not in closed_set:
                     #If the neighbour hasn't been visited
@@ -132,7 +135,7 @@ cdef class AStar():
 
                     if successor not in g_score or new_g_score < g_score[successor]:
                         #Add the neighbour with the g_score to the heap
-                        open_set.insert(successor, new_g_score + lattice_distance(successor.pos[0],successor.pos[1], goal.pos[0], goal.pos[1]))
+                        open_set.insert(successor, new_g_score + lattice_distance(*successor.pos, *goal.pos))
                         g_score[successor] = new_g_score
                         came_from[successor] = current
                 
