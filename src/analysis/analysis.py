@@ -272,19 +272,24 @@ class MplCanvas(FigureCanvasQTAgg):
     def create_normal_distribution(self, mu, sigma, inf, sup, unit):
         def get_sample(size):
             nonlocal mu, sigma, inf, sup
-            sample = []
-            for _ in range(size):
-                r = np.random.normal(mu, sigma)
-                while r > sup or r < inf:
-                    r = np.random.normal(mu, sigma)
-                sample.append(r)
+
+            sample = np.random.normal(mu, sigma,size=size )
+            mask = (sample > sup) | (sample < inf)
+
+            while np.any(mask):
+                
+                sample = np.where(mask, np.random.normal(mu, sigma, size=size), sample)
+                mask = (sample > sup) | (sample < inf)
+            
             return sample
+
+
         if self.axes != None:
             self.axes.cla()
         else:
             self.axes = self.fig.add_subplot(111)
         
-        n_bins = 1000
+        n_bins = 1200
 
         x = np.linspace(mu-5*sigma, mu+5*sigma, n_bins)
         # Plot the theorical normal distribution.

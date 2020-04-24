@@ -11,7 +11,7 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import *
 from PIL import Image
 
-import src.visual.colors as c
+import src.app.colors as c
 from src.models.states import States
 from src.models.cities import CellType
 
