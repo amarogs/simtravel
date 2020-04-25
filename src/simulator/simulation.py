@@ -9,7 +9,7 @@ from src.metrics.metrics import SimulationMetric, SimulationSnapshot
 from src.metrics.units import Units
 from src.models.station import Station
 from src.models.vehicle import ElectricVehicle, Vehicle
-from src.simulator.simulator import Simulator
+from src.simulator.engine import SimulatorEngine
 
 # from src.graphlib.pygraphFunctions import Graph
 
@@ -233,7 +233,7 @@ class Simulation():
     def create_simulator(self):
         """Creates the simulator object.
         Then it also creates the vehicles calling Simulation.create_vehicles() """
-        self.simulator = Simulator(self)
+        self.simulator = SimulatorEngine(self)
         self.create_vehicles()
 
     def print_summary(self):

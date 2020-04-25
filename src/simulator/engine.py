@@ -6,7 +6,7 @@ import random
 from src.models.states import States
 from src.simulator.cythonGraphFunctions import AStar
 
-class Simulator:
+class SimulatorEngine:
 
     def __init__(self, simulation):
         """
