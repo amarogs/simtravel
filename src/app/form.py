@@ -97,6 +97,7 @@ class ParamsCreationForm(QWidget):
     def close_all(self):
         self.current_view = None
         self.city_visualization.close()
+        self.distribution_visualization.close()
         self.hide()
 
     def next_screen(self):

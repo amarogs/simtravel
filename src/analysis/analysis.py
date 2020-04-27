@@ -125,7 +125,7 @@ class GraphFunctions():
 
         return canvas
 
-    def graph_occupation_evolution(self, occupation_mean, x=None, live=False):
+    def graph_occupation_evolution(self, plugs_per_station, occupation_mean, x=None, live=False):
         """Receives a dictionary of stations where k=station position and val=[list of occupation]
         Creates canvas of 4 subplots with the occupation of the stations """
         
@@ -151,7 +151,9 @@ class GraphFunctions():
                     if x is None:
                         x = self.x_measures_minutes
 
-                    canvas.__dict__['axes_'+str(i)].plot(x, y, color='k')
+                    canvas.__dict__['axes_'+str(i)].plot(x, y, color='k', label="Occupation")
+                    canvas.__dict__['axes_'+str(i)].plot(x, np.repeat(plugs_per_station, len(x)), color='green', linestyle="--", label="Capacity")
+                    canvas.__dict__['axes_'+str(i)].legend()
                     canvas.__dict__['axes_'+str(i)].set_xlabel("Simulation evolution (minutes)")
                     canvas.__dict__['axes_'+str(i)].set_ylabel("Station occupation (EVs)")
                     canvas.__dict__['axes_'+str(i)].set_title("Station at {} ".format(pos))
@@ -169,7 +171,9 @@ class GraphFunctions():
             y = occupation_mean[stations[0]]
             if x is None:
                 x =self.x_measures_minutes
-            canvas.axes.plot(x, y, color='k')
+            canvas.axes.plot(x, y, color='k', label="Occupation")
+            canvas.axes.plot(x, np.repeat(plugs_per_station, len(x)), color='green', linestyle="--", label="Capacity")
+            canvas.axes.legend()
             canvas.axes.set_xlabel("Simulation evolution (minutes)")
             canvas.axes.set_ylabel("Station occupation (EVs)")
             canvas.axes.set_title("Station at {} ".format(stations[0]))
@@ -177,8 +181,7 @@ class GraphFunctions():
             occupation_plots = [canvas]  # Create the list of plots
 
         elif len(stations) == 4:
-            occupation_plots = [plot_four_stations(
-                0, 1, stations, occupation_mean)]
+            occupation_plots = [plot_four_stations(0, 1, stations, occupation_mean)]
         else:
             total_plots = math.ceil(len(stations)/4)
             occupation_plots = [plot_four_stations(plot_i, total_plots, stations, occupation_mean)
@@ -312,6 +315,15 @@ class SimulationAnalysis(Simulation):
 
         # load the data into the object
         self.load_data()
+
+        # Compute number of plugs per station
+        if ST_LAYOUT == "central":
+            self.plugs_per_station = self.TOTAL_PLUGS
+        elif ST_LAYOUT == "distributed":
+            self.plugs_per_station = self.TOTAL_PLUGS/self.TOTAL_D_ST
+        elif ST_LAYOUT == "four":
+            self.plugs_per_station = self.TOTAL_PLUGS/4
+
         # Prepare the data for the global report
         self.prepare_global_data()
         # Total plots
@@ -324,11 +336,12 @@ class SimulationAnalysis(Simulation):
         # Create the grapher object:
         self.grapher = GraphFunctions(self.sim_name, self.units,params.N_BINS, self.DELTA_TSTEPS, len(self.states_mean['States.AT_DEST']))
 
+
         # Prepare for the generation of canvases
         self.computed_canvases = []
         self.canvas_creator = [
             lambda : self.grapher.graph_states_evolution(self.states_mean, self.states_std), \
-            lambda : self.grapher.graph_occupation_evolution(self.occupation_mean), \
+            lambda : self.grapher.graph_occupation_evolution(self.plugs_per_station, self.occupation_mean), \
             lambda : self.grapher.graph_heat_map_evolution(self.heat_map_mean), \
             lambda : self.grapher.graph_velocities_evolution(self.velocities_mean, self.velocities_std)
             ]
@@ -343,11 +356,9 @@ class SimulationAnalysis(Simulation):
         # Convert the time variables to minutes
         to_minutes = ['seeking', 'queueing', 'total']
         for key in to_minutes:
-            self.global_mean[key] = self.units.steps_to_minutes(
-                self.global_mean[key])
+            self.global_mean[key] = self.units.steps_to_minutes(self.global_mean[key])
 
-            self.global_std[key] = self.units.steps_to_minutes(
-                self.global_std[key])
+            self.global_std[key] = self.units.steps_to_minutes(self.global_std[key])
 
         # Convert the velocities into km/h and compute the std.
         to_kmh = ['speed', 'mobility']
@@ -361,6 +372,14 @@ class SimulationAnalysis(Simulation):
         self.global_mean['elapsed'] = self.units.steps_to_minutes(
             self.ELAPSED/(self.TOTAL_VEHICLES*self.REPETITIONS))
         self.global_std['elapsed'] = 0
+
+        # Compute the mean occupation across all the stations:
+        occupation_array = np.array([arr for pos, arr in self.occupation_mean.items()])
+        
+        mean_occupation = (np.mean(occupation_array, axis=1) - self.plugs_per_station)/self.plugs_per_station
+        self.global_mean['occupation'] = np.mean(mean_occupation)
+        self.global_std['occupation'] = np.std(mean_occupation)
+
 
     def load_data(self):
         """Takes the attributes of the root folder of the
@@ -557,11 +576,13 @@ class GlobalAnalysis():
         # Sort the keys into two categories and generate the suptitles
         self.traffic = ['seeking', 'queueing', 'total', 'elapsed']
         self.velocities = ['speed', 'mobility']
+        self.stations = ['occupation']
         self.suptitles = {'seeking': 'Mean time spent seeking EV rate = {}',
                           'queueing': 'Mean time spent queueing EV rate = {}',
                           'total': "Total time spent recharging EV rate = {} ",
                           'elapsed': "Time elapsed", 'speed': "Mean speed EV rate = {}",
-                          'mobility': "Mean mobility EV rate = {} "}
+                          'mobility': "Mean mobility EV rate = {} ", 
+                          'occupation': "Mean station occupation  EV rate = {}"}
         
         self.total_plots = 0
         self.computed_canvases = []
@@ -669,7 +690,11 @@ class GlobalAnalysis():
             y, yerr = mean[i, j, :], std[i, j, :]
             x = self.matrix_total_vehicles[i, j, :]
 
-            canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,label="{} = {}".format("Layout", layout))
+            # if key in self.stations:
+            #     canvas.axes.scatter(x, y, label="{} = {}".format("Layout", layout))
+            # else:
+            #     canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,label="{} = {}".format("Layout", layout))
+            canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,marker="o", markersize=3, ls="solid",label="{} = {}".format("Layout", layout))
 
         # Set the axis
         canvas.axes.set_xlabel("Total number of vehicles")
@@ -677,6 +702,12 @@ class GlobalAnalysis():
             canvas.axes.set_ylabel("Time (minutes)")
         elif key in self.velocities:
             canvas.axes.set_ylabel("Mean speed (km/h)")
+        elif key in self.stations:
+            canvas.axes.plot(x, np.repeat(1, len(y)), color='k', linestyle="--", label="Occupation doubles capacity")
+            canvas.axes.plot(x, np.repeat(0, len(y)), color='k', linestyle="-.", label="Optimal occupation")
+            canvas.axes.plot(x, np.repeat(-1, len(y)), color='k', linestyle=":", label="No occupation")
+
+            canvas.axes.set_ylabel("Mean occupation index (vehicles - chargers /chargers)")
         elif key == 'elapsed':
             canvas.axes.set_ylabel("Time elapsed per repetition (minutes/vehicle)")
 

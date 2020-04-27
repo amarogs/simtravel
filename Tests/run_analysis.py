@@ -65,7 +65,7 @@ else:
 
 # Once the individual analysis is over, create the global report.
 g_analysis = GlobalAnalysis(attrs, 'seeking', 'queueing','total', 'speed',
-                   'mobility', 'elapsed')
+                   'mobility','occupation', 'elapsed')
 g_analysis.load_matrices(sim_analysis)
 g_analysis.load_single_attribute(sim_analysis, 'TOTAL_VEHICLES')
 g_analysis.create_report()

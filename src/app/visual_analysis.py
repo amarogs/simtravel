@@ -132,7 +132,7 @@ class AnalysisWindow(QMainWindow):
             
             all_sim_analysis = [SimulationAnalysis(*attr) for attr in attributes]
             # Create a global analysis object and feed it with the simulations.
-            g_analysis = GlobalAnalysis(attributes, 'seeking', 'queueing','total', 'speed','mobility', 'elapsed')
+            g_analysis = GlobalAnalysis(attributes, 'seeking', 'queueing','total', 'speed','mobility', 'occupation','elapsed')
             g_analysis.load_matrices(all_sim_analysis)
             g_analysis.load_single_attribute(all_sim_analysis, 'TOTAL_VEHICLES')
             g_analysis.compute_all()
@@ -342,9 +342,6 @@ class SingleAnalysis(QWidget):
             ev, tf, ly = params
             filename = "{}#{}#{}".format(ev, tf, ly)
 
-            # Create a analysis of the simulation
-            self.sim_analysis = SimulationAnalysis(*self.attributes_by_filename[filename])
-
             # Add the window as an attribute so that the window stays on the screen.
             window_name = "WINDOW_{}_{}_{}".format(ev, tf, ly)
             self.__dict__[window_name] = AnalysisWindow(ev, tf, ly, self.attributes_by_filename[filename])
@@ -445,7 +442,7 @@ class GlobalAnalysisForm(SingleAnalysis):
         if report:
             all_sim_analysis = [SimulationAnalysis(*attr) for attr in attrs]
             # Create a global analysis object and feed it with the simulations.
-            g_analysis = GlobalAnalysis(attrs, 'seeking', 'queueing','total', 'speed','mobility', 'elapsed')
+            g_analysis = GlobalAnalysis(attrs, 'seeking', 'queueing','total', 'speed','mobility', 'occupation','elapsed')
             g_analysis.load_matrices(all_sim_analysis)
             g_analysis.load_single_attribute(all_sim_analysis, 'TOTAL_VEHICLES')
             # Create the report.
