@@ -583,7 +583,14 @@ class GlobalAnalysis():
                           'elapsed': "Time elapsed", 'speed': "Mean speed EV rate = {}",
                           'mobility': "Mean mobility EV rate = {} ", 
                           'occupation': "Mean station occupation  EV rate = {}"}
-        
+
+        self.suptitles_heat = {'seeking': 'Mean time spent seeking',
+                    'queueing': 'Mean time spent queueing',
+                    'total': "Total time spent recharging",
+                    'elapsed': "Time elapsed", 'speed': "Mean speed",
+                    'mobility': "Mean mobility", 
+                    'occupation': "Mean station occupation"}
+         
         self.total_plots = 0
         self.computed_canvases = []
     
@@ -604,12 +611,11 @@ class GlobalAnalysis():
             total_tfd.add(tfd)
             total_layout.add(layout)
 
-        self.evd_index = sorted(total_evd)
-        self.tfd_index = sorted(total_tfd)
-        self.layout_index = sorted(total_layout)
+        self.evd_index = sorted(list(total_evd))
+        self.tfd_index = sorted(list(total_tfd))
+        self.layout_index = sorted(list(total_layout))
 
-        shape = (len(self.evd_index),  len(
-            self.layout_index), len(self.tfd_index))
+        shape = (len(self.evd_index),  len(self.layout_index), len(self.tfd_index))
         return shape
 
     def compute_index(self, simulation):
@@ -676,7 +682,44 @@ class GlobalAnalysis():
                 figures.append(fig)
                 names.append(name)
 
+            # For all ev density draw a heat map
+            # fig, name = self.create_heat_map(key, mean, std)
+            # figures.append(fig)
+            # names.append(name)
+
         return figures, names
+
+    def create_heat_map(self, key, mean, std):
+        """Returns a canvas with 3 heat maps, each one representing a layout and the values
+        come from evd x tfd. Rememeber that the input matrices are sorted by (evd, ly, tf) """
+        
+        mean_by_ly =  mean.swapaxes(0,1)
+        std_by_ly = std.swapaxes(0,1)
+        canvas = MplCanvas()
+        canvas.fig.suptitle(self.suptitles_heat[key])
+        
+
+        for i, name in enumerate(self.layout_index):
+            canvas.__dict__["canvas_".format(i+1)] = canvas.fig.add_subplot(1, 3, i+1)
+            axes = canvas.__dict__["canvas_".format(i+1)]
+            max_value = np.max(mean[i])
+            img = axes.imshow(mean[i]/max_value, origin='upper', vmin=0, vmax=1)
+
+            axes.set_title(name)
+            axes.set_xticks(np.arange(len(self.tfd_index)))
+            axes.set_xticklabels(self.tfd_index)
+
+            axes.set_yticks(np.arange(len(self.evd_index)))
+            axes.set_yticklabels(self.evd_index)
+
+            # for j in range(len(self.evd_index)):
+            #     for k in range(len(self.tfd_index)):
+            #             text = axes.text(k, j, mean[i][j, k],ha="center", va="center", color="w")
+            
+            #canvas.fig.colorbar(img, label="Probability of finding a vehicle")
+
+        return canvas, "{}_heatmap".format(key)
+
 
     def create_canvas_per_evd(self, i, key, mean, std):
 
