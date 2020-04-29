@@ -4,7 +4,7 @@ from Cython.Build import cythonize
 import os
 
 
-cythonize_folders = ["metrics", "models", "simulator", "analysis", "app"]
+cythonize_folders = ["metrics", "models", "simulator"]
 ext_modules = []
 split_by = "/"
 if os.name != 'posix':
