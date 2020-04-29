@@ -8,6 +8,7 @@ from src.simulator.simulation import Simulation
 from src.models.cities import SquareCity
 from src.app.animation import VisualizationWindow
 from src.app.visual_analysis  import LiveAnalysisPyG as LiveAnalysisWindow
+from src.app.param import LY_ENG_TO_SP, LY_SP_TO_ENG
 
 
 class ExecutionVisualizationForm(QWidget):
@@ -78,7 +79,7 @@ class ExecutionVisualizationForm(QWidget):
     def create_simulation(self):
         ev = str(self.combo_widgets['EV_DENSITY_VALUES'].currentText())
         tf = str(self.combo_widgets['TF_DENSITY_VALUES'].currentText())
-        ly = str(self.combo_widgets['ST_LAYOUT_VALUES'].currentText())
+        ly = LY_SP_TO_ENG[str(self.combo_widgets['ST_LAYOUT_VALUES'].currentText())]
         path = self.params_text["PATH"]
         self.simulation_directory =  os.path.join(path, "results","{}#{}#{}.hdf5".format(ev, tf, ly))
         # Create the simulation object
@@ -171,12 +172,12 @@ class ExecutionVisualizationForm(QWidget):
 
         ST_LAYOUT_VALUES = []
         if self.params_text['ST_CENTRAL']:
-            ST_LAYOUT_VALUES.append("central")
+            ST_LAYOUT_VALUES.append("grande")
 
         if self.params_text['ST_DISTRIBUTED']:
-            ST_LAYOUT_VALUES.append("distributed")
+            ST_LAYOUT_VALUES.append("pequeñas")
         if self.params_text['ST_FOUR']:
-            ST_LAYOUT_VALUES.append("four")
+            ST_LAYOUT_VALUES.append("medianas")
         self.params_text['ST_LAYOUT_VALUES'] = ST_LAYOUT_VALUES
 
     def fulfill_combo_widget(self, key):

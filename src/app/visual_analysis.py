@@ -10,7 +10,9 @@ import pyqtgraph as pg
 
 from src.analysis.analysis import SimulationAnalysis, GraphFunctions, GlobalAnalysis, MplCanvas
 from src.models.states import States
+from src.app.param import LY_ENG_TO_SP, LY_SP_TO_ENG
 import src.analysis.parameters_analysis as params
+
 
 class LiveAnalysisPyG(QMainWindow):
     def __init__(self, simulation, main_window, parent=None, flags=QtCore.Qt.WindowFlags()):
@@ -88,8 +90,10 @@ class LiveAnalysisWindow(QMainWindow):
         len_data = len(self.simulation.metrics.states_evolution[self.keys[0]])
         self.grapher.update_states_canvas(self.states_graph, len_data, self.simulation.metrics.states_evolution)
         self.states_graph.draw()
-        
+
+
 class AnalysisDistribucion(QMainWindow):
+    """A window that computes a normal distribution """
     def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(parent=parent, flags=flags)
         
@@ -116,7 +120,6 @@ class AnalysisDistribucion(QMainWindow):
         self.canvas.create_normal_distribution(mu, sigma, inf, sup, unit)
         self.canvas.update()
         self.update()
-
 class AnalysisWindow(QMainWindow):
     """Clase para abrir una ventana con un carrousel de gráficas. """
     def __init__(self,ev, tf, ly, attributes, non_individual=False, parent=None, flags=QtCore.Qt.WindowFlags()):
@@ -306,7 +309,9 @@ class SingleAnalysis(QWidget):
 
         self.combo_widgets['ST_LAYOUT_VALUES'].clear()
         if tf != "" and ev != "":
-            self.combo_widgets['ST_LAYOUT_VALUES'].addItems(sorted(self.st_values_per_tf_ev[tf+"#"+ev]))
+            items = sorted(self.st_values_per_tf_ev[tf+"#"+ev]) 
+
+            self.combo_widgets['ST_LAYOUT_VALUES'].addItems([LY_ENG_TO_SP[x] for x in items])
    
     def fulfill_combo_widget(self, key, values):
         combo = QComboBox()
@@ -330,7 +335,7 @@ class SingleAnalysis(QWidget):
         If any of the combo is not selected, then returns None. """
         ev =  self.combo_widgets['EV_DENSITY_VALUES'].currentText()
         tf =  self.combo_widgets['TF_DENSITY_VALUES'].currentText()
-        ly =  self.combo_widgets['ST_LAYOUT_VALUES'].currentText()
+        ly =  LY_SP_TO_ENG[self.combo_widgets['ST_LAYOUT_VALUES'].currentText()]
         if any([x=="" for x in [ev, tf, ly]]):
             return
         else:
@@ -427,8 +432,6 @@ class SingleAnalysis(QWidget):
             if key.startswith("WINDOW"):
                 window.close()
         return super().closeEvent(cls)
-
-
 class GlobalAnalysisForm(SingleAnalysis):
     def __init__(self, BASEDIR_PATH, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(BASEDIR_PATH, parent=parent, flags=flags)

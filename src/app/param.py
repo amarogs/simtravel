@@ -57,3 +57,8 @@ st_four = Param(QCheckBox, None, None, "ST_FOUR", "Cuatro estaciones medianas en
 
 instances_configuration_creation = [tf_density, ev_density]
 stations_configuration_creation = [st_central, st_distributed, st_four]
+
+
+# Diccionario de traducción de staciones:
+LY_ENG_TO_SP = {"central":"grande", "distributed":"pequeñas", "four":"medianas"}
+LY_SP_TO_ENG = {v:k for (k, v) in LY_ENG_TO_SP.items()}

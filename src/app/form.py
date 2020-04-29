@@ -7,19 +7,24 @@ from PyQt5.QtWidgets import *
 from src.app.animation import Animation, VisualizationWindow
 from src.models.cities import SquareCity
 from src.app.param import city_creation,stations_creation, speed_creation, battery_creation, \
-    distribution_creation, sim_configuration_creation, instances_configuration_creation, stations_configuration_creation
+    distribution_creation, sim_configuration_creation, instances_configuration_creation, stations_configuration_creation, LY_SP_TO_ENG, LY_ENG_TO_SP
 from src.app.visual_analysis import AnalysisDistribucion
 
 
 class ParamsCreationForm(QWidget):
 
 
-    def __init__(self, params, parent=None, flags=QtCore.Qt.WindowFlags()):
+    def __init__(self, params,callback, parent=None, flags=QtCore.Qt.WindowFlags()):
         super(ParamsCreationForm, self).__init__(parent=parent, flags=flags)
-        self.current_view = None # Points to the next view that must be rendered
+        # Function that must be called right after closing the form
+        self.callback = callback
+        # Points to the next view that must be rendered
+        self.current_view = None 
+        # List of function that create the views. The current_view can point to any view to draw it.
         self.views = [self.create_city_form, self.create_physical_units_form, \
             self.create_distribution_form, self.create_sim_configuration_form, self.create_results_form]
-
+        # List of arguments that are used in the creation functions. Each index matches a function
+        # in the list of functions.
         self.args = [{"title1":"Creación de la ciudad", "button1":"Mostrar ciudad",\
                     "title2":"Configuración de estaciones", "button2":"Mostras estaciones"},\
 
@@ -27,9 +32,12 @@ class ParamsCreationForm(QWidget):
                      {"title1": "Distribución de la batería", "title2": "Distribución del tiempo de espera"},
                      {"title1": "Configuración general de las simulaciones", "title2": "Configuración de las instancias",
                      "title3": "Configuración de las estaciones"},{"title1":"Configuración de los resultados"}]
-        self.global_params = params
-        self.params_text = copy.deepcopy(params)
 
+        # Attribute that points to the global params
+        self.global_params = params
+        # Attribute used througout the form to store a internal copy.
+        self.params_text = copy.deepcopy(params)
+        # Attribute that holds each widget with a KEY that matches those in the simulation parameters.
         self.params_widget = {k:None for k in self.params_text}
 
         # Button tool in the lower part of the main window.
@@ -99,6 +107,7 @@ class ParamsCreationForm(QWidget):
         self.city_visualization.close()
         self.distribution_visualization.close()
         self.hide()
+        self.callback()
 
     def next_screen(self):
         """Function that draws the next screen """
@@ -182,7 +191,7 @@ class ParamsCreationForm(QWidget):
         # Place the stations in the city based on the parameters chosen.
         min_plugs_per_station, min_num_stations = self.params_text["MIN_PLUGS_PER_STATION"], self.params_text["MIN_D_STATIONS"]
         _, TOTAL_D_ST = city.set_max_chargers_stations(min_plugs_per_station, min_num_stations)
-        stations_pos, stations_influence = city.place_stations_new(self.station_layout.currentText(), TOTAL_D_ST)
+        stations_pos, stations_influence = city.place_stations_new(LY_SP_TO_ENG[self.station_layout.currentText()], TOTAL_D_ST)
         
         # Display the newly created city with the stations.
         self.city_visualization.show_new_city(city.SIZE, city.city_matrix, stations_pos=stations_pos, stations_influence=stations_influence)        
@@ -249,7 +258,7 @@ class ParamsCreationForm(QWidget):
         show_city_button = QPushButton(kwargs["button2"])
         show_city_button.clicked.connect(self.show_stations)
         self.station_layout = QComboBox()
-        self.station_layout.addItems(["central", "distributed", "four"])
+        self.station_layout.addItems(LY_SP_TO_ENG.keys())
         line_layout = QHBoxLayout()
         line_layout.addWidget(show_city_button)
         line_layout.addWidget(self.station_layout)

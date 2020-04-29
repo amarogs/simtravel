@@ -6,6 +6,9 @@ import os
 
 cythonize_folders = ["metrics", "models", "simulator"]
 ext_modules = []
+split_by = "/"
+if os.name != 'posix':
+    split_by = "\\"
 
 for folder in cythonize_folders:
     path = os.path.join(".", "src", folder )
@@ -13,7 +16,7 @@ for folder in cythonize_folders:
 
     for source_file in files:
         source_file_path = os.path.join(path, source_file)
-        module_name = source_file_path.split(".")[1][1::].replace("\\", ".")
+        module_name = source_file_path.split(".")[1][1::].replace(split_by, ".")
         print("Creating {} with files: {}".format(module_name, source_file_path))
         ext_modules.append(Extension(module_name, [source_file_path]))
 

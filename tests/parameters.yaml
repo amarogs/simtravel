@@ -14,6 +14,7 @@ SPEED :  10 # km/h
 CELL_LENGTH :  5 # meters
 SIMULATION_SPEED :  1 #cell/tstep
 BATTERY :  1 #kWh
+AUTONOMY: 135 # Vehicle autonomy in km
 CS_POWER :  7 #kW
 
 #BATTERY DISTRIBUTION #

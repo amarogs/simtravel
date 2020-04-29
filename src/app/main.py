@@ -38,9 +38,10 @@ class SimtravelMainWindow(QMainWindow):
                 <h1>Bienvenido</h1>
                 
                 <p>
-                <br>(1) Crea nuevos parámetros de simulación o cárguelos desde un archivo.
-                <br>(2) Ejecuta la simulación con los parámetros cargados.
-                <br>(3) Analice los resultados.
+                <br>(1) Crear nuevos parámetros de simulación o cargar desde un archivo.
+                <br>(2) Los parámetros creados o modificados puede ser guardados como archivo.
+                <br>(2) Ejecutar la simulación con los parámetros cargados.
+                <br>(3) Analizar los resultados obtenido o de otra localización.
                 </p>
                 <br>
                 <a href=https://github.com/amarogs/simtravel>Código fuente <a/>
@@ -50,7 +51,7 @@ class SimtravelMainWindow(QMainWindow):
 
         layout.addWidget(msg_label)
         self.welcome.setLayout(layout)
-        self.parameters_creation_form = ParamsCreationForm(self.parameters, flags=flags)
+        self.parameters_creation_form = ParamsCreationForm(self.parameters, self.create_new_welcome, flags=flags)
         self.execution_visualization_form = ExecutionVisualizationForm(self.parameters, VisualizationWindow(), flags=flags)
         self.individual_analysis_form = SingleAnalysis(self.parameters['PATH'], flags=flags)
         self.global_analysis_form = GlobalAnalysisForm(self.parameters['PATH'], flags=flags)
@@ -149,6 +150,9 @@ class SimtravelMainWindow(QMainWindow):
         self.global_analysis_form.update_values(self.parameters['PATH'])
         self.stack.setCurrentWidget(self.global_analysis_form)
 
+    def create_new_welcome(self):
+        """Sets the stack to point to the welcome widget. """
+        self.stack.setCurrentWidget(self.welcome)
     def closeEvent(self,cls):
         
         
@@ -159,13 +163,15 @@ class SimtravelMainWindow(QMainWindow):
 
         return super().closeEvent(cls)
 
-# enable highdpi scaling
-QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  
+if __name__ == "__main__":
+    # enable highdpi scaling
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)  
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-# Create the application 
-app = QApplication([])
-QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
-app.setApplicationName("SIMTRAVEL")
-main_window = SimtravelMainWindow()
-main_window.show()
-app.exec_()
+    # Create the application 
+    app = QApplication([])
+    QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
+    app.setApplicationName("SIMTRAVEL")
+    main_window = SimtravelMainWindow()
+    main_window.show()
+    app.exec_()
