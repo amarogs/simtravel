@@ -6,7 +6,7 @@ from multiprocessing import Pool
 import yaml
 
 parameters =None
-with open("tests/parameters.yaml", "r") as f:
+with open("scripts/parameters.yaml", "r") as f:
     parameters = yaml.load(f, Loader=yaml.FullLoader)
     for k, v in parameters.items():
         globals()[k] = v
@@ -33,7 +33,7 @@ sim_args = []
 for ev in EV_DENSITY_VALUES:
     for tf in TF_DENSITY_VALUES:
         for ly in ST_LAYOUT_VALUES:
-            sim_args.append((ev, tf, ly))
+            sim_args.append((ev, tf, ly, PATH))
 
 
 def run_simulation_with(args):
@@ -43,7 +43,7 @@ def run_simulation_with(args):
     # Set the simulation units.
     simulation.set_simulation_units(speed=SPEED, cell_length=CELL_LENGTH,
                                     simulation_speed=SIMULATION_SPEED,
-                                    battery=BATTERY, cs_power=CS_POWER)
+                                    battery=BATTERY, cs_power=CS_POWER, autonomy=AUTONOMY)
     # Set the battery and idle distribution
     simulation.set_battery_distribution(lower=BATTERY_THRESHOLD,
                                         std=BATTERY_STD)
