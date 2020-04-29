@@ -7,12 +7,15 @@ __pycache__/
 *.so
 
 # Results
-results*/*
+results
 *.zip
 *.pdf
 *.svg
 *.json
 .vscode/
+
+# Virtual environment
+sim-venv
 
 # Distribution / packaging
 .Python
