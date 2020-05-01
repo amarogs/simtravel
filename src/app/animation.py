@@ -376,7 +376,8 @@ class VisualizationWindow(QMainWindow):
 
         if self.sim_data == None:
             # The simulation is over
-            self.is_over_function()
+            self.is_over_function(True)
+            self.is_over_function = None
             
         self.opengl_animation.update()
         if self.live_analysis_window != None:
@@ -392,7 +393,7 @@ class VisualizationWindow(QMainWindow):
             self.live_analysis_window.destroy()
 
         if self.is_over_function:
-            self.is_over_function()
+            self.is_over_function(False)
 
         self.settings.setValue("geometry", self.saveGeometry())
         self.settings.setValue("windowState", self.saveState())

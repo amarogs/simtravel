@@ -130,9 +130,9 @@ class ExecutionVisualizationForm(QWidget):
         self.resume.hide()
         self.visualization_window.timer.start()
 
-    def simulation_is_over(self):
+    def simulation_is_over(self, all_done):
         """Function called when the simulation has finished executing """
-        self.on_click_terminate_button(all_done=True)
+        self.on_click_terminate_button(all_done)
 
     def on_click_execute_button(self):
 

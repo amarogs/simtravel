@@ -106,7 +106,7 @@ class CityBuilder():
         return self.next_cell_of(x,y, (direction-2)%4, (direction-1)%4 )
 
     def leads_to(self, x,y, direction, lx, ly):
-        """Given a position (x,y) and a direction. Tests, wheter
+        """Given a position (x,y) and a direction. Tests, whether
         following the direction, the next cell is (lx, ly). """
         next_pos = self.next_cell_of(x, y, direction)
         
@@ -306,6 +306,18 @@ class Roundabout(CityBuilder):
 
 class RoadIntersection(CityBuilder):
     def __init__(self, c_x, c_y, directions):
+        """Creates RoadIntersection object that conects two streets together by meenas
+        of an intersection. The right priority rule is applied. 
+
+        Args:
+            c_x (int): x coordinate of the center of the new intersection
+            c_y (int): y coordinate of the center of the new intersection
+            directions (list): Direction of each cell that the intersection joins. Order: [W, S, E, N]
+        
+        Returns:
+            A RoadIntersection instance
+        """
+
         super().__init__()
         cell_order = [self.W, self.S, self.E, self.N]
         cell_order = [self.direction_vectors[k] for k in cell_order]
@@ -319,7 +331,7 @@ class RoadIntersection(CityBuilder):
             sucessors = [self.next_cell_of(x,y, cell_direction)]
             
             if self.is_entrance(x,y,cell_direction, c_x, c_y):
-                # This cell is an intersection entrance, now we have to check wheter
+                # This cell is an intersection entrance, now we have to check whether
                 # it has priority or not.   
                 index_right = (i+1)%4
                 right_vector = cell_order[index_right]
@@ -394,14 +406,24 @@ class Intersection(Roundabout):
 class SquareCity(CityBuilder):
     def __init__(self, RB_LENGTH, AV_LENGTH, SCALE, INTERSEC_LENGTH=3 ):
         super().__init__()
-        """RB_LENGTH: Is the length of the side of the roundabout rotary. The minimum for 
-        it to work must be 6, any even number greater that 6 is valid.
+        """
+        Creates a regular and synthetic city made of puzzle pieces. The city is based on a pattern
+        and scale. Each parameter that regulates the size is given as an argument.
 
-        AV_LENGTH: Is the length of a strip of avenue. It is the length from a roundabout to 
-        the next roundabout.
+        Args:
+            RB_LENGTH (int): Is the length of the side of the roundabout rotary. The minimum for 
+            it to work must be 6, any even number greater that 6 is valid.
 
-        INTERSEC_LENGTH: Is the length of the side of the intersection rotary. The minimum number
-        for it to work must be 3, any odd number greater thar 3 is valid.  """
+            AV_LENGTH (int): Is the length of a strip of avenue. It is the length from a roundabout to 
+            the next roundabout.
+
+            INTERSEC_LENGTH (int): Is the length of the side of the intersection rotary. The minimum number
+            for it to work must be 3, any odd number greater thar 3 is valid. 
+        
+        Returns
+            A SquareCity instance
+        """
+        
         
         
         
@@ -498,10 +520,6 @@ class SquareCity(CityBuilder):
         def change_pos_to_references(cell, attribute, dictionary):
             """Given a cell, and a list of keys (attribute), replace the 
             keys for a reference to the object in the dictionary """
-            # if attribute == "predecessors":
-                
-            #     if len(cell.__dict__[attribute]) > 0:
-            #         print("Tiene elementos camiando predecessors: ", cell, cell.predecessors, cell.cell_type)
 
             cell.__dict__[attribute] = [city_map[k] for k in cell.__dict__[attribute]]
         
@@ -664,6 +682,22 @@ class SquareCity(CityBuilder):
         return stations_per_district
 
     def place_stations_new(self, layout, total_d_st):
+        """
+        Computes the placement of new stations as well as the area of influence of each station. This means
+        the area that serves each group of stations.
+
+        Args:
+            layout (str): can have value 'central', 'distributed' or 'four'.
+            total_d_st (int): total number of distributed stations.
+
+        Returns:
+            stations_cluster (list of list): is a list of list of tuples. Each list contains the 
+            position of the stations that form a cluster together. These stations belong to the same 'neighbourhood'.
+            positions_cluster (list of list): each list is related to the stations_cluster with the same index. It is
+            the positions os the city that are served by that stations_cluster.
+
+
+        """
 
         def nearest_cell_type(reference, type_set):
             """Returns the nearest cell to reference that belongs to the type_set. """
