@@ -341,6 +341,7 @@ class VisualizationWindow(QMainWindow):
         self.live_analysis_window = None
 
         self.is_over_function = None
+        self.all_done = False
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.update_animation)
 
@@ -362,7 +363,9 @@ class VisualizationWindow(QMainWindow):
         # Starting state of the simulation:
         # current_repetition, current_tstep, metrics, snapshot
         self.sim_data = (0, 0, None, None)
+        self.all_done = False
         self.is_over_function = is_over_function
+
 
         self.opengl_animation.display_new_city(self.simulation.SIZE, self.simulation.city_matrix)
         self.opengl_animation.display_stations(self.simulation.stations)
@@ -376,8 +379,9 @@ class VisualizationWindow(QMainWindow):
 
         if self.sim_data == None:
             # The simulation is over
-            self.is_over_function(True)
-            self.is_over_function = None
+            self.all_done = True
+            self.is_over_function()
+            
             
         self.opengl_animation.update()
         if self.live_analysis_window != None:
@@ -393,7 +397,7 @@ class VisualizationWindow(QMainWindow):
             self.live_analysis_window.destroy()
 
         if self.is_over_function:
-            self.is_over_function(False)
+            self.is_over_function()
 
         self.settings.setValue("geometry", self.saveGeometry())
         self.settings.setValue("windowState", self.saveState())

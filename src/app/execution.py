@@ -26,8 +26,8 @@ class ExecutionVisualizationForm(QWidget):
         self.fps.valueChanged.connect(self.fps_change)
         self.analyse_button = QPushButton("Analizar")
         self.analyse_button.clicked.connect(self.on_click_analyse_button)
-        
 
+        self.all_done = None
         # Button tool on the bottom part of the main window
         self.button_tool = QWidget()
         self.button_layout = QHBoxLayout()
@@ -103,7 +103,7 @@ class ExecutionVisualizationForm(QWidget):
 
         return simulation
 
-    def on_click_terminate_button(self, all_done=False):
+    def on_click_terminate_button(self):
         # Hide the buttons that control the execution
         self.execute.show()
         self.pause.hide()
@@ -113,7 +113,8 @@ class ExecutionVisualizationForm(QWidget):
 
         # Stop the execution and close the visualization window
         self.visualization_window.timer.stop()
-        if not all_done and self.simulation_directory != None:
+        if not self.visualization_window.all_done and self.simulation_directory != None:
+            print("Condition True, deleting")
             # Destroy the file that was created.
             if os.path.exists(self.simulation_directory):
                 os.remove(self.simulation_directory)
@@ -130,9 +131,10 @@ class ExecutionVisualizationForm(QWidget):
         self.resume.hide()
         self.visualization_window.timer.start()
 
-    def simulation_is_over(self, all_done):
+    def simulation_is_over(self):
         """Function called when the simulation has finished executing """
-        self.on_click_terminate_button(all_done)
+        
+        self.on_click_terminate_button()
 
     def on_click_execute_button(self):
 
@@ -163,7 +165,7 @@ class ExecutionVisualizationForm(QWidget):
         """Setes the timer of the visualization to the new interval based on the 
         fps count. """
 
-        self.visualization_window.timer.setInterval(int(1000/self.fps.value()))
+        self.visualization_window.timer.setInterval(float(1000/self.fps.value()))
 
     def list_of_stations_layout(self):
         """For each layout selected in the parameters file, creates
@@ -216,7 +218,7 @@ class ExecutionVisualizationForm(QWidget):
         layout = QFormLayout()
         
         self.fps.setValue(24)
-        self.fps.setMaximum(10800)
+        self.fps.setMaximum(1000000)
         self.fps.setMinimum(1)
         layout.addRow(QLabel("Selecciona los FPS de la visualización (más frames, más rápido):"), self.fps)
         vs.setLayout(layout)
