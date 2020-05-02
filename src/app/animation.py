@@ -314,7 +314,7 @@ class Animation(QOpenGLWidget):
         glVertex2f(x + width, y)                           # bottom right point
         glVertex2f(x + width, y + height)                  # top right point
         glVertex2f(x, y + height)                          # top left point
-        glVertex2f(x, y)                                   # bottom left point
+        glVertex2f(x, y)                                      # bottom left point
         
         glEnd()
 
@@ -357,7 +357,7 @@ class VisualizationWindow(QMainWindow):
         self.opengl_animation.display_new_city(size, city,city_map,stations_pos,stations_influence)
         self.opengl_animation.update()
 
-    def start_animation(self, simulation, is_over_function):
+    def start_animation(self, simulation, is_over_function, progress_bar):
         """Creates a QTimer that triggers the update of the animation. """
         self.simulation = simulation
         # Starting state of the simulation:
@@ -365,6 +365,7 @@ class VisualizationWindow(QMainWindow):
         self.sim_data = (0, 0, None, None)
         self.all_done = False
         self.is_over_function = is_over_function
+        self.progress_bar = progress_bar
 
 
         self.opengl_animation.display_new_city(self.simulation.SIZE, self.simulation.city_matrix)
@@ -376,7 +377,7 @@ class VisualizationWindow(QMainWindow):
     def update_animation(self):
 
         self.sim_data = self.simulation.run_simulator_application(*self.sim_data)
-
+        self.progress_bar.setValue(self.progress_bar.value() + 1)
         if self.sim_data == None:
             # The simulation is over
             self.all_done = True

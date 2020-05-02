@@ -23,11 +23,13 @@ class ExecutionVisualizationForm(QWidget):
         self.simulation_directory = None
         self.visualization_window = visualization_window
         self.fps = QSpinBox()
+        self.progress_bar = QProgressBar()
+        self.progress_bar.hide()
         self.fps.valueChanged.connect(self.fps_change)
         self.analyse_button = QPushButton("Analizar")
         self.analyse_button.clicked.connect(self.on_click_analyse_button)
-
         self.all_done = None
+
         # Button tool on the bottom part of the main window
         self.button_tool = QWidget()
         self.button_layout = QHBoxLayout()
@@ -140,19 +142,23 @@ class ExecutionVisualizationForm(QWidget):
 
         # Update the view of the buttons
         self.execute.hide()
+
         self.pause.show()
         self.terminate.show()
-
         self.analyse_button.show()
+        self.progress_bar.show()
+        self.progress_bar.setValue(0)
 
         # Create a new simulation
         self.simulation = self.create_simulation()
         self.simulation.prepare_simulation(self.params_text['TOTAL_TIME'], \
             self.params_text['MEASURE_PERIOD'], self.params_text['REPETITIONS'])
 
+        # Set the progress bar maximum
+        self.progress_bar.setMaximum(self.simulation.TOTAL_TSTEPS)
         # Open the visualization window
         self.visualization_window.show()
-        self.visualization_window.start_animation(self.simulation, self.simulation_is_over)
+        self.visualization_window.start_animation(self.simulation, self.simulation_is_over, self.progress_bar)
 
         # Start the timer
         self.fps_change()
@@ -218,7 +224,7 @@ class ExecutionVisualizationForm(QWidget):
         layout = QFormLayout()
         
         self.fps.setValue(24)
-        self.fps.setMaximum(1000000)
+        self.fps.setMaximum(1000)
         self.fps.setMinimum(1)
         layout.addRow(QLabel("Selecciona los FPS de la visualización (más frames, más rápido):"), self.fps)
         vs.setLayout(layout)
@@ -231,6 +237,7 @@ class ExecutionVisualizationForm(QWidget):
         layout.addWidget(st)
         layout.addWidget(vs)
         layout.addWidget(self.analyse_button)
+        layout.addWidget(self.progress_bar)
         main_content.setLayout(layout)
 
         return main_content    

@@ -26,7 +26,7 @@ class ParamsCreationForm(QWidget):
         # List of arguments that are used in the creation functions. Each index matches a function
         # in the list of functions.
         self.args = [{"title1":"Creación de la ciudad", "button1":"Mostrar ciudad",\
-                    "title2":"Configuración de estaciones", "button2":"Mostras estaciones"},\
+                    "title2":"Configuración de la distribución de estaciones", "button2":"Mostras estaciones"},\
 
                      {"title1": "Unidades físicas - velocidad", "title2": "Unidades físicas - energía"},
                      {"title1": "Distribución de la batería", "title2": "Distribución del tiempo de espera"},
@@ -235,6 +235,7 @@ class ParamsCreationForm(QWidget):
         cities_form = QGroupBox(kwargs["title1"])
         layout = QFormLayout()
         layout.setSizeConstraint(QLayout.SetMinimumSize)
+        layout.addRow(QLabel("Configuración de la ciudad sintética con rotondas, calles y avenidas."))
         # For each parameter, add it to the layout
         self.add_params_to_layout(city_creation, layout)
 
@@ -251,6 +252,7 @@ class ParamsCreationForm(QWidget):
         stations_form = QGroupBox(kwargs["title2"])
         layout = QFormLayout()
         layout.setSizeConstraint(QLayout.SetMinimumSize)
+        layout.addRow(QLabel("El número de estaciones distribuidas será el siguiente número múltiplo de cuatro y\n cuadrado perfecto del número mínimo indicado "))
         # For each parameter, add it to the layout
         self.add_params_to_layout(stations_creation, layout)
         
@@ -374,19 +376,23 @@ class ParamsCreationForm(QWidget):
           
             if path:
                 self.params_text['PATH'] = path
-                self.current_directory_label.setText("Directorio actual: " + self.params_text["PATH"])
-
+                self.current_directory_text.setText(self.params_text['PATH'])
+        def update_path():
+            self.params_text['PATH'] = self.current_directory_text.text()
+            
         # Create a subform about the path where the results are going to be stored.
         self.current_form = QGroupBox(kwargs['title1'])
         layout = QFormLayout()
         layout.setSizeConstraint(QLayout.SetMinimumSize)
-        layout.addRow(QLabel("Seleccione el directorio donde se van a guardar los resultados de las simulaciones."))
-        if self.params_text["PATH"] == ".":
-            self.params_text["PATH"] = QtCore.QDir.currentPath()
-            
-        self.current_directory_label = QLabel("Directorio actual: " + self.params_text["PATH"])
-        layout.addRow(self.current_directory_label)
-        button_change_path = QPushButton("Seleccionar nuevo directorio")
+        msg = """Seleccione el directorio donde se van a guardar los resultados de las simulaciones.\nPuede seleccionar uno del sistema haciendo click en el botón o bien escribir manualmente el directorio."""
+        layout.addRow(QLabel(msg))
+
+        
+        self.current_directory_text = QLineEdit() 
+        self.current_directory_text.textChanged.connect(update_path)
+        self.current_directory_text.setText(self.params_text['PATH'])
+        layout.addRow(QLabel("Directorio seleccionado:"),self.current_directory_text)
+        button_change_path = QPushButton("Seleccionar directorio del sistema")
         button_change_path.clicked.connect(on_click_button_change_path)
         layout.addRow(button_change_path)
         self.current_form.setLayout(layout)
