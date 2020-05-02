@@ -111,6 +111,7 @@ class ExecutionVisualizationForm(QWidget):
         self.pause.hide()
         self.resume.hide()
         self.terminate.hide()
+        self.progress_bar.hide()
         self.analyse_button.hide()
 
         # Stop the execution and close the visualization window
@@ -155,7 +156,7 @@ class ExecutionVisualizationForm(QWidget):
             self.params_text['MEASURE_PERIOD'], self.params_text['REPETITIONS'])
 
         # Set the progress bar maximum
-        self.progress_bar.setMaximum(self.simulation.TOTAL_TSTEPS)
+        self.progress_bar.setMaximum(self.simulation.TOTAL_TSTEPS*self.simulation.REPETITIONS)
         # Open the visualization window
         self.visualization_window.show()
         self.visualization_window.start_animation(self.simulation, self.simulation_is_over, self.progress_bar)

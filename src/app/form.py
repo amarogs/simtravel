@@ -252,7 +252,7 @@ class ParamsCreationForm(QWidget):
         stations_form = QGroupBox(kwargs["title2"])
         layout = QFormLayout()
         layout.setSizeConstraint(QLayout.SetMinimumSize)
-        layout.addRow(QLabel("El número de estaciones distribuidas será el siguiente número múltiplo de cuatro y\n cuadrado perfecto del número mínimo indicado "))
+        layout.addRow(QLabel("El número de estaciones pequeñas total será el siguiente número múltiplo de cuatro y\n cuadrado perfecto del número mínimo indicado "))
         # For each parameter, add it to the layout
         self.add_params_to_layout(stations_creation, layout)
         

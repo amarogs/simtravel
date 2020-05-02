@@ -11,12 +11,13 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 
 
 import src.analysis.parameters_analysis as params
+
 from src.metrics.units import Units
 from src.models.states import States
 from src.simulator.simulation import Simulation
 
 matplotlib.use('Qt5Agg')
-
+language = params.LANGUAGE
 
 
 # Configure the matplotlib backend
@@ -64,7 +65,7 @@ class GraphFunctions():
             line = canvas.axes.plot(x, states_mean[s], color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
             canvas.lines[s] = line[0]
 
-        canvas.axes.set_xlabel("Time (minutes)")
+        canvas.axes.set_xlabel(params.lb_evolution[language])
         canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
         canvas.axes.set_title("Evolution of states.")
         canvas.axes.legend()
@@ -116,12 +117,12 @@ class GraphFunctions():
 
             _, new_err = self.binning_data(x, state_std)
 
-            err_plot = canvas.axes.errorbar(new_x, new_y, yerr=new_err, color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
+            err_plot = canvas.axes.errorbar(new_x, new_y, yerr=new_err, color=params.COLORS[s], label=params.STATE_NAMES[language][s], linewidth=2)
         
 
-        canvas.axes.set_xlabel("Time (minutes)")
-        canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
-        canvas.axes.set_title("Evolution of states.")
+        canvas.axes.set_xlabel(params.lb_evolution[language])
+        canvas.axes.set_ylabel(params.lb_states_y[language])
+        canvas.axes.set_title(params.lb_states[language])
         canvas.axes.legend()
 
         return canvas
@@ -130,14 +131,14 @@ class GraphFunctions():
         """Receives a dictionary of stations where k=station position and val=[list of occupation]
         Creates canvas of 4 subplots with the occupation of the stations """
         
-        super_title = self.sim_name + " {}/{}"
+        super_title =  " {}/{}"
 
         def plot_four_stations(plot_i, total_plots, stations, occupation):
             nonlocal x
             """Creates a figure to plot 4 stations occupation """
 
             canvas = MplCanvas()
-            canvas.fig.suptitle(super_title.format(plot_i+1, total_plots))
+            # canvas.fig.suptitle(super_title.format(plot_i+1, total_plots))
             canvas.fig.subplots_adjust(hspace=0.4)  # Adjust the space
 
             for i in range(4):  # Creates the subplots
@@ -152,34 +153,38 @@ class GraphFunctions():
                     if x is None:
                         x = self.x_measures_minutes
 
-                    canvas.__dict__['axes_'+str(i)].plot(x, y, color='k', label="Occupation")
-                    canvas.__dict__['axes_'+str(i)].plot(x, np.repeat(plugs_per_station, len(x)), color='green', linestyle="--", label="Capacity")
+                    canvas.__dict__['axes_'+str(i)].plot(x, y, color='k', label=params.lb_occupation_legend[language])
+                    canvas.__dict__['axes_'+str(i)].plot(x, np.repeat(plugs_per_station, len(x)), color='green', linestyle="--", label=params.lb_occupation_capacity[language])
                     canvas.__dict__['axes_'+str(i)].legend()
-                    canvas.__dict__['axes_'+str(i)].set_xlabel("Simulation evolution (minutes)")
-                    canvas.__dict__['axes_'+str(i)].set_ylabel("Station occupation (EVs)")
-                    canvas.__dict__['axes_'+str(i)].set_title("Station at {} ".format(pos))
+                    canvas.__dict__['axes_'+str(i)].set_xlabel(params.lb_evolution[language])
+                    canvas.__dict__['axes_'+str(i)].set_ylabel(params.lb_occupation_y[language])
+                    canvas.__dict__['axes_'+str(i)].set_title(params.lb_occupation[language].format(pos))
 
             return canvas
 
         stations = sorted(list(occupation_mean.keys()))
         if len(stations) == 1:
-            total_plots, plot_i = 1, 0  # We have only one plot
+            total_plots, plot_i, i = 1, 0,0  # We have only one plot
+            pos = stations[plot_i + i]
 
-            canvas = MplCanvas()
-            canvas.axes = canvas.fig.add_subplot(111)
-            canvas.fig.suptitle(super_title.format(plot_i+1, total_plots))  # Add the suptitle
-            # Plot the data
+            canvas = MplCanvas() # Create the canvas
+            canvas.__dict__['axes_'+str(i)] = canvas.fig.add_subplot(111)
+
+            # Retrieve the data
             y = occupation_mean[stations[0]]
             if x is None:
-                x =self.x_measures_minutes
-            canvas.axes.plot(x, y, color='k', label="Occupation")
-            canvas.axes.plot(x, np.repeat(plugs_per_station, len(x)), color='green', linestyle="--", label="Capacity")
-            canvas.axes.legend()
-            canvas.axes.set_xlabel("Simulation evolution (minutes)")
-            canvas.axes.set_ylabel("Station occupation (EVs)")
-            canvas.axes.set_title("Station at {} ".format(stations[0]))
+                x = self.x_measures_minutes
 
-            occupation_plots = [canvas]  # Create the list of plots
+            # Plot the data
+            canvas.__dict__['axes_'+str(i)].plot(x, y, color='k', label=params.lb_occupation_legend[language])
+            canvas.__dict__['axes_'+str(i)].plot(x, np.repeat(plugs_per_station, len(x)), color='green', linestyle="--", label=params.lb_occupation_capacity[language])
+            canvas.__dict__['axes_'+str(i)].legend()
+            canvas.__dict__['axes_'+str(i)].set_xlabel(params.lb_evolution[language])
+            canvas.__dict__['axes_'+str(i)].set_ylabel(params.lb_occupation_y[language])
+            canvas.__dict__['axes_'+str(i)].set_title(params.lb_occupation[language].format(pos))
+            
+            # Create the list of plots
+            occupation_plots = [canvas]  
 
         elif len(stations) == 4:
             occupation_plots = [plot_four_stations(0, 1, stations, occupation_mean)]
@@ -195,7 +200,7 @@ class GraphFunctions():
         Returns a list of canvases where each canvas is a matrix image representing the probability of finding
         a vehicle. """
 
-        super_title = self.sim_name + " - Snapshot {}/{}"
+        super_title = params.lb_heat[language]
         canvases = []
         for (i, hmap) in heat_map_mean.items():
 
@@ -206,9 +211,10 @@ class GraphFunctions():
 
             norm = 1.0/((eval(i)+1)*self.total_measures/len(heat_map_mean))
             # Plot the heat map
-            img = canvas.axes.imshow(norm*hmap, cmap='hot',interpolation='nearest', origin='upper', vmin=0, vmax=1)
+            img = canvas.axes.imshow(norm*hmap, cmap='hot',interpolation='nearest', origin='upper')
+            
             # Show the leyend
-            canvas.fig.colorbar(img, label="Probability of finding a vehicle")
+            canvas.fig.colorbar(img, label=params.lb_heat_bar[language])
             canvases.append(canvas)
 
         return canvases
@@ -225,14 +231,14 @@ class GraphFunctions():
         
         # Create a figure
         canvas = MplCanvas()
-        canvas.fig.suptitle(self.sim_name)
+        # canvas.fig.suptitle(self.sim_name)
 
         
         # Create a subplot
         canvas.axes_1 = canvas.fig.add_subplot(1,2,1)
 
-        canvas.axes_1.set_xlabel("Simulation evolution (minutes)")
-        canvas.axes_1.set_ylabel("Mean speed (km/h)")
+        canvas.axes_1.set_xlabel(params.lb_evolution[language])
+        canvas.axes_1.set_ylabel(params.lb_speed[language])
 
         # Plot the data
         y = self.units.simulation_speed_to_kmh(velocities_mean['speed'])
@@ -242,14 +248,14 @@ class GraphFunctions():
         new_x, new_y = self.binning_data(x,y)
         _, new_yerr = self.binning_data(x, yerr)
 
-        canvas.axes_1.errorbar(new_x, new_y, yerr=new_yerr, color="k",label="Mean speed evolution")
-        canvas.axes_1.legend()
+        canvas.axes_1.errorbar(new_x, new_y, yerr=new_yerr, color="k")
+        #canvas.axes_1.legend()
 
         # Create a subplot
         canvas.axes_2 = canvas.fig.add_subplot(1,2,2)
 
-        canvas.axes_2.set_xlabel("Simulation evolution (minutes)")
-        canvas.axes_2.set_ylabel("Mean mobility (km/h)")
+        canvas.axes_2.set_xlabel(params.lb_evolution[language])
+        canvas.axes_2.set_ylabel(params.lb_mobility[language])
 
         y = self.units.simulation_speed_to_kmh(velocities_mean['mobility'])
         
@@ -259,9 +265,9 @@ class GraphFunctions():
         _, new_yerr = self.binning_data(x, yerr)
 
 
-        canvas.axes_2.errorbar(new_x, new_y, yerr=new_yerr, color="k",label="Mean mobility evolution")
+        canvas.axes_2.errorbar(new_x, new_y, yerr=new_yerr, color="k")
 
-        canvas.axes_2.legend()
+        #canvas.axes_2.legend()
 
         return canvas
 
@@ -377,7 +383,7 @@ class SimulationAnalysis(Simulation):
         # Compute the mean occupation across all the stations:
         occupation_array = np.array([arr for pos, arr in self.occupation_mean.items()])
         
-        mean_occupation = (np.mean(occupation_array, axis=1) - self.plugs_per_station)/self.plugs_per_station
+        mean_occupation = (np.mean(occupation_array, axis=1))/self.plugs_per_station
         self.global_mean['occupation'] = np.mean(mean_occupation)
         self.global_std['occupation'] = np.std(mean_occupation)
 
@@ -578,12 +584,7 @@ class GlobalAnalysis():
         self.traffic = ['seeking', 'queueing', 'total', 'elapsed']
         self.velocities = ['speed', 'mobility']
         self.stations = ['occupation']
-        self.suptitles = {'seeking': 'Mean time spent seeking EV rate = {}',
-                          'queueing': 'Mean time spent queueing EV rate = {}',
-                          'total': "Total time spent recharging EV rate = {} ",
-                          'elapsed': "Time elapsed", 'speed': "Mean speed EV rate = {}",
-                          'mobility': "Mean mobility EV rate = {} ", 
-                          'occupation': "Mean station occupation  EV rate = {}"}
+
 
         self.suptitles_heat = {'seeking': 'Mean time spent seeking',
                     'queueing': 'Mean time spent queueing',
@@ -734,29 +735,25 @@ class GlobalAnalysis():
             y, yerr = mean[i, j, :], std[i, j, :]
             x = self.matrix_total_vehicles[i, j, :]
 
-            # if key in self.stations:
-            #     canvas.axes.scatter(x, y, label="{} = {}".format("Layout", layout))
-            # else:
-            #     canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,label="{} = {}".format("Layout", layout))
             canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,marker="o", markersize=3, ls="solid",label="{} = {}".format("Layout", layout))
 
         # Set the axis
-        canvas.axes.set_xlabel("Total number of vehicles")
+        canvas.axes.set_xlabel(params.global_x_label[language])
         if key in self.traffic:
-            canvas.axes.set_ylabel("Time (minutes)")
-        elif key in self.velocities:
-            canvas.axes.set_ylabel("Mean speed (km/h)")
-        elif key in self.stations:
-            canvas.axes.plot(x, np.repeat(1, len(y)), color='k', linestyle="--", label="Occupation doubles capacity")
-            canvas.axes.plot(x, np.repeat(0, len(y)), color='k', linestyle="-.", label="Optimal occupation")
-            canvas.axes.plot(x, np.repeat(-1, len(y)), color='k', linestyle=":", label="No occupation")
+            canvas.axes.set_ylabel(params.global_y_label[language]['traffic'])
 
-            canvas.axes.set_ylabel("Mean occupation index (vehicles - chargers /chargers)")
+        elif key in self.velocities:
+            canvas.axes.set_ylabel(params.global_y_label[language]['velocities'])
+        elif key in self.stations:
+            label, y_label = params.global_y_label[language]['stations']
+            canvas.axes.plot(x, np.repeat(1, len(y)), color='k', linestyle="--", label=label)
+            canvas.axes.set_ylabel(y_label)
+            
         elif key == 'elapsed':
             canvas.axes.set_ylabel("Time elapsed per repetition (minutes/vehicle)")
 
         # Set the suptitle
-        canvas.figure.suptitle(self.suptitles[key].format(evd))
+        canvas.figure.suptitle(params.global_suptitles[language][key].format(evd))
         # Set the legend
         canvas.axes.legend()
 
