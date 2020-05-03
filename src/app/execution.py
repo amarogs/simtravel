@@ -8,7 +8,7 @@ from src.simulator.simulation import Simulation
 from src.models.cities import SquareCity
 from src.app.animation import VisualizationWindow
 from src.app.visual_analysis  import LiveAnalysisPyG as LiveAnalysisWindow
-from src.app.param import LY_ENG_TO_SP, LY_SP_TO_ENG
+from src.app.params import LY_ENG_TO_SP, LY_SP_TO_ENG
 
 
 class ExecutionVisualization(QWidget):

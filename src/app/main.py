@@ -4,7 +4,7 @@ from PyQt5.QtGui import QKeySequence
 
 from PyQt5.QtWidgets import *
 
-from src.app.form import ParamsCreationForm
+from src.app.parameters_form import ParamsCreationForm
 from src.app.execution import ExecutionVisualization
 from src.app.animation import VisualizationWindow
 from src.app.visual_analysis import SingleAnalysis, GlobalAnalysisForm
@@ -126,8 +126,8 @@ class SimtravelMainWindow(QMainWindow):
         """Creates a new form to build a parameter file.
         Updates the stack to point to this new widget. """
         
-        if self.parameters_creation_form.current_view == None:
-            self.parameters_creation_form.initialize_widget(self.parameters)
+        
+        self.parameters_creation_form.update_app_params(self.parameters)
 
         self.stack.setCurrentWidget(self.parameters_creation_form)
 

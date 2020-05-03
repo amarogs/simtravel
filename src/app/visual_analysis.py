@@ -10,7 +10,7 @@ import pyqtgraph as pg
 
 from src.analysis.analysis import SimulationAnalysis, GraphFunctions, GlobalAnalysis, MplCanvas
 from src.models.states import States
-from src.app.param import LY_ENG_TO_SP, LY_SP_TO_ENG
+from src.app.params import LY_ENG_TO_SP, LY_SP_TO_ENG
 import src.analysis.parameters_analysis as params
 
 
