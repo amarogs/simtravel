@@ -92,7 +92,7 @@ class LiveAnalysisWindow(QMainWindow):
         self.states_graph.draw()
 
 
-class AnalysisDistribucion(QMainWindow):
+class AnalysisDistribution(QMainWindow):
     """A window that computes a normal distribution """
     def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(parent=parent, flags=flags)

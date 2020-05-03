@@ -5,7 +5,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import *
 
 from src.app.form import ParamsCreationForm
-from src.app.execution import ExecutionVisualizationForm
+from src.app.execution import ExecutionVisualization
 from src.app.animation import VisualizationWindow
 from src.app.visual_analysis import SingleAnalysis, GlobalAnalysisForm
 
@@ -52,7 +52,7 @@ class SimtravelMainWindow(QMainWindow):
         layout.addWidget(msg_label)
         self.welcome.setLayout(layout)
         self.parameters_creation_form = ParamsCreationForm(self.parameters, self.create_new_welcome, flags=flags)
-        self.execution_visualization_form = ExecutionVisualizationForm(self.parameters, VisualizationWindow(), flags=flags)
+        self.execution_visualization_form = ExecutionVisualization(self.parameters, VisualizationWindow(), flags=flags)
         self.individual_analysis_form = SingleAnalysis(self.parameters['PATH'], flags=flags)
         self.global_analysis_form = GlobalAnalysisForm(self.parameters['PATH'], flags=flags)
 

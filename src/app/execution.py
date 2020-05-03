@@ -11,9 +11,9 @@ from src.app.visual_analysis  import LiveAnalysisPyG as LiveAnalysisWindow
 from src.app.param import LY_ENG_TO_SP, LY_SP_TO_ENG
 
 
-class ExecutionVisualizationForm(QWidget):
+class ExecutionVisualization(QWidget):
     def __init__(self, params, visualization_window, parent=None, flags=QtCore.Qt.WindowFlags()):
-        super(ExecutionVisualizationForm, self).__init__(parent=parent, flags=flags)
+        super(ExecutionVisualization, self).__init__(parent=parent, flags=flags)
         
         # global parameters to be used
         self.params_text = params

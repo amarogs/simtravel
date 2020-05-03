@@ -8,7 +8,7 @@ from src.app.animation import Animation, VisualizationWindow
 from src.models.cities import SquareCity
 from src.app.param import city_creation,stations_creation, speed_creation, battery_creation, \
     distribution_creation, sim_configuration_creation, instances_configuration_creation, stations_configuration_creation, LY_SP_TO_ENG, LY_ENG_TO_SP
-from src.app.visual_analysis import AnalysisDistribucion
+from src.app.visual_analysis import AnalysisDistribution
 
 
 class ParamsCreationForm(QWidget):
@@ -22,7 +22,7 @@ class ParamsCreationForm(QWidget):
         self.current_view = None 
         # List of function that create the views. The current_view can point to any view to draw it.
         self.views = [self.create_city_form, self.create_physical_units_form, \
-            self.create_distribution_form, self.create_sim_configuration_form, self.create_results_form]
+            self.create_distribution_form, self.create_general_configuration_form, self.create_results_form]
         # List of arguments that are used in the creation functions. Each index matches a function
         # in the list of functions.
         self.args = [{"title1":"Creación de la ciudad", "button1":"Mostrar ciudad",\
@@ -80,7 +80,7 @@ class ParamsCreationForm(QWidget):
         self.city_visualization = VisualizationWindow()
 
         # Create a distribution visualization widget
-        self.distribution_visualization = AnalysisDistribucion()
+        self.distribution_visualization = AnalysisDistribution()
 
         # Set the widget as hidden by default
         self.hide()
@@ -397,7 +397,7 @@ class ParamsCreationForm(QWidget):
         layout.addRow(button_change_path)
         self.current_form.setLayout(layout)
 
-    def create_sim_configuration_form(self, *args, **kwargs):
+    def create_general_configuration_form(self, *args, **kwargs):
 
         # Create the form that will be displayed in the scrollable area
         self.current_form = QWidget()
