@@ -117,7 +117,6 @@ class ExecutionVisualization(QWidget):
         # Stop the execution and close the visualization window
         self.visualization_window.timer.stop()
         if not self.visualization_window.all_done and self.simulation_directory != None:
-            print("Condition True, deleting")
             # Destroy the file that was created.
             if os.path.exists(self.simulation_directory):
                 os.remove(self.simulation_directory)

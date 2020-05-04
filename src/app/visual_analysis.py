@@ -40,7 +40,7 @@ class LiveAnalysisPyG(QMainWindow):
 
         # Give styling to the graphWidget
         self.graphWidget.setBackground("w")
-        self.graphWidget.setTitle("Evolución de estados para EVs")
+        self.graphWidget.setTitle("Evolución de estados para vehículos eléctricos")
         self.graphWidget.setLabel('left', 'Número de vehículos')
         self.graphWidget.setLabel("bottom", "Tiempo simulación (minutos)")
         self.graphWidget.addLegend()
@@ -65,38 +65,14 @@ class LiveAnalysisPyG(QMainWindow):
         self.main_window.live_analysis_window = None
         
         return super().closeEvent(cls)
-class LiveAnalysisWindow(QMainWindow):
-    def __init__(self, simulation, parent=None, flags=QtCore.Qt.WindowFlags()):
-        super().__init__(parent=parent, flags=flags)
-        self.simulation = simulation
-        # Create the grapher
-        self.grapher = GraphFunctions(simulation.sim_name, simulation.units, 1, simulation.DELTA_TSTEPS, 1)
-        
-        # Retrieve the initial data from the metrics object
-        states_mean = self.simulation.metrics.states_evolution
-        states_std = {k:np.repeat(0, len(states_mean[k])) for k in states_mean}
-        
-        self.keys = list(states_mean.keys())
 
-        x = self.grapher.steps_to_minutes(len(states_mean[self.keys[0]]))
-
-        # Plot the data into a canvas
-        self.states_graph = self.grapher.graph_states_evolution_live(states_mean, x, live=True)
-        
-        # And set the graph as the main widget.
-        self.setCentralWidget(self.states_graph)
-
-    def update_values(self):
-        len_data = len(self.simulation.metrics.states_evolution[self.keys[0]])
-        self.grapher.update_states_canvas(self.states_graph, len_data, self.simulation.metrics.states_evolution)
-        self.states_graph.draw()
-
-
-class AnalysisDistribution(QMainWindow):
+class DistributionVisualization(QMainWindow):
     """A window that computes a normal distribution """
     def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(parent=parent, flags=flags)
         
+        self.setWindowTitle("Visualización de distribución")
+
         # Main widget to be displayed
         self.content = QWidget()
         self.layout = QVBoxLayout()
@@ -223,9 +199,9 @@ class AnalysisWindow(QMainWindow):
         
 
 
-class SingleAnalysis(QWidget):
+class SingleAnalysisForm(QWidget):
     def __init__(self, BASEDIR_PATH, parent=None, flags=QtCore.Qt.WindowFlags()):
-        super(SingleAnalysis, self).__init__(parent=parent, flags=flags)
+        super(SingleAnalysisForm, self).__init__(parent=parent, flags=flags)
         self.BASEDIR_PATH = BASEDIR_PATH
         self.combo_widgets = {}
         self.attributes_by_filename = {}
@@ -432,7 +408,7 @@ class SingleAnalysis(QWidget):
             if key.startswith("WINDOW"):
                 window.close()
         return super().closeEvent(cls)
-class GlobalAnalysisForm(SingleAnalysis):
+class GlobalAnalysisForm(SingleAnalysisForm):
     def __init__(self, BASEDIR_PATH, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(BASEDIR_PATH, parent=parent, flags=flags)
     

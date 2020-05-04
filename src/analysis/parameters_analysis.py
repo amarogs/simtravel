@@ -3,7 +3,7 @@ from src.models.states import States
 """Plot configuration """
 FIGSIZE = (6.4,4.8 )  # Size of the figure to be produced
 LANGUAGE = "es"
-
+stations_ly = {"central":"grande", "distributed":"pequeñas", "four":"medianas"}
 
 STATE_NAMES_ENG = {States.TOWARDS_DEST: 'towards destination', States.AT_DEST: 'at destination',
                States.TOWARDS_ST: 'towards station', States.QUEUEING: 'queuing', States.CHARGING: 'recharging', States.NO_BATTERY: 'no battery'}

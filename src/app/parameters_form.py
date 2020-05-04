@@ -7,7 +7,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import *
 from src.app.animation import Animation, VisualizationWindow
 from src.models.cities import SquareCity
-from src.app.visual_analysis import AnalysisDistribution
+from src.app.visual_analysis import DistributionVisualization
 from src.app.params import LY_ENG_TO_SP, LY_SP_TO_ENG
 
 
@@ -350,7 +350,7 @@ class DistributionPage(Page):
     def __init__(self, parent=None, flags=QtCore.Qt.WindowFlags()):
         super().__init__(parent=parent, flags=flags)
         # Create the visualization window
-        self.distribution_visualization = AnalysisDistribution()
+        self.distribution_visualization = DistributionVisualization()
         # Create the PageParam
         battery_autonomy = PageParam(QSpinBox, 1, 1, "AUTONOMY", "Autonomía de una carga completa (km):")
         battery_thresh = PageParam(QDoubleSpinBox, 0.05, 0.01, "BATTERY_THRESHOLD", "Umbral mínimo de batería (tanto por uno):")

@@ -17,6 +17,7 @@ from src.models.states import States
 from src.simulator.simulation import Simulation
 
 matplotlib.use('Qt5Agg')
+plt.style.use('ggplot')
 language = params.LANGUAGE
 
 
@@ -53,47 +54,8 @@ class GraphFunctions():
         return new_x, new_y
     def steps_to_minutes(self, length):
         return self.units.steps_to_minutes(np.arange(length)*self.DELTA_TSTEPS)
-    def graph_states_evolution_live(self, states_mean, x=None, live=False):
-        """Given a dictionary of states{k=states, val=[number of vehicles in that state at that step]}, and
-        the dictioanary with the deviation of the steps, returns a canvas with the lines plotted. """
 
-        canvas = MplCanvas()
-        canvas.axes = canvas.fig.add_subplot(111)
-        canvas.lines = {}
-
-        for s in States:
-            line = canvas.axes.plot(x, states_mean[s], color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
-            canvas.lines[s] = line[0]
-
-        canvas.axes.set_xlabel(params.lb_evolution[language])
-        canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
-        canvas.axes.set_title("Evolution of states.")
-        canvas.axes.legend()
-
-        return canvas
-
-    def update_states_canvas(self, canvas, x, states_mean):
-        """Given a canvas of the states evolution, update the axes with new data from states_mean """
-        # Clear the axes
-        canvas.axes.cla()
-        # Compute the new x in minutes
-        x = self.steps_to_minutes(x)
-
-        # Plot each state
-        for s in States:
-            # line = canvas.axes.plot(x, states_mean[s], color=params.COLORS[s], label=params.STATE_NAMES[s], linewidth=2)
-            # canvas.lines[s] = line[0]
-            canvas.lines[s].set_ydata(states_mean[s])
-            canvas.lines[s].set_xdata(x)
-        canvas.fig.canvas.draw()
-        canvas.fig.canvas.flush_events()
-        
-        # canvas.axes.set_xlabel("Time (minutes)")
-        # canvas.axes.set_ylabel("Number of EVs at each state (EVs)")
-        # canvas.axes.set_title("Evolution of states.")
-        # canvas.axes.legend()        
-
-
+      
     def graph_states_evolution(self, states_mean, states_std, x=None, live=False):
         """Given a dictionary of states{k=states, val=[number of vehicles in that state at that step]}, and
         the dictioanary with the deviation of the steps, returns a canvas with the lines plotted. """
@@ -207,6 +169,7 @@ class GraphFunctions():
             # Create a subplot for this snapshot
             canvas = MplCanvas()
             canvas.axes = canvas.fig.add_subplot(111)
+            canvas.axes.grid(False)
             canvas.figure.suptitle(super_title.format(eval(i)+1, len(heat_map_mean)))
 
             norm = 1.0/((eval(i)+1)*self.total_measures/len(heat_map_mean))
@@ -326,10 +289,13 @@ class SimulationAnalysis(Simulation):
         # Compute number of plugs per station
         if ST_LAYOUT == "central":
             self.plugs_per_station = self.TOTAL_PLUGS
+            self.n_stations = 1
         elif ST_LAYOUT == "distributed":
             self.plugs_per_station = self.TOTAL_PLUGS/self.TOTAL_D_ST
+            self.n_stations = self.TOTAL_D_ST
         elif ST_LAYOUT == "four":
             self.plugs_per_station = self.TOTAL_PLUGS/4
+            self.n_stations = 4
 
         # Prepare the data for the global report
         self.prepare_global_data()
@@ -386,6 +352,10 @@ class SimulationAnalysis(Simulation):
         mean_occupation = (np.mean(occupation_array, axis=1))/self.plugs_per_station
         self.global_mean['occupation'] = np.mean(mean_occupation)
         self.global_std['occupation'] = np.std(mean_occupation)
+
+        # Save the total number of stations
+        self.global_mean['n_stations'] = self.n_stations
+        self.global_std['n_stations'] = 0
 
 
     def load_data(self):
@@ -575,8 +545,11 @@ class GlobalAnalysis():
             os.makedirs(self.path)
         # For each key passed as attribute, we must
         # create a matrix to store the data.
-        self.global_keys = global_keys
-        for key in global_keys:
+        self.global_keys = list(global_keys)
+
+        # Add the key to compute the total number of stations.
+        self.global_keys.append("n_stations")
+        for key in self.global_keys:
             self.__setattr__(key+"_mean", np.zeros(shape=self.shape))
             self.__setattr__(key+"_std", np.zeros(shape=self.shape))
 
@@ -674,20 +647,21 @@ class GlobalAnalysis():
         figures, names = [], []
 
         for key in self.global_keys:
-            # Retrieve the matrices from memory
-            mean = self.__dict__[key+"_mean"]
-            std = self.__dict__[key+"_std"]
+            if key != "n_stations":
+                # Retrieve the matrices from memory
+                mean = self.__dict__[key+"_mean"]
+                std = self.__dict__[key+"_std"]
 
-            # For each ev density
-            for i in range(self.shape[0]):
-                fig, name = self.create_canvas_per_evd(i, key, mean, std)
-                figures.append(fig)
-                names.append(name)
+                # For each ev density
+                for i in range(self.shape[0]):
+                    fig, name = self.create_canvas_per_evd(i, key, mean, std)
+                    figures.append(fig)
+                    names.append(name)
 
-            # For all ev density draw a heat map
-            # fig, name = self.create_heat_map(key, mean, std)
-            # figures.append(fig)
-            # names.append(name)
+                # For all ev density draw a heat map
+                # fig, name = self.create_heat_map(key, mean, std)
+                # figures.append(fig)
+                # names.append(name)
 
         return figures, names
 
@@ -722,7 +696,22 @@ class GlobalAnalysis():
 
         return canvas, "{}_heatmap".format(key)
 
-
+    def get_layout_label(self, n_stations):
+        if language == "es":
+            if n_stations == 1:
+                label = "1 estación grande"
+            elif n_stations == 4:
+                label = "4 estaciones medianas"
+            else:
+                label = "{} estaciones pequeñas".format(n_stations)
+        else:
+            if n_stations == 1:
+                label ="1 big station"
+            elif n_stations == 4:
+                label ="4 medium stations"
+            else:
+                label="{} small stations".format(n_stations)
+        return label
     def create_canvas_per_evd(self, i, key, mean, std):
 
         evd = self.evd_index[i]
@@ -732,11 +721,14 @@ class GlobalAnalysis():
         # For each traffic density, plot each row
         for j in range(self.shape[1]):
             layout = self.layout_index[j]
+            n_stations = int(self.__dict__["n_stations_mean"][i, j,0])
+            st_label = self.get_layout_label(n_stations)
             y, yerr = mean[i, j, :], std[i, j, :]
             x = self.matrix_total_vehicles[i, j, :]
 
-            canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,marker="o", markersize=3, ls="solid",label="{} = {}".format("Layout", layout))
-
+            canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,marker="o", markersize=3, ls="solid",label=st_label)
+            
+                
         # Set the axis
         canvas.axes.set_xlabel(params.global_x_label[language])
         if key in self.traffic:
@@ -755,6 +747,6 @@ class GlobalAnalysis():
         # Set the suptitle
         canvas.figure.suptitle(params.global_suptitles[language][key].format(evd))
         # Set the legend
-        canvas.axes.legend()
+        canvas.axes.legend(fontsize=8)
 
         return canvas, key+"_"+str(evd)
