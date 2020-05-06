@@ -3,7 +3,10 @@ from src.models.cities import SquareCity
 from src.simulator.simulation import Simulation
 import sys
 from multiprocessing import Pool
+import multiprocessing
 import yaml
+
+
 
 parameters =None
 with open("scripts/parameters.yaml", "r") as f:
@@ -48,24 +51,30 @@ def run_simulation_with(args):
     simulation.set_battery_distribution(lower=BATTERY_THRESHOLD,
                                         std=BATTERY_STD)
     simulation.set_idle_distribution(upper=IDLE_UPPER,
-                                     lower=IDLE_LOWER, std=IDLE_STD)
+                                    lower=IDLE_LOWER, std=IDLE_STD)
     # Create the city
     simulation.create_city(SquareCity, RB_LENGTH, AV_LENGTH, INTERSEC_LENGTH, SCALE) 
 
     simulation.stations_placement(min_plugs_per_station=MIN_PLUGS_PER_STATION,
-                                  min_num_stations=MIN_D_STATIONS)
+                                min_num_stations=MIN_D_STATIONS)
     # Create the simulator
     simulation.create_simulator()
 
     # Run the simulation
     simulation.run(total_time=TOTAL_TIME,
-                   measure_period=MEASURE_PERIOD, repetitions=REPETITIONS)
+                measure_period=MEASURE_PERIOD, repetitions=REPETITIONS)
 
+if __name__ == "__main__":
 
-if NUM_PROCESS == 1:
-    for args in sim_args:
-        run_simulation_with(args)
-else:
-    pool = Pool(NUM_PROCESS)
-    results = pool.map_async(run_simulation_with, sim_args)
-    results.get()
+    multiprocessing.freeze_support()
+
+    if NUM_PROCESS == 1:
+        for args in sim_args:
+            run_simulation_with(args)
+    else:
+        pool = Pool(NUM_PROCESS)
+        results = pool.map_async(run_simulation_with, sim_args)
+        results.get()
+
+    if pool:
+        pool.close()

@@ -14,10 +14,10 @@ SPEED :  10 # km/h
 CELL_LENGTH :  5 # meters
 SIMULATION_SPEED :  1 #cell/tstep
 BATTERY :  1 #kWh
-AUTONOMY: 135 # Vehicle autonomy in km
 CS_POWER :  7 #kW
 
 #BATTERY DISTRIBUTION #
+AUTONOMY: 135 # EV autonomy in km
 BATTERY_THRESHOLD :  0.25 # lower limit of the charge
 BATTERY_STD :  0.2 # percentage of deviation from the mean.
 
@@ -34,22 +34,19 @@ EV_DENSITY_VALUES:
   - 0.2
   - 0.3
 TF_DENSITY_VALUES:
-  - 0.4
-  - 0.5
-  - 0.6
+  - 0.1
+  
+  
 
 ST_CENTRAL: 1
-ST_DISTRIBUTED: 1
-ST_FOUR : 1
+ST_DISTRIBUTED: 0
+ST_FOUR : 0
 
-#GRAPHICS PARAMETERS #
-WIDTH :  700 #Window width
-HEIGHT :  700 #Window height
-DELAY :  0 #Number of ms between different frames
+
 
 #GENERAL PARAMETERS #
-REPETITIONS :  2 #Number of times each simulation is run
-TOTAL_TIME :  5  # Number of hours to simulate
+REPETITIONS :  1 #Number of times each simulation is run
+TOTAL_TIME : 1  # Number of hours to simulate
 MEASURE_PERIOD :  0 # Number of minutes between two consecutive snapshots of the system.
 PATH: "."
 

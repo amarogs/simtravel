@@ -1,6 +1,5 @@
 import math
 import os
-
 import h5py
 import matplotlib
 import matplotlib.pyplot as plt
@@ -22,11 +21,19 @@ language = params.LANGUAGE
 
 
 # Configure the matplotlib backend
-plt.rc('font', family='serif')
-plt.rc('xtick', labelsize='x-small')
-plt.rc('ytick', labelsize='x-small')
 plt.rc('text', usetex=False)
 
+SMALL_SIZE = 6
+MEDIUM_SIZE = 8
+BIGGER_SIZE = 10
+
+plt.rc('font', family='serif', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 class GraphFunctions():
     def __init__(self,sim_name, units, n_elements_per_bin, DELTA_TSTEPS, total_measures):
@@ -100,6 +107,7 @@ class GraphFunctions():
             """Creates a figure to plot 4 stations occupation """
 
             canvas = MplCanvas()
+            canvas.fig.tight_layout()
             # canvas.fig.suptitle(super_title.format(plot_i+1, total_plots))
             canvas.fig.subplots_adjust(hspace=0.4)  # Adjust the space
 
@@ -130,6 +138,7 @@ class GraphFunctions():
             pos = stations[plot_i + i]
 
             canvas = MplCanvas() # Create the canvas
+            canvas.fig.tight_layout()
             canvas.__dict__['axes_'+str(i)] = canvas.fig.add_subplot(111)
 
             # Retrieve the data
@@ -174,7 +183,7 @@ class GraphFunctions():
 
             norm = 1.0/((eval(i)+1)*self.total_measures/len(heat_map_mean))
             # Plot the heat map
-            img = canvas.axes.imshow(norm*hmap, cmap='hot',interpolation='nearest', origin='upper')
+            img = canvas.axes.imshow(norm*hmap, cmap='hot',interpolation='none', origin='upper')
             
             # Show the leyend
             canvas.fig.colorbar(img, label=params.lb_heat_bar[language])
@@ -311,17 +320,24 @@ class SimulationAnalysis(Simulation):
 
 
         # Prepare for the generation of canvases
+        # This code should be done directly with lambda functions, given that python can't pickle
+        # lambda functions and we need to send this object trough a process, we are going to write
+        # each function as a regular named function.
+
         self.computed_canvases = []
-        self.canvas_creator = [
-            lambda : self.grapher.graph_states_evolution(self.states_mean, self.states_std), \
-            lambda : self.grapher.graph_occupation_evolution(self.plugs_per_station, self.occupation_mean), \
-            lambda : self.grapher.graph_heat_map_evolution(self.heat_map_mean), \
-            lambda : self.grapher.graph_velocities_evolution(self.velocities_mean, self.velocities_std)
-            ]
+
+        self.canvas_creator = [self.lambda1, self.lambda2, self.lambda3, self.lambda4]
 
         # generate the report of the simulation
         # self.generate_report()
-
+    def lambda1(self):
+        return self.grapher.graph_states_evolution(self.states_mean, self.states_std)
+    def lambda2(self):
+        return self.grapher.graph_occupation_evolution(self.plugs_per_station, self.occupation_mean)
+    def lambda3(self):
+        return self.grapher.graph_heat_map_evolution(self.heat_map_mean)
+    def lambda4(self):
+        return self.grapher.graph_velocities_evolution(self.velocities_mean, self.velocities_std)
     def prepare_global_data(self):
         """This function takes the attributes that are going
         to be used as a global meter of the simulation. """
@@ -336,10 +352,13 @@ class SimulationAnalysis(Simulation):
         # Convert the velocities into km/h and compute the std.
         to_kmh = ['speed', 'mobility']
         for key in to_kmh:
-            self.global_mean[key] = self.units.simulation_speed_to_kmh(
-                np.mean(self.global_mean[key]))
-            self.global_std[key] = self.units.simulation_speed_to_kmh(
-                np.std(self.global_mean[key]))
+            mean = self.units.simulation_speed_to_kmh(np.mean(self.global_mean[key]))
+            std = np.std(self.global_mean[key])
+
+            self.global_mean[key] = mean
+            
+            
+            self.global_std[key] =  std
 
         # Convert the elapsed time to minutes/(vehicles * repetitions)
         self.global_mean['elapsed'] = self.units.steps_to_minutes(
@@ -482,7 +501,7 @@ class SimulationAnalysis(Simulation):
             if type(fig) == MplCanvas:
                 fig = fig.fig
             pp.savefig(fig)
-            fig.savefig(path+"/" + name+".svg", format="svg", dpi=100)
+            fig.savefig(path+"/" + name+".pdf", format="pdf", dpi=100)
             fig.clear()
             plt.close(fig)
         pp.close()
@@ -631,12 +650,12 @@ class GlobalAnalysis():
         # Create the canvases and names for the files
         canvases, names = self.graph_attributes()
 
-        # Create a pdf pages object named: global.pdf
-        pp = PdfPages(self.path+"/global.pdf")
+        # Create a pdf pages object named: report.pdf
+        pp = PdfPages(self.path+"/report.pdf")
 
         for (canvas, name) in zip(canvases, names):
             pp.savefig(canvas.figure)
-            canvas.figure.savefig(self.path+"/" + name+".svg", format="svg", dpi=150)
+            canvas.figure.savefig(self.path+"/" + name+".pdf", format="pdf", dpi=150)
         pp.close()
 
     def graph_attributes(self):
@@ -724,6 +743,7 @@ class GlobalAnalysis():
             n_stations = int(self.__dict__["n_stations_mean"][i, j,0])
             st_label = self.get_layout_label(n_stations)
             y, yerr = mean[i, j, :], std[i, j, :]
+     
             x = self.matrix_total_vehicles[i, j, :]
 
             canvas.axes.errorbar(x, y, yerr=yerr, linewidth=2,marker="o", markersize=3, ls="solid",label=st_label)
@@ -733,7 +753,8 @@ class GlobalAnalysis():
         canvas.axes.set_xlabel(params.global_x_label[language])
         if key in self.traffic:
             canvas.axes.set_ylabel(params.global_y_label[language]['traffic'])
-
+        elif key == 'mobility':
+            canvas.axes.set_ylabel("Movilidad media (km/h)")
         elif key in self.velocities:
             canvas.axes.set_ylabel(params.global_y_label[language]['velocities'])
         elif key in self.stations:

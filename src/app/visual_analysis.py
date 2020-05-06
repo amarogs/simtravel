@@ -111,7 +111,7 @@ class AnalysisWindow(QMainWindow):
             
             all_sim_analysis = [SimulationAnalysis(*attr) for attr in attributes]
             # Create a global analysis object and feed it with the simulations.
-            g_analysis = GlobalAnalysis(attributes, 'seeking', 'queueing','total', 'speed','mobility', 'occupation')
+            g_analysis = GlobalAnalysis(attributes, 'seeking', 'queueing','total', 'speed','mobility')
             g_analysis.load_matrices(all_sim_analysis)
             g_analysis.load_single_attribute(all_sim_analysis, 'TOTAL_VEHICLES')
             g_analysis.compute_all()
@@ -421,7 +421,7 @@ class GlobalAnalysisForm(SingleAnalysisForm):
         if report:
             all_sim_analysis = [SimulationAnalysis(*attr) for attr in attrs]
             # Create a global analysis object and feed it with the simulations.
-            g_analysis = GlobalAnalysis(attrs, 'seeking', 'queueing','total', 'speed','mobility', 'occupation')
+            g_analysis = GlobalAnalysis(attrs, 'seeking', 'queueing','total', 'speed','mobility')
             g_analysis.load_matrices(all_sim_analysis)
             g_analysis.load_single_attribute(all_sim_analysis, 'TOTAL_VEHICLES')
             # Create the report.
