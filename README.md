@@ -26,8 +26,13 @@ Crea un entorno virtual de Python y sobre el entorno instalar todos los módulos
 que son extensiones.
 
 ```
+pip3 install virtualenv
+python3 -m virtualenv simtravel-env
+source simtravel-env/bin/activate
+
+
 pip3 install -r requirements.txt
-python3 setup.py
+python3 setup.py build_ext --inplace
 ```
 
 ### Ejecución
@@ -35,4 +40,10 @@ Para ejecutar la aplicación de escritorio lanzamos el archivo de run_app.py que
 
 ```
 python3 -m scripts.run_app
+```
+
+Para ejecutar el script paralelo debemos modificar los parámetros que se encuentran en la carpeta scripts/parameters.yml y ejecutar el siguiente comando donde nc es el número de procesos que queremos utilizar.
+
+```
+python3 -m scripts.run nc
 ```
