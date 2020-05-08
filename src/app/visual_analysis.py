@@ -103,7 +103,7 @@ class AnalysisWindow(QMainWindow):
         if non_individual:
             title = "Análisis global de distintas simulaciones"
         else:
-            title = "Análisis para Densidad EV={}, Densidad TF={}, Layout={}".format(ev, tf, ly)
+            title = "Análisis para Densidad VE={}, Densidad TF={}, Estaciones={}".format(ev, tf, ly)
 
         self.setWindowTitle(title)
         # Create the analysis and set up the gallery
@@ -374,7 +374,7 @@ class SingleAnalysisForm(QWidget):
 
         combo = self.fulfill_combo_widget("EV_DENSITY_VALUES", [])
         combo.currentTextChanged.connect(self.on_change_ev_combo)
-        selectors_layout.addWidget(QLabel("Densidad de EV: "), 0, 3)
+        selectors_layout.addWidget(QLabel("Densidad de VE: "), 0, 3)
         selectors_layout.addWidget(combo, 1, 3)
 
 

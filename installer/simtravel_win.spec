@@ -1,9 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+import PyInstaller.config
+PyInstaller.config.CONF['workpath'] = '../'
 block_cipher = None
 
 
-a = Analysis(['scripts\\run_app.py'],
+a = Analysis(['./scripts/run_app.py'],
              pathex=['C:\\Users\\Amaro\\OneDrive - UNIVERSIDAD DE SEVILLA\\simtravel'],
              binaries=[],
              datas=[('build/lib/', '.'), ('img', './img/')],
@@ -22,12 +23,12 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='run_app',
+          name='SIMTRAVEL',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=True,
+          console=False,
           icon='img/icon.ico',
            )
 coll = COLLECT(exe,

@@ -33,8 +33,8 @@ class SimtravelMainWindow(QMainWindow):
                 <p>
                 <br>(1) Crear nuevos parámetros de simulación o cargar desde un archivo.
                 <br>(2) Los parámetros creados o modificados puede ser guardados como archivo.
-                <br>(2) Ejecutar la simulación con los parámetros cargados.
-                <br>(3) Analizar los resultados obtenido o de otra localización.
+                <br>(3) Ejecutar la simulación con los parámetros cargados.
+                <br>(4) Analizar los resultados obtenido o de otra localización.
                 </p>
                 <br>
                 <a href=https://github.com/amarogs/simtravel>Código fuente <a/>
@@ -91,7 +91,7 @@ class SimtravelMainWindow(QMainWindow):
         self.individual_analysis = QAction("Nuevo análisis individual")
         self.individual_analysis.triggered.connect(self.create_new_individual_analysis)
         self.analysis_menu.addAction(self.individual_analysis)
-        self.global_analysis = QAction("Nuevo análisis grupal")
+        self.global_analysis = QAction("Nuevo análisis global")
         self.global_analysis.triggered.connect(self.create_new_global_analysis)
         self.analysis_menu.addAction(self.global_analysis)
 

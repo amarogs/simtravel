@@ -16,7 +16,7 @@ class ExecutionVisualization(QWidget):
         super(ExecutionVisualization, self).__init__(parent=parent, flags=flags)
         
         # global parameters to be used
-        self.params_text = params
+        self.params_text = copy.deepcopy(params)
         self.combo_widgets = {}
 
         # Visualizatoin related widgets
@@ -70,7 +70,7 @@ class ExecutionVisualization(QWidget):
         self.setLayout(self.layout)
 
     def update_values(self, parameters):
-        self.params_text = parameters
+        self.params_text = copy.deepcopy(parameters)
         new_main_content = self.create_main_content()
         self.layout.replaceWidget(self.main_content, new_main_content, QtCore.Qt.FindChildrenRecursively)
         self.main_content.setParent(None)
