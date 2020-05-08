@@ -21,16 +21,15 @@ apt-get install python3-dev
 ```
 
 ### Instalación
-
-Crea un entorno virtual de Python y sobre el entorno instalar todos los módulos necesarios para que funcione la aplicación y compilar los módulos
-que son extensiones.
+Pimero creamos el entorno virtual de Python 
 
 ```
 pip3 install virtualenv
 python3 -m virtualenv simtravel-env
 source simtravel-env/bin/activate
-
-
+```
+Ahora instalamos los módulos que necesitamos y compilamos el código como extensiones de Python.
+```
 pip3 install -r requirements.txt
 python3 setup.py build_ext --inplace
 ```
