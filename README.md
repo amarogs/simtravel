@@ -26,7 +26,7 @@ Crea un entorno virtual de Python y sobre el entorno instalar todos los módulos
 que son extensiones.
 
 ```
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 python3 setup.py
 ```
 
