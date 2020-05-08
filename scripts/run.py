@@ -5,20 +5,26 @@ import sys
 from multiprocessing import Pool
 import multiprocessing
 import yaml
+import argparse
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-np","--nprocess", help="número de procesos a crear",
+                    type=int, default=1)
+parser.add_argument("-pf", "--paramsfile", help="ruta del archivo de parámetros", default="scripts/parameters.yaml")
+args = parser.parse_args()
+print(args)
 
-parameters =None
-with open("scripts/parameters.yaml", "r") as f:
+# Read the parameters file to use from the command line.
+with open(args.paramsfile, "r") as f:
     parameters = yaml.load(f, Loader=yaml.FullLoader)
     for k, v in parameters.items():
         globals()[k] = v
 
 # Read the number of cores to use from the command line.
-if len(sys.argv) == 2:
-    NUM_PROCESS = int(sys.argv[1])
-else:
-    NUM_PROCESS = 1
+NUM_PROCESS = args.nprocess
+
+
 
 
 # Create the combination of values we want to try.
