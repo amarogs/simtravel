@@ -44,5 +44,5 @@ python3 -m scripts.run_app
 Para ejecutar el script paralelo debemos modificar los parámetros que se encuentran en la carpeta scripts/parameters.yml y ejecutar el siguiente comando donde nc es el número de procesos que queremos utilizar.
 
 ```
-python3 -m scripts.run nc
+python3 -m scripts.run -np 16 -pf /home/amaro/parameters.yaml
 ```
