@@ -41,7 +41,7 @@ Para ejecutar la aplicación de escritorio lanzamos el archivo de run_app.py que
 python3 -m scripts.run_app
 ```
 
-Para ejecutar el script paralelo debemos modificar los parámetros que se encuentran en la carpeta scripts/parameters.yml y ejecutar el siguiente comando donde nc es el número de procesos que queremos utilizar.
+Para ejecutar el script paralelo debemos modificar los parámetros que se encuentran en la carpeta scripts/parameters.yml y ejecutar el siguiente comando donde -np es el número de procesos que queremos utilizar y con -pf indicamos la ruta al archivo de parámetros. Si no se suministra -np se usará 1 proceso y si no se suministra -pf se buscará el archiov de parámeotros de la carpeta scripts.
 
 ```
 python3 -m scripts.run -np 16 -pf /home/amaro/parameters.yaml
