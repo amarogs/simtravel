@@ -24,26 +24,7 @@ class SimtravelMainWindow(QMainWindow):
 
         # Create the widgets that the stack will hold.
         self.stack = QStackedWidget()
-        self.welcome = QWidget(flags=flags)
-        layout = QHBoxLayout()
-        msg = """
-                <br><br>
-                <h1>Bienvenido</h1>
-                
-                <p>
-                <br>(1) Crear nuevos parámetros de simulación o cargar desde un archivo.
-                <br>(2) Los parámetros creados o modificados puede ser guardados como archivo.
-                <br>(3) Ejecutar la simulación con los parámetros cargados.
-                <br>(4) Analizar los resultados obtenido o de otra localización.
-                </p>
-                <br>
-                <a href=https://github.com/amarogs/simtravel>Código fuente <a/>
-                 """
-        msg_label =QLabel(msg)
-        # msg_label.setAlignment(QtCore.Qt.AlignCenter)
-
-        layout.addWidget(msg_label)
-        self.welcome.setLayout(layout)
+        self.welcome = self.create_welcome_view()
         self.parameters_creation_form = ParamsCreationForm(self.parameters, self.create_new_welcome, flags=flags)
         self.execution_visualization_form = ExecutionVisualization(self.parameters, VisualizationWindow(), flags=flags)
         self.individual_analysis_form = SingleAnalysisForm(self.parameters['PATH'], flags=flags)
@@ -95,7 +76,60 @@ class SimtravelMainWindow(QMainWindow):
         self.global_analysis.triggered.connect(self.create_new_global_analysis)
         self.analysis_menu.addAction(self.global_analysis)
 
+    def create_welcome_view(self):
+        welcome = QWidget()
+        
+        title = QLabel("<h1>Bienvenido</h1>")
+        title.setAlignment(QtCore.Qt.AlignCenter)
 
+        first_section = QWidget()
+        section_layout = QVBoxLayout()
+        subtitle_1 = QLabel("<h3>¿Qué se puede hacer?</h3>")
+        instructions = QLabel("""
+                <h3>¿Qué se puede hacer?</h3>
+                
+                <p>
+                <br>(1) Crear nuevos parámetros de simulación o cargar desde un archivo.
+                <br>(2) Los parámetros creados o modificados puede ser guardados como archivo.
+                <br>(3) Ejecutar la simulación con los parámetros cargados.
+                <br>(4) Analizar los resultados obtenido o de otra localización.
+                </p>
+        """)
+        section_layout.addWidget(subtitle_1)
+        section_layout.addWidget(instructions)
+    
+        first_section.setLayout(section_layout)
+
+        # Create the second section
+        second_section = QWidget()
+        section_layout = QVBoxLayout()
+
+        subtitle_2 = QLabel("<h3>¿Dónde se encuentra el código?</h3>")
+        view_code = QLabel("""
+                
+                <h3>¿Dónde se encuentra el código?</h3>
+                
+                <p>
+                <br>(1) Repositorio del proyecto: <a href=https://github.com/amarogs/simtravel>Acceso a código fuente </a> 
+                <br>(2) En el repositorio están las instrucciones para instalar la aplicación desde el código fuente.  
+                </p>
+         """)
+        view_code.setOpenExternalLinks(True)
+        section_layout.addWidget(subtitle_2)
+        section_layout.addWidget(view_code)
+        second_section.setLayout(section_layout)
+
+        # Create the general view
+        layout = QVBoxLayout()
+        layout.addWidget(title)
+        #layout.addWidget(first_section)
+        #layout.addWidget(second_section)
+        layout.addWidget(instructions)
+        layout.addWidget(view_code)
+        layout.addWidget(QLabel("\n\n"))
+        
+        welcome.setLayout(layout)
+        return welcome
     def open_file(self):
         """Opens a yaml file and saves the parameters into the parameters variable. """
         
