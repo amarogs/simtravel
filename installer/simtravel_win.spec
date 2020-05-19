@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(['./scripts/run_app.py'],
-             pathex=['C:\\Users\\Amaro\\OneDrive - UNIVERSIDAD DE SEVILLA\\simtravel'],
+             pathex=['C:\\Users\\Amaro\\simtravel'],
              binaries=[],
              datas=[('build/lib/', '.'), ('img', './img/')],
              hiddenimports=[],
@@ -38,4 +38,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='run_app')
+               name='SIMTRAVEL win')
