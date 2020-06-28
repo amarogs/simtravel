@@ -6,7 +6,7 @@ Además permite el estudio de la colocación de estaciones de recarga probando c
 * Cuatro estaciones medianas distribuidas por la ciudad.
 * Múltiples estaciones pequeñas repartidas de manera homogénea.
 
-Los archivos binarios con la aplicación empaquetada se pueden descargar de:
+Los archivos binarios con la aplicación empaquetada se pueden descargar de: [release 1](https://github.com/amarogs/simtravel/releases/tag/1.0)
 
 
 
