@@ -1,5 +1,5 @@
 # simtravel
-Simulador de tráfico urbano mediante un modelo híbrido AC-autómata. 
+Simulador de tráfico urbano mediante un modelo híbrido AC-agente. 
 Es un simulador de tráfico en el que creamos ciudades sintéticas y simétricas y colocamos vehículos que pueden ser eléctricos y no eléctricos. 
 Además permite el estudio de la colocación de estaciones de recarga probando con 3 tipos de colocaciones.
 * Una estación grande en el centro.
