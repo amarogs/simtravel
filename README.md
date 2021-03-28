@@ -1,18 +1,18 @@
 # simtravel
-Simulador de tráfico urbano mediante un modelo híbrido AC-agente. 
-Es un simulador de tráfico en el que creamos ciudades sintéticas y simétricas y colocamos vehículos que pueden ser eléctricos y no eléctricos. 
-Además permite el estudio de la colocación de estaciones de recarga probando con 3 tipos de colocaciones.
-* Una estación grande en el centro.
-* Cuatro estaciones medianas distribuidas por la ciudad.
-* Múltiples estaciones pequeñas repartidas de manera homogénea.
+Urban traffic simulator based on a hybrid cellular automata and agent-based model.
 
-Los archivos binarios con la aplicación empaquetada se pueden descargar de: [release 1](https://github.com/amarogs/simtravel/releases/tag/1.0)
+Using this tool we can model synthetic and symmetric cities where electric vehicles (EV) and non-electric vehicles (ICEV) are placed. This simulator enables the study of the arrangement of EV charging stations testing three different stations layout:
+
+* A large central station
+* Four medium-sized stations distributed around the city
+* Multiple small stations scattered all over the city.
+
+The binary files with the application ready to execute can be downloaded from: [release 1](https://github.com/amarogs/simtravel/releases/tag/1.0)
 
 
 
-### Requisitos previos
-Tener instalado Python 3 (probado en la versión 3.8),  tener instalado el gestor de paquetes pip y tener instaladas las dependencias para
-poder compilar extensiones.
+### Installation requisites
+Python 3 (tested on version 3.8) as well as the package-management tool pip. Since some parts of the code have to be compiled, the necessary libraries must also be installed.
 
 ```
 apt-get install python3
@@ -20,29 +20,39 @@ apt-get install python3-pip
 apt-get install python3-dev
 ```
 
-### Instalación
-Pimero creamos el entorno virtual de Python 
+### Installation
+First, create a new Python virtual environment 
+ 
 
 ```
 pip3 install virtualenv
 python3 -m virtualenv simtravel-env
 source simtravel-env/bin/activate
 ```
-Ahora instalamos los módulos que necesitamos y compilamos el código como extensiones de Python.
+Then, install all needed module by using the [requirements.txt](./requirements.txt) and compile the code as a Python extension module.
+
 ```
 pip3 install -r requirements.txt
 python3 setup.py build_ext --inplace
 ```
 
-### Ejecución
-Para ejecutar la aplicación de escritorio lanzamos el archivo de run_app.py que se encuentra en la carpeta scripts.
+### Execution
+Finally, the execution of the simulation can be done in two different ways. By using the desktop application, and therefore visualizing the result, or by using the parallel script which is much faster due to no visualization at all.
+
+The desktop app can be executed using the file [run_app.py](./scripts/run_app.py) which can be found in the scripts folder.
+
 
 ```
 python3 -m scripts.run_app
 ```
 
-Para ejecutar el script paralelo debemos modificar los parámetros que se encuentran en la carpeta scripts/parameters.yml y ejecutar el siguiente comando donde -np es el número de procesos que queremos utilizar y con -pf indicamos la ruta al archivo de parámetros. Si no se suministra -np se usará 1 proceso y si no se suministra -pf se buscará el archiov de parámeotros de la carpeta scripts.
+The second way to execute the simulations is through the parallel script. 
+First, we need to modify the input parameters. A template of the parameter file can be found on [parameters.yaml](./scripts/parameters.yaml). 
+Afterwards, we execute the following command:
 
 ```
-python3 -m scripts.run -np 16 -pf /home/amaro/parameters.yaml
+python3 -m scripts.run -np 16 -pf ./parameters.yaml
 ```
+
+Where `-np` is the total number of processes that we want to use and `-pf` is the argument to indicate where the parameter file is. 
+By default `-np` takes value 1 and `-pf` assumes that the parameter file is inside ./scripts/parameters.yaml.
