@@ -1,4 +1,4 @@
-﻿cycler==0.10.0
+cycler==0.10.0
 Cython==0.29.17
 h5py==2.10.0
 kiwisolver==1.2.0
@@ -13,5 +13,5 @@ PyQt5-sip==12.7.2
 pyqtgraph @ git+https://github.com/pyqtgraph/pyqtgraph@a76d9daec25724c8bf22c61a2ebb3c9b6bff6a4d
 python-dateutil==2.8.1
 PyYAML==5.4
-scipy==1.4.1
+scipy==1.10.0
 six==1.14.0
