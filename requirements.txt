@@ -1,10 +1,10 @@
-﻿cycler==0.10.0
+cycler==0.10.0
 Cython==0.29.17
 h5py==2.10.0
 kiwisolver==1.2.0
 matplotlib==3.2.1
 numpy==1.22.0
-Pillow==9.3.0
+Pillow==10.0.1
 PyOpenGL==3.1.5
 PyOpenGL-accelerate==3.1.5
 pyparsing==2.4.7
